@@ -15,6 +15,5 @@ namespace Entities
         public User User { get; set; }
         public ICollection<Subject> Subjects { get; set; }
         public ICollection<Class> Classes { get; set; }
-        //n-ns : diciplina/turma
     }
 }
