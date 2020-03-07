@@ -16,6 +16,5 @@ namespace Entities
         public ICollection<Evaluation> Evaluations {get; set; }
         public ICollection<Class> Classes { get; set; }
         public ICollection<Attendance> Attendances { get; set; }
-        //nota/turma/frequencia
     }
 }
