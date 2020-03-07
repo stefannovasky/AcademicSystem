@@ -9,6 +9,6 @@ namespace Entities
         public int InstructorID { get; set; }
         public Instructor Instructor { get; set; }
         public int ClassID { get; set; }
-        public Class Category { get; set; }
+        public Class Class { get; set; }
     }
 }

@@ -38,6 +38,27 @@ namespace DAL
             modelBuilder.ApplyConfiguration(new CoordinatorMapConfig());
             modelBuilder.ApplyConfiguration(new ClassMapConfig());
             modelBuilder.ApplyConfiguration(new AttendanceMapConfig());
+
+            modelBuilder.Entity<SubjectInstructor>()
+                .HasKey(si => new { si.SubjectID, si.InstructorID });
+            modelBuilder.Entity<SubjectInstructor>()
+                .HasOne(si => si.Subject)
+                .WithMany(s => s.Instructors)
+                .HasForeignKey(si => si.SubjectID);
+            modelBuilder.Entity<SubjectInstructor>()
+                .HasOne(si => si.Instructor)
+                .WithMany(i => i.Subjects)
+                .HasForeignKey(si => si.InstructorID);
+            modelBuilder.Entity<StudentClass>()
+                .HasKey(sc => new { sc.StudentID, sc.ClassID });
+            modelBuilder.Entity<StudentClass>()
+                .HasOne(sc => sc.Student)
+                .WithMany(s => s.Classes)
+                .HasForeignKey(sc => sc.StudentID);
+            modelBuilder.Entity<StudentClass>()
+                .HasOne(sc => sc.Class)
+                .WithMany(c => c.Students)
+                .HasForeignKey(sc => sc.ClassID);
             base.OnModelCreating(modelBuilder);
         }
 
