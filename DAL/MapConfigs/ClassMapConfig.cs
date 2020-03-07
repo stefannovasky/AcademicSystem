@@ -11,7 +11,8 @@ namespace DAL.MapConfigs
     {
         public void Configure(EntityTypeBuilder<Class> builder)
         {
-            throw new NotImplementedException();
+            builder.Property(c => c.CourseID).IsRequired();
+            builder.Property(c => c.SubjectID).IsRequired();
         }
     }
 }
