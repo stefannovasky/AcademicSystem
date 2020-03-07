@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using DAL.MapConfigs;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -27,6 +28,16 @@ namespace DAL
                     .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
                 entityType.GetProperties().Where(c => c.ClrType == typeof(string)).ToList().ForEach(p => p.SetIsUnicode(false));
             }
+            modelBuilder.ApplyConfiguration(new UserMapConfig());
+            modelBuilder.ApplyConfiguration(new SubjectMapConfig());
+            modelBuilder.ApplyConfiguration(new StudentMapConfig());
+            modelBuilder.ApplyConfiguration(new OwnerMapConfig());
+            modelBuilder.ApplyConfiguration(new InstructorMapConfig());
+            modelBuilder.ApplyConfiguration(new EvaluationMapConfig());
+            modelBuilder.ApplyConfiguration(new CourseMapConfig());
+            modelBuilder.ApplyConfiguration(new CoordinatorMapConfig());
+            modelBuilder.ApplyConfiguration(new ClassMapConfig());
+            modelBuilder.ApplyConfiguration(new AttendanceMapConfig());
             base.OnModelCreating(modelBuilder);
         }
 
