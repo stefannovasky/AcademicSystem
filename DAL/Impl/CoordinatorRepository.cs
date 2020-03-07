@@ -4,32 +4,33 @@ using Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL.Impl
 {
     public class CoordinatorRepository : ICoordinatorRepository
     {
-        public Response Create(Coordinator item)
+        public Task<Response> Create(Coordinator item)
         {
             throw new NotImplementedException();
         }
 
-        public Response Delete(int id)
+        public Task<Response> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<Coordinator> GetAll()
+        public Task<DataResponse<Coordinator>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<Coordinator> GetByID(int id)
+        public Task<DataResponse<Coordinator>> GetByID(int id)
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<Coordinator> Update(Coordinator item)
+        public Task<DataResponse<Coordinator>> Update(Coordinator item)
         {
             throw new NotImplementedException();
         }
