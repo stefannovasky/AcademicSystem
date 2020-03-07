@@ -11,7 +11,11 @@ namespace DAL.MapConfigs
     {
         public void Configure(EntityTypeBuilder<Attendance> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(a => a.ID);
+            builder.Property(a => a.Date).IsRequired();
+            builder.Property(a => a.Value).IsRequired();
+            builder.Property(a => a.StudentID).IsRequired();
+            builder.Property(a => a.ClassID).IsRequired();
         }
     }
 }
