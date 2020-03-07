@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DAL.Interfaces
 {
-    public interface IInstructorRepository
+    public interface IInstructorRepository : IRepository<Instructor>
     {
     }
 }
