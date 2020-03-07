@@ -11,7 +11,7 @@ namespace DAL.MapConfigs
     {
         public void Configure(EntityTypeBuilder<Coordinator> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(c => c.ID); 
         }
     }
 }
