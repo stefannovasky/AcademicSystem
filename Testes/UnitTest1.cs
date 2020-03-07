@@ -23,12 +23,12 @@ namespace Testes
                 {
                     ctx.Users.Add(new User() { 
                         City="bLUEMANI",
-                        Cpf="111.111.111-11",
+                        Cpf="121.111.111-11",
                         Name="SADIAODA",
-                        Email="ASAJHDAIUDAU@SFKDFISJ.COM",
+                        Email="ASAJHDAIUDsdaAU@SFKDFISJ.COM",
                         Number="123",
                         Password="ASIODUAIDA",
-                        Rg="7.123.123",
+                        Rg="7.323.123",
                         Street="maria vai lavar a louca",
                         State="sa"
                     });
