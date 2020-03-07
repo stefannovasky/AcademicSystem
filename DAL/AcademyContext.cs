@@ -8,16 +8,28 @@ namespace DAL
 {
     public class AcademyContext : DbContext
     {
-        public AcademyContext()
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<Class> Classes { get; set; }
+        public DbSet<Coordinator> Coordinators { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Evaluation> Evaluations { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Owner> Owners { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        public AcademyContext() : base ()
         {
 
         }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+            optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\stefa\OneDrive\Documentos\academic.mdf;Integrated Security=True;Connect Timeout=30");
+            base.OnConfiguring(optionsBuilder);
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -38,6 +50,8 @@ namespace DAL
             modelBuilder.ApplyConfiguration(new CoordinatorMapConfig());
             modelBuilder.ApplyConfiguration(new ClassMapConfig());
             modelBuilder.ApplyConfiguration(new AttendanceMapConfig());
+            //base.OnModelCreating(modelBuilder);
+            
 
             modelBuilder.Entity<SubjectInstructor>()
                 .HasKey(si => new { si.SubjectID, si.InstructorID });
@@ -93,18 +107,8 @@ namespace DAL
                 .HasOne(oc => oc.Course)
                 .WithMany(c => c.Owners)
                 .HasForeignKey(oc => oc.CourseID);
-            base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Attendance> Attendances { get; set; }
-        public DbSet<Class> Classes { get; set; }
-        public DbSet<Coordinator> Coordinators { get; set; }
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Evaluation> Evaluations { get; set; }
-        public DbSet<Instructor> Instructors { get; set; }
-        public DbSet<Owner> Owners { get; set; }
-        public DbSet<Student> Students { get; set; }
-        public DbSet<Subject> Subjects { get; set; }
-        public DbSet<User> Users { get; set; }
+
     }
 }
