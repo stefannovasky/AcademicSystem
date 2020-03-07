@@ -12,6 +12,7 @@ namespace Entities
         public DateTime UpdatedAt { get; set; }
         public DateTime DeletedAt { get; set; }
         public string Name { get; set; }
+
         public ICollection<Instructor> Instructors { get; set; }
         public int CourseID { get; set; }
         public Course Course { get; set; }

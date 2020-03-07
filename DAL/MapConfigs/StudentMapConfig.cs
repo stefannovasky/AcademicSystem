@@ -11,7 +11,7 @@ namespace DAL.MapConfigs
     {
         public void Configure(EntityTypeBuilder<Student> builder)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

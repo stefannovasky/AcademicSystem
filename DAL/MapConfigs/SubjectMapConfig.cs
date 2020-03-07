@@ -11,7 +11,7 @@ namespace DAL.MapConfigs
     {
         public void Configure(EntityTypeBuilder<Subject> builder)
         {
-            throw new NotImplementedException();
+            builder.Property(s => s.Name).HasMaxLength(120).IsRequired();
         }
     }
 }

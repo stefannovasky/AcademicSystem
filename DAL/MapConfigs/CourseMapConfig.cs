@@ -11,7 +11,9 @@ namespace DAL.MapConfigs
     {
         public void Configure(EntityTypeBuilder<Course> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(c => c.ID);
+            builder.Property(c => c.Name).HasMaxLength(100).IsRequired();
+            builder.Property(c => c.Period).HasMaxLength(10).IsRequired();
         }
     }
 }
