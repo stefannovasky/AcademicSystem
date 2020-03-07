@@ -18,8 +18,8 @@ namespace Entities
         public Course Course { get; set; }
 
         public ICollection<StudentClass> Students { get; set; }
-        public ICollection<EvaluationClass> Evaluations { get; set; }
-        public ICollection<AttendanceClass> Attendances { get; set; }
+        public ICollection<Evaluation> Evaluations { get; set; }
+        public ICollection<Attendance> Attendances { get; set; }
         public ICollection<InstructorClass> Instructors { get; set; }
         public ICollection<CoordinatorClass> Coordinators { get; set; }
     }
