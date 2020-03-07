@@ -13,10 +13,8 @@ namespace Entities
         public DateTime DeletedAt { get; set; }
         public string Name { get; set; }
 
-        public ICollection<Instructor> Instructors { get; set; }
+        public ICollection<SubjectInstructor> Instructors { get; set; }
         public int CourseID { get; set; }
-        public Course Course { get; set; }
         public ICollection<Class> Classes { get; set; }
-        //n instrutores, n turmas, 1 curso
     }
 }

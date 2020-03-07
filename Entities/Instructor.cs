@@ -13,7 +13,7 @@ namespace Entities
         public DateTime DeletedAt { get; set; }
         public int UserID { get; set; }
         public User User { get; set; }
-        public ICollection<Subject> Subjects { get; set; }
-        public ICollection<Class> Classes { get; set; }
+        public ICollection<SubjectInstructor> Subjects { get; set; }
+        public ICollection<InstructorClass> Classes { get; set; }
     }
 }
