@@ -12,7 +12,6 @@ namespace DAL.MapConfigs
         public void Configure(EntityTypeBuilder<Coordinator> builder)
         {
             builder.HasKey(c => c.ID); 
-            builder.Property(c => c.UserID).IsRequired(); 
         }
     }
 }
