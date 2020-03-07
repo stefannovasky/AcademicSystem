@@ -12,8 +12,6 @@ namespace DAL.MapConfigs
         public void Configure(EntityTypeBuilder<Class> builder)
         {
             builder.HasKey(c => c.ID); 
-            builder.Property(c => c.CourseID).IsRequired();
-            builder.Property(c => c.SubjectID).IsRequired();
         }
     }
 }
