@@ -4,32 +4,33 @@ using Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL.Impl
 {
     public class UserRepository : IUserRepository
     {
-        public Response Create(User item)
+        public Task<Response> Create(User item)
         {
             throw new NotImplementedException();
         }
 
-        public Response Delete(int id)
+        public Task<Response> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<User> GetAll()
+        public Task<DataResponse<User>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<User> GetByID(int id)
+        public Task<DataResponse<User>> GetByID(int id)
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<User> Update(User item)
+        public Task<DataResponse<User>> Update(User item)
         {
             throw new NotImplementedException();
         }

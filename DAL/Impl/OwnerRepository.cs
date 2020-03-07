@@ -4,32 +4,33 @@ using Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL.Impl
 {
     public class OwnerRepository : IOwnerRepository
     {
-        public Response Create(Owner item)
+        public Task<Response> Create(Owner item)
         {
             throw new NotImplementedException();
         }
 
-        public Response Delete(int id)
+        public Task<Response> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<Owner> GetAll()
+        public Task<DataResponse<Owner>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<Owner> GetByID(int id)
+        public Task<DataResponse<Owner>> GetByID(int id)
         {
             throw new NotImplementedException();
         }
 
-        public DataResponse<Owner> Update(Owner item)
+        public Task<DataResponse<Owner>> Update(Owner item)
         {
             throw new NotImplementedException();
         }
