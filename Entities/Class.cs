@@ -17,10 +17,10 @@ namespace Entities
         public int CourseID { get; set; }
         public Course Course { get; set; }
 
-        public ICollection<Student> Students { get; set; }
-        public ICollection<Evaluation> Evaluations { get; set; }
-        public ICollection<Attendance> Attendances { get; set; }
-        public ICollection<Instructor> Instructors { get; set; }
-        public ICollection<Coordinator> Coordinators { get; set; }
+        public ICollection<StudentClass> Students { get; set; }
+        public ICollection<EvaluationClass> Evaluations { get; set; }
+        public ICollection<AttendanceClass> Attendances { get; set; }
+        public ICollection<InstructorClass> Instructors { get; set; }
+        public ICollection<CoordinatorClass> Coordinators { get; set; }
     }
 }
