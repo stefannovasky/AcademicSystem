@@ -18,6 +18,7 @@ namespace Entities
         public string Number { get; set; }
         public string State {get; set; }
         public string Name { get; set; }
+
         public Owner Owner { get; set; }
         public Coordinator Coordinator { get; set; }
         public Instructor Instructor { get; set; }
