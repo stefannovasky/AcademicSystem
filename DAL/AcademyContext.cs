@@ -49,6 +49,7 @@ namespace DAL
                 .HasOne(si => si.Instructor)
                 .WithMany(i => i.Subjects)
                 .HasForeignKey(si => si.InstructorID);
+                
             modelBuilder.Entity<StudentClass>()
                 .HasKey(sc => new { sc.StudentID, sc.ClassID });
             modelBuilder.Entity<StudentClass>()
@@ -59,6 +60,39 @@ namespace DAL
                 .HasOne(sc => sc.Class)
                 .WithMany(c => c.Students)
                 .HasForeignKey(sc => sc.ClassID);
+                
+            modelBuilder.Entity<CoordinatorClass>()
+                .HasKey(cc => new { cc.CoordinatorID, cc.ClassID });
+            modelBuilder.Entity<CoordinatorClass>()
+                .HasOne(cc => cc.Coordinator)
+                .WithMany(c => c.Classes)
+                .HasForeignKey(cc => cc.CoordinatorID);
+            modelBuilder.Entity<CoordinatorClass>()
+                .HasOne(cc => cc.Class)
+                .WithMany(c => c.Coordinators)
+                .HasForeignKey(cc => cc.ClassID);
+
+            modelBuilder.Entity<InstructorClass>()
+                .HasKey(ic => new { ic.InstructorID, ic.ClassID });
+            modelBuilder.Entity<InstructorClass>()
+                .HasOne(ic => ic.Instructor)
+                .WithMany(i => i.Classes)
+                .HasForeignKey(ic => ic.InstructorID);
+            modelBuilder.Entity<InstructorClass>()
+                .HasOne(ic => ic.Class)
+                .WithMany(c => c.Instructors)
+                .HasForeignKey(ic => ic.ClassID);
+
+            modelBuilder.Entity<OwnerCourse>()
+                .HasKey(oc => new { oc.OwnerID, oc.CourseID });
+            modelBuilder.Entity<OwnerCourse>()
+                .HasOne(oc => oc.Owner)
+                .WithMany(o => o.Courses)
+                .HasForeignKey(oc => oc.OwnerID);
+            modelBuilder.Entity<OwnerCourse>()
+                .HasOne(oc => oc.Course)
+                .WithMany(c => c.Owners)
+                .HasForeignKey(oc => oc.CourseID);
             base.OnModelCreating(modelBuilder);
         }
 
