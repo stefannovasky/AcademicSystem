@@ -27,9 +27,9 @@ namespace Testes
                 City = "Blumenau",
                 State = "SC",
                 Street = "José Da Silva",
-                Rg = "1.123.123",
-                Cpf = "111.111.112-11",
-                Email = "valid_email@mail.com",
+                Rg = "13.233.123",
+                Cpf = "111.211.112-11",
+                Email = "vaççid_email@mail.com",
                 Name = "Stefan Novasky",
                 Number = "11",
                 Password = "ValidPassword123!",   
@@ -181,11 +181,11 @@ namespace Testes
         {
             UserRepository repo = new UserRepository();
 
-            DataResponse<User> r = await repo.GetByID(1024);
+            DataResponse<User> r = await repo.GetByID(1);
 
             Assert.IsTrue(r.Success);
         }
-        */
+        
         /*
         [Test]
         public async Task ShouldReturnUserNotFound()

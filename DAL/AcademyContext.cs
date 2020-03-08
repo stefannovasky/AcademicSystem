@@ -26,7 +26,7 @@ namespace DAL
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"");
+            optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\stefa\OneDrive\Documentos\FILHADAPUTA.mdf;Integrated Security=True;Connect Timeout=30");
             base.OnConfiguring(optionsBuilder);
         }
         
@@ -50,8 +50,7 @@ namespace DAL
             modelBuilder.ApplyConfiguration(new CoordinatorMapConfig());
             modelBuilder.ApplyConfiguration(new ClassMapConfig());
             modelBuilder.ApplyConfiguration(new AttendanceMapConfig());
-            //base.OnModelCreating(modelBuilder);
-            
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<SubjectInstructor>()
                 .HasKey(si => new { si.SubjectID, si.InstructorID });
