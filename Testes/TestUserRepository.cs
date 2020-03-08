@@ -198,6 +198,7 @@ namespace Testes
             Assert.AreEqual(expected: "User not found\r\n", actual: r.GetErrorMessage()); 
         }
         */
+        /*
         [Test]
         public async Task ShouldUpdateAUser()
         {
@@ -213,6 +214,7 @@ namespace Testes
             Assert.IsTrue(r.Success);
             Assert.AreEqual(expected: "Updated", actual: r2.Data[0].Name); 
         }
+        */
 
     }
 }
