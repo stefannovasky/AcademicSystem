@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Shared
 {
     public class HashUtils
     {
-        public string HashString(string text)
+        public async Task<string> HashString(string text)
         {
             // Create a SHA256   
             using (SHA256 sha256Hash = SHA256.Create())
@@ -25,12 +26,12 @@ namespace Shared
             }
         }
 
-        public bool CompareHash(string text, string hash)
+        public async Task<bool> CompareHash(string text, string hash)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
                 // ComputeHash - returns byte array  
-                text = this.HashString(text);
+                text = await this.HashString(text);
 
                 return text == hash; 
             }
