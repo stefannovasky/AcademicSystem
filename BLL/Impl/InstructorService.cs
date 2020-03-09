@@ -1,4 +1,5 @@
 ﻿using BLL.Interfaces;
+using DAL.Impl;
 using Entities;
 using Shared;
 using System;
@@ -10,29 +11,82 @@ namespace BLL.Impl
 {
     public class InstructorService : IInstructorService
     {
+        private InstructorRepository _InstructorRepo = new InstructorRepository();
         public async Task<Response> Create(Instructor item)
         {
-            throw new NotImplementedException();
+            Response response = new Response();
+            try
+            {
+                response = await _InstructorRepo.Create(item);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorList.Add("Error on create Instructor");
+                response.Success = false;
+                return response;
+            }
         }
 
         public async Task<Response> Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Response response = await _InstructorRepo.Delete(id);
+                return response;
+            }
+            catch (Exception)
+            {
+                Response r = new Response() { Success = false };
+                r.ErrorList.Add("Error on delete Instructor");
+                return r;
+            }
         }
 
         public async Task<DataResponse<Instructor>> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                DataResponse<Instructor> response = await _InstructorRepo.GetAll();
+                return response;
+            }
+            catch (Exception)
+            {
+                DataResponse<Instructor> r = new DataResponse<Instructor>() { Success = false };
+                r.ErrorList.Add("Error on read Instructors");
+                return r;
+            }
         }
 
         public async Task<DataResponse<Instructor>> GetByID(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                DataResponse<Instructor> response = await _InstructorRepo.GetByID(id);
+                return response;
+            }
+            catch (Exception)
+            {
+                DataResponse<Instructor> r = new DataResponse<Instructor>() { Success = false };
+                r.ErrorList.Add("Error on get Instructor");
+                return r;
+            }
         }
 
         public async Task<DataResponse<Instructor>> Update(Instructor item)
         {
-            throw new NotImplementedException();
+            DataResponse<Instructor> response = new DataResponse<Instructor>();
+            try
+            {
+                response = await _InstructorRepo.Update(item);
+                return response;
+            }
+            catch (Exception)
+            {
+                response.ErrorList.Add("Error on update Instructor");
+                response.Success = false;
+                return response;
+            }
         }
     }
 }
