@@ -26,7 +26,7 @@ namespace DAL
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"");
+            optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\learning\academy.mdf;Integrated Security=True;Connect Timeout=30");
             base.OnConfiguring(optionsBuilder);
         }
         

@@ -15,10 +15,49 @@ namespace Testes
         public void Setup()
         {
         }
+        /*
+        [Test]
+        public async Task ShouldCreateAUser()
+        {
+            UserRepository repo = new UserRepository();
 
-            /*
-            [Test]
-            public async Task ShouldCreateAUser()
+            User u = new User
+            {
+                City = "Blumenau",
+                State = "SC",
+                Street = "Jos√© Da Silva",
+                Rg = "1.193.223",
+                Cpf = "121.333.112-11",
+                Email = "valsi3dfsdsd_email@mail.com.br",
+                Name = "Stefan Novasky",
+                Number = "11",
+                Password = "ValidPassword123!",   
+            };
+
+            Response r = await repo.Create(u);
+            Assert.IsTrue(r.Success);
+        }
+        */
+        /*
+        [Test]
+        public async Task ShouldReturnEmailAlreadyExists()
+        {
+            UserRepository repo = new UserRepository();
+
+            User u = new User
+            {
+                City = "Blumenau",
+                State = "SC",
+                Street = "Jos√© Da Silva",
+                Rg = "7.677.207",
+                Cpf = "262.232.242.12",
+                Email = "duplicated@mail.com.br",
+                Name = "Stefan Novasky",
+                Number = "11",
+                Password = "ValidPassword123!",
+            };
+
+            User u2 = new User
             {
                 UserRepository repo = new UserRepository();
 
@@ -26,7 +65,7 @@ namespace Testes
                 {
                     City = "Blumenau",
                     State = "SC",
-                    Street = "JosÈ Da Silva",
+                    Street = "Jos√© Da Silva",
                     Rg = "1.123.123",
                     Cpf = "111.111.112-11",
                     Email = "valid_email@mail.com",
@@ -49,7 +88,7 @@ namespace Testes
                 {
                     City = "Blumenau",
                     State = "SC",
-                    Street = "JosÈ Da Silva",
+                    Street = "Jos√© Da Silva",
                     Rg = "7.677.207",
                     Cpf = "262.232.242.12",
                     Email = "duplicated@mail.com.br",
@@ -62,7 +101,7 @@ namespace Testes
                 {
                     City = "Blumenau",
                     State = "SC",
-                    Street = "JosÈ Da Silva",
+                    Street = "Jos√© Da Silva",
                     Rg = "9.998.995",
                     Cpf = "211.901.277-19",
                     Email = "duplicated@mail.com.br",
@@ -87,7 +126,7 @@ namespace Testes
                 {
                     City = "Blumenau",
                     State = "SC",
-                    Street = "JosÈ Da Silva",
+                    Street = "Jos√© Da Silva",
                     Rg = "1.111.111",
                     Cpf = "777.777.777-77",
                     Email = "mail@mail.com",
@@ -100,7 +139,7 @@ namespace Testes
                 {
                     City = "Blumenau",
                     State = "SC",
-                    Street = "JosÈ Da Silva",
+                    Street = "Jos√© Da Silva",
                     Rg = "1.111.112",
                     Cpf = "777.777.777-77",
                     Email = "mail2@mail.com",
@@ -125,7 +164,7 @@ namespace Testes
                 {
                     City = "Blumenau",
                     State = "SC",
-                    Street = "JosÈ Da Silva",
+                    Street = "Jos√© Da Silva",
                     Rg = "3.333.333",
                     Cpf = "717.777.776-77",
                     Email = "mail32132@mail.com",
@@ -138,7 +177,7 @@ namespace Testes
                 {
                     City = "Blumenau",
                     State = "SC",
-                    Street = "JosÈ Da Silva",
+                    Street = "Jos√© Da Silva",
                     Rg = "3.333.333",
                     Cpf = "727.717.777-77",
                     Email = "mail1221313132@mail.com",
