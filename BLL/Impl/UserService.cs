@@ -28,10 +28,11 @@ namespace BLL.Impl
                     return response;
                 }
 
+                item.Password = await new HashUtils().HashString(item.Password);
                 response = await _userRepo.Create(item);
                 return response;                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 response.ErrorList.Add("Error on create user");
                 response.Success = false; 

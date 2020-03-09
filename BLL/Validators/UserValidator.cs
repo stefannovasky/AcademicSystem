@@ -17,7 +17,7 @@ namespace BLL.Validators
             RuleFor(x => x.Rg).Length(8, 16);
             RuleFor(x => x.Street).Length(1, 120);
             RuleFor(x => x.Number).Length(0, 6);
-            RuleFor(x => x.State).Length(3);
+            RuleFor(x => x.State).Length(2, 3);
             RuleFor(x => x.City).Length(1, 120);
 		}
 	}
