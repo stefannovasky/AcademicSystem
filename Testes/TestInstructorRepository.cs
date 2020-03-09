@@ -21,7 +21,7 @@ namespace Tests
         {
             UserRepository userrepo = new UserRepository();
             DataResponse<User> r = await userrepo.GetAll();
-            User u = r.Data[3];
+            User u = r.Data[0];
             InstructorRepository repo = new InstructorRepository();
             Response response = await repo.Create(new Instructor() { UserID = u.ID });
             Assert.IsTrue(response.Success);
@@ -32,7 +32,7 @@ namespace Tests
         {
             UserRepository userrepo = new UserRepository();
             DataResponse<User> r = await userrepo.GetAll();
-            User u = r.Data[3];
+            User u = r.Data[0];
             InstructorRepository repo = new InstructorRepository();
             Response response = await repo.Create(new Instructor() { UserID = u.ID });
             Assert.IsFalse(response.Success);
@@ -42,7 +42,7 @@ namespace Tests
         public async Task ShouldDeleteAInstructor()
         {
             InstructorRepository repo = new InstructorRepository();
-            int id = (await new UserRepository().GetAll()).Data[0].ID;
+            int id = (await new InstructorRepository().GetAll()).Data[0].ID;
             Response r = await repo.Delete(id);
             Assert.IsTrue(r.Success);
         }
@@ -57,14 +57,14 @@ namespace Tests
         public async Task ShouldGetAInstructorByID()
         {
             InstructorRepository repo = new InstructorRepository();
-            DataResponse<Instructor> r = await repo.GetByID(4);
+            DataResponse<Instructor> r = await repo.GetByID(1);
             Assert.IsTrue(r.Success);
         }
         [Test]
         public async Task ShouldUpdateAInstructor()
         {
             InstructorRepository repo = new InstructorRepository();
-            DataResponse<Instructor> r = await repo.GetByID(4);
+            DataResponse<Instructor> r = await repo.GetByID(1);
             Instructor u = r.Data[0];
             u.User.Name = "Updated";
             DataResponse<Instructor> r2 = await repo.Update(u);

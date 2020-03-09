@@ -21,6 +21,7 @@ namespace Tests
             Entities.Subject Subject = new Entities.Subject()
             {
                 CourseID = (await new CourseRepository().GetAll()).Data[0].ID,
+                Name = "Excel avançado",
                 IsActive = true
             };
             Response response = await new SubjectRepository().Create(Subject);

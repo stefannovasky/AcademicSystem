@@ -109,48 +109,13 @@ namespace Tests
                 Assert.IsFalse(r2.Success);
                 Assert.AreEqual(expected: "Cpf already exists\r\n", actual: r2.GetErrorMessage());
             }
-            [Test]
-            public async Task ShouldReturnRgAlreadyExists()
-            {
-                UserRepository repo = new UserRepository();
-
-                User u = new User
-                {
-                    City = "Blumenau",
-                    State = "SC",
-                    Street = "José Da Silva",
-                    Rg = "3.333.333",
-                    Cpf = "717.777.776-77",
-                    Email = "mail32132@mail.com",
-                    Name = "Stefan Novasky",
-                    Number = "11",
-                    Password = "ValidPassword123!",
-                };
-
-                User u2 = new User
-                {
-                    City = "Blumenau",
-                    State = "SC",
-                    Street = "José Da Silva",
-                    Rg = "3.333.333",
-                    Cpf = "727.717.777-77",
-                    Email = "mail1221313132@mail.com",
-                    Name = "Stefan Novasky",
-                    Number = "11",
-                    Password = "ValidPassword123!",
-                };
-
-                Response r = await repo.Create(u);
-                Response r2 = await repo.Create(u2);
-                Assert.IsFalse(r2.Success);
-                Assert.AreEqual(expected: "Rg already exists\r\n", actual: r2.GetErrorMessage());
-            }
+     
             [Test]
             public async Task ShouldDeleteAUser()
             {
                 UserRepository repo = new UserRepository();
 
-                Response r = await repo.Delete(1016);
+                Response r = await repo.Delete(1);
 
                 Assert.IsTrue(r.Success);
             }
@@ -168,7 +133,7 @@ namespace Tests
             {
                 UserRepository repo = new UserRepository();
 
-                DataResponse<User> r = await repo.GetByID(1024);
+                DataResponse<User> r = await repo.GetByID(1);
 
                 Assert.IsTrue(r.Success);
             }
@@ -187,7 +152,7 @@ namespace Tests
             {
                 UserRepository repo = new UserRepository();
 
-                DataResponse<User> r = await repo.GetByID(1024);
+                DataResponse<User> r = await repo.GetByID(10);
             
                 User u = r.Data[0];
                 u.Name = "Updated"; 

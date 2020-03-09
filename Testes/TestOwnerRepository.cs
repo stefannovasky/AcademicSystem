@@ -21,7 +21,7 @@ namespace Tests
         {
             OwnerRepository repo = new OwnerRepository();
 
-            int id = (await new UserRepository().GetAll()).Data[2].ID;
+            int id = (await new UserRepository().GetAll()).Data[0].ID;
 
             Owner u = new Owner
             {
@@ -46,7 +46,7 @@ namespace Tests
         public async Task ShouldDeleteAOwner()
         {
             OwnerRepository repo = new OwnerRepository();
-            int id = (await new UserRepository().GetAll()).Data[0].ID;
+            int id = (await new OwnerRepository().GetAll()).Data[0].ID;
             Response r = await repo.Delete(id);
             Assert.IsTrue(r.Success);
         }
@@ -61,7 +61,7 @@ namespace Tests
         public async Task ShouldGetAOwnerByID()
         {
             OwnerRepository repo = new OwnerRepository();
-            DataResponse<Owner> r = await repo.GetByID(1);
+            DataResponse<Owner> r = await repo.GetByID(4);
             Assert.IsTrue(r.Success);
         }
         [Test]

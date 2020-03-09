@@ -22,7 +22,7 @@ namespace Tests
             UserRepository userrepo = new UserRepository();
             DataResponse<User> r = await userrepo.GetAll();
 
-            User u = r.Data[1];
+            User u = r.Data[0];
 
             StudentRepository repo = new StudentRepository();
             Response response = await repo.Create(new Student() { UserID = u.ID });
@@ -34,7 +34,7 @@ namespace Tests
             UserRepository userrepo = new UserRepository();
             DataResponse<User> r = await userrepo.GetAll();
 
-            User u = r.Data[1];
+            User u = r.Data[0];
 
             StudentRepository repo = new StudentRepository();
             Response response = await repo.Create(new Student() { UserID = u.ID });
@@ -45,7 +45,7 @@ namespace Tests
         public async Task ShouldDeleteAStudent()
         {
             StudentRepository repo = new StudentRepository();
-            int id = (await new UserRepository().GetAll()).Data[0].ID;
+            int id = (await new StudentRepository().GetAll()).Data[0].ID;
             Response r = await repo.Delete(id);
 
             Assert.IsTrue(r.Success);
@@ -64,7 +64,7 @@ namespace Tests
         {
             StudentRepository repo = new StudentRepository();
 
-            DataResponse<Student> r = await repo.GetByID(3);
+            DataResponse<Student> r = await repo.GetByID(1);
 
             Assert.IsTrue(r.Success);
         }
@@ -73,7 +73,7 @@ namespace Tests
         {
             StudentRepository repo = new StudentRepository();
 
-            DataResponse<Student> r = await repo.GetByID(3);
+            DataResponse<Student> r = await repo.GetByID(1);
 
             Student u = r.Data[0];
             u.User.Name = "Updated";
