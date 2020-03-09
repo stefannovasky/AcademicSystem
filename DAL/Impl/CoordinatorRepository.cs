@@ -83,7 +83,15 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    response.Data.Add(await context.Coordinators.FindAsync(id));
+                    Coordinator c = new Coordinator(); 
+                    c = await context.Coordinators.Include(c => c.User).SingleOrDefaultAsync(c => c.ID == id);
+                    if (c == null)
+                    {
+                        response.Success = false;
+                        response.ErrorList.Add("User not found");
+                        return response; 
+                    }
+                    response.Data.Add(c);
                     return response;
                 }
             }
