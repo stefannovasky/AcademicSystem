@@ -60,6 +60,7 @@ namespace DAL.Impl
                 {
                     User u = await ctx.Users.FindAsync(id);
                     u.IsActive = false;
+                    u.DeletedAt = DateTime.Now;
                     ctx.Update(u);
                     await ctx.SaveChangesAsync();
                 }
@@ -107,7 +108,7 @@ namespace DAL.Impl
 
                 using (AcademyContext ctx = new AcademyContext())
                 {
-                    user = await ctx.Users.SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
+                    user = await ctx.Users.Include(u => u.Student).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 }
                 if (user == null)
                 {
@@ -116,7 +117,7 @@ namespace DAL.Impl
                     return response; 
                 }
 
-                DataResponse<User> r = new DataResponse<User>();
+                DataResponse<User> r = new DataResponse<User>() { Success = true };
                 r.Data.Add(user);
 
                 return r;
@@ -137,6 +138,7 @@ namespace DAL.Impl
                 using (AcademyContext ctx = new AcademyContext())
                 {
                     u = await ctx.Users.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
+                    u.UpdatedAt = DateTime.Now;
                     u = item;
                     ctx.Update(u);
                     await ctx.SaveChangesAsync();
