@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Tests
 {
 
-    public class Tests
+    public class TestUserRepository
     {
         [SetUp]
         public void Setup()
