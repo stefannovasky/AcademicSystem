@@ -16,7 +16,6 @@ namespace Tests
         {
         }
 
-        /*
         [Test]
         public async Task ShouldCreateAInstructor()
         {
@@ -27,9 +26,7 @@ namespace Tests
             Response response = await repo.Create(new Instructor() { UserID = u.ID });
             Assert.IsTrue(response.Success);
         }
-        */
         
-        /*
         [Test]
         public async Task ShouldReturnUniqueKeyError()
         {
@@ -41,8 +38,6 @@ namespace Tests
             Assert.IsFalse(response.Success);
             Assert.AreEqual(expected: "Instructor already exists\r\n", actual: response.GetErrorMessage());
         }
-        */
-        /*
         [Test]
         public async Task ShouldDeleteAInstructor()
         {
@@ -51,8 +46,6 @@ namespace Tests
             Response r = await repo.Delete(id);
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldGetAllInstructors()
         {
@@ -60,8 +53,6 @@ namespace Tests
             DataResponse<Instructor> r = await repo.GetAll();
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldGetAInstructorByID()
         {
@@ -69,8 +60,6 @@ namespace Tests
             DataResponse<Instructor> r = await repo.GetByID(4);
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldUpdateAInstructor()
         {
@@ -82,6 +71,5 @@ namespace Tests
             Assert.IsTrue(r.Success);
             Assert.AreEqual(expected: "Updated", actual: r2.Data[0].User.Name);
         }
-        */
     }
 }

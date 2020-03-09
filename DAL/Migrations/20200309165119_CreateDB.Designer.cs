@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AcademyContext))]
-    [Migration("20200307231930_CreateDB")]
+    [Migration("20200309165119_CreateDB")]
     partial class CreateDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -631,7 +631,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Entities.Subject", b =>
                 {
-                    b.HasOne("Entities.Course", null)
+                    b.HasOne("Entities.Course", "Course")
                         .WithMany("Subjects")
                         .HasForeignKey("CourseID")
                         .OnDelete(DeleteBehavior.Restrict)

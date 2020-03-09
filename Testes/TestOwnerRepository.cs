@@ -16,7 +16,6 @@ namespace Tests
         {
         }
 
-        /*
         [Test]
         public async Task ShouldCreateAOwner()
         {
@@ -32,8 +31,6 @@ namespace Tests
             Response r = await repo.Create(u);
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldReturnUniqueKeyError()
         {
@@ -45,10 +42,6 @@ namespace Tests
             Assert.IsFalse(response.Success);
             Assert.AreEqual(expected: "Owner already exists\r\n", actual: response.GetErrorMessage());
         }
-        */
-        
-                
-        /*
         [Test]
         public async Task ShouldDeleteAOwner()
         {
@@ -57,9 +50,6 @@ namespace Tests
             Response r = await repo.Delete(id);
             Assert.IsTrue(r.Success);
         }
-        */
-
-        /*
         [Test]
         public async Task ShouldGetAllOwners()
         {
@@ -67,8 +57,6 @@ namespace Tests
             DataResponse<Owner> r = await repo.GetAll();
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldGetAOwnerByID()
         {
@@ -76,8 +64,6 @@ namespace Tests
             DataResponse<Owner> r = await repo.GetByID(1);
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldUpdateAOwner()
         {
@@ -89,6 +75,5 @@ namespace Tests
             Assert.IsTrue(r.Success);
             Assert.AreEqual(expected: "Updated", actual: r2.Data[0].User.Name);
         }
-        */
     }
 }

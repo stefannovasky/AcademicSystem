@@ -6,7 +6,7 @@ using NUnit.Framework;
 using Shared;
 using System.Threading.Tasks;
 
-namespace Testes
+namespace Tests
 {
 
     public class Tests
@@ -15,7 +15,6 @@ namespace Testes
         public void Setup()
         {
         }
-        /*
         [Test]
         public async Task ShouldCreateAUser()
         {
@@ -37,48 +36,7 @@ namespace Testes
             Response r = await repo.Create(u);
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
-        [Test]
-        public async Task ShouldReturnEmailAlreadyExists()
-        {
-            UserRepository repo = new UserRepository();
 
-            User u = new User
-            {
-                City = "Blumenau",
-                State = "SC",
-                Street = "José Da Silva",
-                Rg = "7.677.207",
-                Cpf = "262.232.242.12",
-                Email = "duplicated@mail.com.br",
-                Name = "Stefan Novasky",
-                Number = "11",
-                Password = "ValidPassword123!",
-            };
-
-            User u2 = new User
-            {
-                UserRepository repo = new UserRepository();
-
-                User u = new User
-                {
-                    City = "Blumenau",
-                    State = "SC",
-                    Street = "José Da Silva",
-                    Rg = "1.123.123",
-                    Cpf = "111.111.112-11",
-                    Email = "valid_email@mail.com",
-                    Name = "Stefan Novasky",
-                    Number = "11",
-                    Password = "ValidPassword123!",   
-                };
-
-                Response r = await repo.Create(u);
-                Assert.IsTrue(r.Success);
-            }
-            */
-            /*
             [Test]
             public async Task ShouldReturnEmailAlreadyExists()
             {
@@ -115,8 +73,6 @@ namespace Testes
                 Assert.IsFalse(r2.Success);
                 Assert.AreEqual(expected: "Email already exists\r\n", actual: r2.GetErrorMessage());
             }
-            */
-            /*
             [Test]
             public async Task ShouldReturnCpfAlreadyExists()
             {
@@ -153,8 +109,6 @@ namespace Testes
                 Assert.IsFalse(r2.Success);
                 Assert.AreEqual(expected: "Cpf already exists\r\n", actual: r2.GetErrorMessage());
             }
-            */
-            /*
             [Test]
             public async Task ShouldReturnRgAlreadyExists()
             {
@@ -191,8 +145,6 @@ namespace Testes
                 Assert.IsFalse(r2.Success);
                 Assert.AreEqual(expected: "Rg already exists\r\n", actual: r2.GetErrorMessage());
             }
-            */
-            /*
             [Test]
             public async Task ShouldDeleteAUser()
             {
@@ -202,8 +154,6 @@ namespace Testes
 
                 Assert.IsTrue(r.Success);
             }
-            */
-            /*
             [Test]
             public async Task ShouldGetAllUsers()
             {
@@ -213,8 +163,6 @@ namespace Testes
 
                 Assert.IsTrue(r.Success);
             }
-            */
-            /*
             [Test]
             public async Task ShouldGetAUserByID()
             {
@@ -224,8 +172,6 @@ namespace Testes
 
                 Assert.IsTrue(r.Success);
             }
-            */
-            /*
             [Test]
             public async Task ShouldReturnUserNotFound()
             {
@@ -236,8 +182,6 @@ namespace Testes
                 Assert.IsFalse(r.Success);
                 Assert.AreEqual(expected: "User not found\r\n", actual: r.GetErrorMessage()); 
             }
-            */
-            /*
             [Test]
             public async Task ShouldUpdateAUser()
             {
@@ -253,7 +197,5 @@ namespace Testes
                 Assert.IsTrue(r.Success);
                 Assert.AreEqual(expected: "Updated", actual: r2.Data[0].Name); 
             }
-            */
-
     }
 }

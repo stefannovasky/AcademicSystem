@@ -16,7 +16,6 @@ namespace Tests
         {
         }
 
-        /*
         [Test]
         public async Task ShouldCreateAStudent()
         {
@@ -29,8 +28,6 @@ namespace Tests
             Response response = await repo.Create(new Student() { UserID = u.ID });
             Assert.IsTrue(response.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldReturnUniqueKeyError()
         {
@@ -44,8 +41,6 @@ namespace Tests
             Assert.IsFalse(response.Success);
             Assert.AreEqual(expected: "Student already exists\r\n", actual: response.GetErrorMessage());
         }
-        */
-        /*
         [Test]
         public async Task ShouldDeleteAStudent()
         {
@@ -55,8 +50,6 @@ namespace Tests
 
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldGetAllStudents()
         {
@@ -66,8 +59,6 @@ namespace Tests
 
             Assert.IsTrue(r.Success);
         }
-        */
-        /*
         [Test]
         public async Task ShouldGetAStudentByID()
         {
@@ -76,8 +67,7 @@ namespace Tests
             DataResponse<Student> r = await repo.GetByID(3);
 
             Assert.IsTrue(r.Success);
-        }*/
-        /*
+        }
         [Test]
         public async Task ShouldUpdateAStudent()
         {
@@ -93,6 +83,5 @@ namespace Tests
             Assert.IsTrue(r.Success);
             Assert.AreEqual(expected: "Updated", actual: r2.Data[0].User.Name);
         }
-        */
     }
 }
