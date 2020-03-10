@@ -14,6 +14,7 @@ namespace Entities
         public bool Concluded { get; set; }
         public double Value { get; set; }
         public string Name { get; set; }
+        public DateTime Date { get; set; }
 
         public int ClassID { get; set; }
         public Class Class { get; set; }

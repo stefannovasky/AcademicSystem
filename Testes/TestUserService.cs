@@ -46,7 +46,7 @@ namespace Tests
                 State = "SC",
                 Street = "José Da Silva",
                 Rg = "1.193.223",
-                Cpf = "444.444.423-12",
+                Cpf = "326.731.610-31",
                 Email = "randommail@mail.com.br",
                 Name = "Stefan Novasky",
                 Number = "11",

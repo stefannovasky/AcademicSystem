@@ -12,6 +12,7 @@ namespace BLL.Validators
         {
             RuleFor(x => x.Value).NotNull();
             RuleFor(x => x.Date).NotNull();
+            RuleFor(x => x.Date).Must(x => x.DayOfYear == DateTime.Now.DayOfYear && x.Year == DateTime.Now.Year);
         }
     }
 }

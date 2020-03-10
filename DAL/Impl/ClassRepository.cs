@@ -65,7 +65,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    response.Data = await context.Classes.Where(a => a.IsActive == true).ToListAsync();
+                    response.Data = await context.Classes.Include(c => c.Instructors).Where(a => a.IsActive == true).ToListAsync();
                     return response;
                 }
             }
@@ -113,6 +113,32 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while updating Class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddInstructor(Class Class, Instructor instructor)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    InstructorClass instructorClass = new InstructorClass() 
+                    {
+                        ClassID = Class.ID,
+                        InstructorID = instructor.ID
+                    };
+                    (await context.Classes.Include(c => c.Instructors).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Instructors.Add(instructorClass);
+                    //Class.Instructors.Add(instructorClass);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind instructor to class.");
                 return response;
             }
         }

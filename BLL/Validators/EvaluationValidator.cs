@@ -11,6 +11,8 @@ namespace BLL.Validators
         public EvaluationValidator()
         {
             RuleFor(x => x.Name).Length(1, 100);
+            RuleFor(x => x.Date).Must(list => list.DayOfYear >= DateTime.Now.DayOfYear && list.Year >= DateTime.Now.Year)
+           .WithMessage("Evaluation cannot be created on the past.");
         }
     }
 }
