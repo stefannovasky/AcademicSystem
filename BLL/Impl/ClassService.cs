@@ -1,5 +1,9 @@
 ﻿using BLL.Interfaces;
+using BLL.Validators;
+using DAL.Impl;
+using DAL.Interfaces;
 using Entities;
+using FluentValidation.Results;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -10,29 +14,86 @@ namespace BLL.Impl
 {
     public class ClassService : IClassService
     {
-        public Task<Response> Create(Class item)
+        private IClassRepository _repository = new ClassRepository();
+
+        public async Task<Response> Create(Class item)
         {
-            throw new NotImplementedException();
+            Response response = new Response();
+            try
+            {
+                response = await _repository.Create(item);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.ErrorList.Add("Error while creating Service.");
+                response.Success = false;
+                return response;
+            }
         }
 
-        public Task<Response> Delete(int id)
+        public async Task<Response> Delete(int id)
         {
-            throw new NotImplementedException();
+            Response response = new Response();
+            try
+            {
+                response = await _repository.Delete(id);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Erro while deleting Class");
+                return response;
+            }
         }
 
-        public Task<DataResponse<Class>> GetAll()
+        public async Task<DataResponse<Class>> GetAll()
         {
-            throw new NotImplementedException();
+            DataResponse<Class> response = new DataResponse<Class>();
+            try
+            {
+                response = await _repository.GetAll();
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Erro inesperado");
+                return response;
+            }
         }
 
-        public Task<DataResponse<Class>> GetByID(int id)
+        public async Task<DataResponse<Class>> GetByID(int id)
         {
-            throw new NotImplementedException();
+            DataResponse<Class> response = new DataResponse<Class>();
+            try
+            {
+                response = await _repository.GetByID(id);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Erro inesperado");
+                return response;
+            }
         }
 
-        public Task<DataResponse<Class>> Update(Class item)
+        public async Task<DataResponse<Class>> Update(Class item)
         {
-            throw new NotImplementedException();
+            DataResponse<Class> response = new DataResponse<Class>();
+            try
+            {
+                response = await _repository.Update(item);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Erro inesperado");
+                return response;
+            }
         }
     }
 }
