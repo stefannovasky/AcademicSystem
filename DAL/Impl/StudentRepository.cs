@@ -143,5 +143,80 @@ namespace DAL.Impl
                 return r;
             }
         }
+
+        public async Task<Response> AddEvaluation(Student student, Evaluation evaluation)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    StudentEvaluation studentEvaluation = new StudentEvaluation()
+                    {
+                        StudentID = student.ID,
+                        EvaluationID = evaluation.ID
+                    };
+                    (await context.Students.Include(c => c.Evaluations).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Evaluations.Add(studentEvaluation);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind evaluation to student.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddClass(Student student, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    StudentClass studentClass = new StudentClass()
+                    {
+                        StudentID = student.ID,
+                        ClassID = Class.ID
+                    };
+                    (await context.Students.Include(c => c.Classes).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Classes.Add(studentClass);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind class to student.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddAttendance(Student student, Attendance attendance)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    StudentAttendance studentAttendance = new StudentAttendance()
+                    {
+                        StudentID = student.ID,
+                        AttendanceID = attendance.ID
+                    };
+                    (await context.Students.Include(c => c.Attendances).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Attendances.Add(studentAttendance);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind attendance to student.");
+                return response;
+            }
+        }
     }
 }
