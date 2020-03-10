@@ -144,5 +144,55 @@ namespace DAL.Impl
                 return r;
             }
         }
+
+        public async Task<Response> AddInstructor(Subject subject, Instructor instructor)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    SubjectInstructor subjectInstructor = new SubjectInstructor()
+                    {
+                        SubjectID = subject.ID,
+                        InstructorID = instructor.ID
+                    };
+                    (await context.Subjects.Include(c => c.Instructors).Where(c => c.ID == subject.ID).FirstOrDefaultAsync()).Instructors.Add(subjectInstructor);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind instructor to subject.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddClass(Subject subject, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    SubjectClass subjectClass = new SubjectClass()
+                    {
+                        SubjectID = subject.ID,
+                        ClassID = Class.ID
+                    };
+                    (await context.Subjects.Include(c => c.Classes).Where(c => c.ID == subject.ID).FirstOrDefaultAsync()).Classes.Add(subjectClass);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind class to subject.");
+                return response;
+            }
+        }
     }
 }

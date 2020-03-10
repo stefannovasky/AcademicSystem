@@ -230,7 +230,7 @@ namespace DAL.Impl
                         ClassID = Class.ID,
                         CoordinatorID = coordinator.ID
                     };
-                    (await context.Classes.Include(c => c.Coordinators).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Coordinators.Add(coordinator);
+                    (await context.Classes.Include(c => c.Coordinators).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Coordinators.Add(coordinatorClass);
                     await context.SaveChangesAsync();
                     return response;
                 }

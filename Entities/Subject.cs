@@ -16,6 +16,6 @@ namespace Entities
         public ICollection<SubjectInstructor> Instructors { get; set; }
         public int CourseID { get; set; }
         public Course Course { get; set; }
-        public ICollection<Class> Classes { get; set; }
+        public ICollection<SubjectClass> Classes { get; set; }
     }
 }
