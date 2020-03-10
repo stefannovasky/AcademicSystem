@@ -15,6 +15,6 @@ namespace Entities
         public User User { get; set; }
         public ICollection<StudentEvaluation> Evaluations {get; set; }
         public ICollection<StudentClass> Classes { get; set; }
-        public ICollection<Attendance> Attendances { get; set; }
+        public ICollection<StudentAttendance> Attendances { get; set; }
     }
 }
