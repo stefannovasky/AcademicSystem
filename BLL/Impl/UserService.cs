@@ -20,7 +20,7 @@ namespace BLL.Impl
             Response response = new Response();
             try
             {
-                ValidationResult validationResponse = new UserValidator().Validate(item);
+                ValidationResult validationResponse = await new UserValidator().ValidateAsync(item);
                 if (!validationResponse.IsValid)
                 {
                     response.Success = false;
