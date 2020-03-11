@@ -145,5 +145,30 @@ namespace DAL.Impl
                 return r;
             }
         }
+
+        public async Task<Response> AddCourse(Owner owner, Course course)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    OwnerCourse ownerCourse = new OwnerCourse()
+                    {
+                        OwnerID = owner.ID,
+                        CourseID = course.ID
+                    };
+                    (await context.Owners.Include(c => c.Courses).Where(c => c.ID == owner.ID).FirstOrDefaultAsync()).Courses.Add(ownerCourse);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind course to owner.");
+                return response;
+            }
+        }
     }
 }
