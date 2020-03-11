@@ -109,5 +109,60 @@ namespace BLL.Impl
                 return response;
             }
         }
+
+        public async Task<Response> AddClass(Course course, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _repository.AddClass(course, Class);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding Class to Course");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddSubject(Course course, Subject subject)
+        {
+            Response response = new Response();
+            try
+            {
+                ValidationResult validationResponse = await new SubjectValidator().ValidateAsync(subject);
+                if (!validationResponse.IsValid)
+                {
+                    response.Success = false;
+                    response.ErrorList.Add("Validation Error");
+                    return response;
+                }
+                response = await _repository.AddSubject(course, subject);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding sybject to Course.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddOwner(Course course, Owner owner)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _repository.AddOwner(course, owner);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding owner in Course.");
+                return response;
+            }
+        }
     }
 }
