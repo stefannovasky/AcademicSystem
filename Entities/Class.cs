@@ -20,7 +20,7 @@ namespace Entities
         public ICollection<StudentClass> Students { get; set; }
         public ICollection<Evaluation> Evaluations { get; set; }
         public ICollection<Attendance> Attendances { get; set; }
-        public ICollection<Instructor> Instructors { get; set; }
+        public ICollection<InstructorClass> Instructors { get; set; }
         public ICollection<CoordinatorClass> Coordinators { get; set; }
     }
 }

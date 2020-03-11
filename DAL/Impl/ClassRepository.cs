@@ -130,7 +130,6 @@ namespace DAL.Impl
                         InstructorID = instructor.ID
                     };
                     (await context.Classes.Include(c => c.Instructors).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Instructors.Add(instructorClass);
-                    //Class.Instructors.Add(instructorClass);
                     await context.SaveChangesAsync();
                     return response;
                 }
@@ -175,12 +174,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    EvaluationClass evaluationClass = new EvaluationClass()
-                    {
-                        ClassID = Class.ID,
-                        EvaluationID = evaluation.ID
-                    };
-                    (await context.Classes.Include(c => c.Evaluations).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Evaluations.Add(evaluationClass);
+                    (await context.Classes.Include(c => c.Evaluations).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Evaluations.Add(evaluation);
                     await context.SaveChangesAsync();
                     return response;
                 }
