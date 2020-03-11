@@ -125,5 +125,70 @@ namespace DAL.Impl
                 return response;
             }
         }
+        // class subject owner 
+        public async Task<Response> AddClass(Course course, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    (await context.Courses.Include(c => c.Classes).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Classes.Add(Class);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind class to course.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddSubject(Course course, Subject subject)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    (await context.Courses.Include(c => c.Subjects).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Subjects.Add(subject);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind subject to course.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddOwner(Course course, Owner owner)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    OwnerCourse ownerCourse = new OwnerCourse()
+                    {
+                        OwnerID = owner.ID,
+                        CourseID = course.ID
+                    };
+                    (await context.Courses.Include(c => c.Owners).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Owners.Add(ownerCourse);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind owner to course.");
+                return response;
+            }
+        }
     }
 }

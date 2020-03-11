@@ -123,5 +123,30 @@ namespace DAL.Impl
                 return response;
             }
         }
+
+        public async Task<Response> AddClass(Coordinator coordinator, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    CoordinatorClass coordinatorClass = new CoordinatorClass()
+                    {
+                        ClassID = Class.ID,
+                        CoordinatorID = coordinator.ID
+                    };
+                    (await context.Coordinators.Include(c => c.Classes).Where(c => c.ID == coordinator.ID).FirstOrDefaultAsync()).Classes.Add(coordinatorClass);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind class to coordinator.");
+                return response;
+            }
+        }
     }
 }

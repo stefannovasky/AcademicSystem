@@ -130,7 +130,6 @@ namespace DAL.Impl
                         InstructorID = instructor.ID
                     };
                     (await context.Classes.Include(c => c.Instructors).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Instructors.Add(instructorClass);
-                    //Class.Instructors.Add(instructorClass);
                     await context.SaveChangesAsync();
                     return response;
                 }
@@ -139,6 +138,96 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while addind instructor to class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddStudent(Class Class, Student student)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    StudentClass studentClass = new StudentClass()
+                    {
+                        ClassID = Class.ID,
+                        StudentID = student.ID
+                    };
+                    (await context.Classes.Include(c => c.Students).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Students.Add(studentClass);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind student to class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddEvaluation(Class Class, Evaluation evaluation)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    (await context.Classes.Include(c => c.Evaluations).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Evaluations.Add(evaluation);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind evaluation to class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddAttendance(Class Class, Attendance attendance)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    (await context.Classes.Include(c => c.Attendances).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Attendances.Add(attendance);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind attendance to class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddCoordinator(Class Class, Coordinator coordinator)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    CoordinatorClass coordinatorClass = new CoordinatorClass()
+                    {
+                        ClassID = Class.ID,
+                        CoordinatorID = coordinator.ID
+                    };
+                    (await context.Classes.Include(c => c.Coordinators).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Coordinators.Add(coordinatorClass);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind coordinator to class.");
                 return response;
             }
         }

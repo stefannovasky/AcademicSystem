@@ -26,7 +26,7 @@ namespace Tests
             Response response = await repo.Create(new Instructor() { UserID = u.ID });
             Assert.IsTrue(response.Success);
         }
-        
+
         [Test]
         public async Task ShouldReturnUniqueKeyError()
         {
@@ -70,6 +70,16 @@ namespace Tests
             DataResponse<Instructor> r2 = await repo.Update(u);
             Assert.IsTrue(r.Success);
             Assert.AreEqual(expected: "Updated", actual: r2.Data[0].User.Name);
+        }
+        [Test]
+        public async Task ShouldAddInstructorToClass()
+        {
+            InstructorRepository instructorRepository = new InstructorRepository();
+            ClassRepository classRepository = new ClassRepository();
+            Instructor instructor = (await instructorRepository.GetByID(1)).Data[0];
+            Class @class = (await classRepository.GetByID(1002)).Data[0];
+            Response response = await classRepository.AddInstructor(@class, instructor);
+            Assert.IsTrue(response.Success);
         }
     }
 }

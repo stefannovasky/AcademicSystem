@@ -144,5 +144,55 @@ namespace DAL.Impl
                 return r;
             }
         }
+
+        public async Task<Response> AddSubject(Instructor instructor, Subject subject)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    SubjectInstructor subjectInstructor = new SubjectInstructor()
+                    {
+                        SubjectID = subject.ID,
+                        InstructorID = instructor.ID
+                    };
+                    (await context.Instructors.Include(c => c.Subjects).Where(c => c.ID == instructor.ID).FirstOrDefaultAsync()).Subjects.Add(subjectInstructor);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind subject to instructor.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddClass(Instructor instructor, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                using (AcademyContext context = new AcademyContext())
+                {
+                    InstructorClass instructorClass = new InstructorClass()
+                    {
+                        ClassID = Class.ID,
+                        InstructorID = instructor.ID
+                    };
+                    (await context.Instructors.Include(c => c.Classes).Where(c => c.ID == instructor.ID).FirstOrDefaultAsync()).Classes.Add(instructorClass);
+                    await context.SaveChangesAsync();
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind class to instructor.");
+                return response;
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DAL.Migrations
 {
-    public partial class CreateDB : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -313,6 +313,7 @@ namespace DAL.Migrations
                     Concluded = table.Column<bool>(nullable: false),
                     Value = table.Column<double>(nullable: false),
                     Name = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
+                    Date = table.Column<DateTime>(nullable: false),
                     ClassID = table.Column<int>(nullable: false),
                     StudentID = table.Column<int>(nullable: false)
                 },
