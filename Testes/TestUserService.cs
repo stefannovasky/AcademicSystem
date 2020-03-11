@@ -93,5 +93,85 @@ namespace Tests
 
             Assert.IsTrue(response.Success);
         }
+
+        [Test]
+        public async Task ShouldReturnUserNotFoundInGetByEmail()
+        {
+            User u = new User
+            {
+                City = "Blumenau",
+                State = "SC",
+                Street = "José Da Silva",
+                Rg = "1.193.223",
+                Cpf = "011.996.550-07",
+                Email = "adhaasdauadyauidyad@mail.com.br",
+                Name = "Stefan Novasky",
+                Number = "11",
+                Password = "ValidPassword123!",
+            };
+
+            Response r = await new UserService().Create(u);
+            if (r.Success)
+            {
+                u.Email = "asdaouda@gmail.com";
+
+                DataResponse<User> result = await new UserService().Authenticate(u);
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual(expected: "User not found\r\n", actual: result.GetErrorMessage());
+            }
+            Assert.IsTrue(r);
+        }
+
+        [Test]
+        public async Task ShouldReturnUserInvalidPassword()
+        {
+            User u = new User
+            {
+                City = "Blumenau",
+                State = "SC",
+                Street = "José Da Silva",
+                Rg = "1.193.223",
+                Cpf = "677.215.940-30",
+                Email = "aaaa@mail.com.br",
+                Name = "Stefan Novasky",
+                Number = "11",
+                Password = "ValidPassword123!",
+            };
+
+            Response r = await new UserService().Create(u);
+            if (r.Success)
+            {
+                u.Password = "Incorrect Password";
+
+                DataResponse<User> result = await new UserService().Authenticate(u);
+                Assert.AreEqual(expected: "Invalid password\r\n", actual: result.GetErrorMessage());
+            }
+        }
+        [Test]
+        public async Task ShouldAuthenticateUser()
+        {
+            User u = new User
+            {
+                City = "Blumenau",
+                State = "SC",
+                Street = "José Da Silva",
+                Rg = "1.193.223",
+                Cpf = "070.674.230-31",
+                Email = "vrauu@mail.com.br",
+                Name = "Stefan Novasky",
+                Number = "11",
+                Password = "ValidPassword123!",
+            };
+
+            Response r = await new UserService().Create(u);
+            if (r.Success)
+            {
+                User u2 = new User() { Email = "vrauu@mail.com.br", Password = "ValidPassword123!" };
+
+                DataResponse <User> result = await new UserService().Authenticate(u2);
+                Assert.IsTrue(result.Success);
+            }
+            Assert.IsTrue(r.Success); 
+        }
     }
 }

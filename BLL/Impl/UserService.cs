@@ -15,6 +15,39 @@ namespace BLL.Impl
     {
         private UserRepository _userRepo = new UserRepository();
 
+        public async Task<DataResponse<User>> Authenticate(User user)
+        {
+            DataResponse<User> r = new DataResponse<User>();
+
+            try
+            {
+                DataResponse<User> getUserResponse = await _userRepo.GetByEmail(user.Email);
+
+                if (getUserResponse.HasError())
+                {
+                    return getUserResponse; 
+                }
+
+                User findedUser = getUserResponse.Data[0];
+
+                if (!await new HashUtils().CompareHash(user.Password, findedUser.Password))
+                {
+                    r.Success = false;
+                    r.ErrorList.Add("Invalid password");
+                    return r; 
+                }
+
+                r.Success = true;
+                return r; 
+            }
+            catch (Exception ex)
+            {
+                r.Success = false;
+                r.ErrorList.Add("Error on user authentication");
+                return r; 
+            }
+        }
+
         public async Task<Response> Create(User item)
         {
             Response response = new Response();
@@ -108,5 +141,7 @@ namespace BLL.Impl
                 return response;
             }
         }
+
+       
     }
 }
