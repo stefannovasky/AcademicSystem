@@ -100,6 +100,41 @@ namespace DAL.Impl
 
         }
 
+        public async Task<DataResponse<User>> GetByEmail(string email)
+        {
+            try
+            {
+                User user = new User();
+
+                using (AcademyContext ctx = new AcademyContext())
+                {
+                    user = await ctx.Users
+                        .Include(u => u.Student)
+                        .Include(u => u.Instructor)
+                        .Include(u => u.Coordinator)
+                        .Include(u => u.Owner)
+                        .SingleOrDefaultAsync(u => u.IsActive == true && u.Email == email);
+                }
+                if (user == null)
+                {
+                    DataResponse<User> response = new DataResponse<User>() { Success = false };
+                    response.ErrorList.Add("User not found");
+                    return response;
+                }
+
+                DataResponse<User> r = new DataResponse<User>() { Success = true };
+                r.Data.Add(user);
+
+                return r;
+            }
+            catch (Exception ex)
+            {
+                DataResponse<User> r = new DataResponse<User>() { Success = false };
+                r.ErrorList.Add("Get user error");
+                return r;
+            }
+        }
+
         public async Task<DataResponse<User>> GetByID(int id)
         {
             try
