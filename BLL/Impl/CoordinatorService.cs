@@ -88,5 +88,21 @@ namespace BLL.Impl
                 return response;
             }
         }
+
+        public async Task<Response> AddClass(Coordinator coordinator, Class @class)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _CoordinatorRepo.AddClass(coordinator, @class);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addding Class in coordinator");
+                return response;
+            }
+        }
     }
 }

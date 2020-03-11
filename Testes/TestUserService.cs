@@ -119,7 +119,7 @@ namespace Tests
                 Assert.IsFalse(result.Success);
                 Assert.AreEqual(expected: "User not found\r\n", actual: result.GetErrorMessage());
             }
-            Assert.IsTrue(r);
+            Assert.IsTrue(r.Success);
         }
 
         [Test]
