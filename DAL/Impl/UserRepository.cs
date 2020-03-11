@@ -12,6 +12,86 @@ namespace DAL.Impl
 {
     public class UserRepository : IUserRepository
     {
+        public async Task<Response> AddCoordinator(User user, Coordinator coordinator)
+        {
+            Response r = new Response();
+            try
+            {
+                using (AcademyContext ctx = new AcademyContext())
+                {
+                    (await ctx.Users.Include(c => c.Coordinator).Where(c => c.ID == user.ID).FirstOrDefaultAsync()).Coordinator = coordinator;
+                    await ctx.SaveChangesAsync();
+                }
+                return r; 
+            }
+            catch (Exception)
+            {
+                r.Success = false;
+                r.ErrorList.Add("Error on add coordinator to user");
+                return r; 
+            }
+        }
+
+        public async Task<Response> AddInstructor(User user, Instructor instructor)
+        {
+            Response r = new Response();
+            try
+            {
+                using (AcademyContext ctx = new AcademyContext())
+                {
+                    (await ctx.Users.Include(c => c.Instructor).Where(c => c.ID == user.ID).FirstOrDefaultAsync()).Instructor = instructor;
+                    await ctx.SaveChangesAsync();
+                }
+                return r;
+            }
+            catch (Exception)
+            {
+                r.Success = false;
+                r.ErrorList.Add("Error on add instructor to user");
+                return r;
+            }
+        }
+
+        public async Task<Response> AddOwner(User user, Owner owner)
+        {
+            Response r = new Response();
+            try
+            {
+                using (AcademyContext ctx = new AcademyContext())
+                {
+                    (await ctx.Users.Include(c => c.Owner).Where(c => c.ID == user.ID).FirstOrDefaultAsync()).Owner = owner;
+                    await ctx.SaveChangesAsync();
+                }
+                return r;
+            }
+            catch (Exception)
+            {
+                r.Success = false;
+                r.ErrorList.Add("Error on add owner to user");
+                return r;
+            }
+        }
+
+        public async Task<Response> AddStudent(User user, Student student)
+        {
+            Response r = new Response();
+            try
+            {
+                using (AcademyContext ctx = new AcademyContext())
+                {
+                    (await ctx.Users.Include(c => c.Student).Where(c => c.ID == user.ID).FirstOrDefaultAsync()).Student = student;
+                    await ctx.SaveChangesAsync();
+                }
+                return r;
+            }
+            catch (Exception)
+            {
+                r.Success = false;
+                r.ErrorList.Add("Error on add owner to user");
+                return r;
+            }
+        }
+
         public async Task<Response> Create(User item)
         {
             try
@@ -143,7 +223,12 @@ namespace DAL.Impl
 
                 using (AcademyContext ctx = new AcademyContext())
                 {
-                    user = await ctx.Users.Include(u => u.Student).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
+                    user = await ctx.Users
+                        .Include(u => u.Student)
+                        .Include(u => u.Coordinator)
+                        .Include(u => u.Owner)
+                        .Include(u => u.Instructor)
+                        .SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 }
                 if (user == null)
                 {
