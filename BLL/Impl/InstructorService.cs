@@ -1,6 +1,8 @@
 ﻿using BLL.Interfaces;
+using BLL.Validators;
 using DAL.Impl;
 using Entities;
+using FluentValidation.Results;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -85,6 +87,45 @@ namespace BLL.Impl
             {
                 response.ErrorList.Add("Error on update Instructor");
                 response.Success = false;
+                return response;
+            }
+        }
+
+        public async Task<Response> AddSubject(Instructor instructor, Subject subject) 
+        {
+            Response response = new Response();
+            try
+            {
+                ValidationResult validationResponse = await new SubjectValidator().ValidateAsync(subject);
+                if (!validationResponse.IsValid)
+                {
+                    response.Success = false;
+                    response.ErrorList.Add("Validation Error");
+                    return response;
+                }
+                response = await _InstructorRepo.AddSubject(instructor, subject);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding Subject into instryuctor");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddClass(Instructor instructor, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _InstructorRepo.AddClass(instructor, Class);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding Class in Instructor");
                 return response;
             }
         }
