@@ -177,12 +177,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    SubjectClass subjectClass = new SubjectClass()
-                    {
-                        SubjectID = subject.ID,
-                        ClassID = Class.ID
-                    };
-                    (await context.Subjects.Include(c => c.Classes).Where(c => c.ID == subject.ID).FirstOrDefaultAsync()).Classes.Add(subjectClass);
+                    (await context.Subjects.Include(c => c.Classes).Where(c => c.ID == subject.ID).FirstOrDefaultAsync()).Classes.Add(Class);
                     await context.SaveChangesAsync();
                     return response;
                 }

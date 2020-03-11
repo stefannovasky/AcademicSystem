@@ -200,12 +200,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    AttendanceClass attendanceClass = new AttendanceClass()
-                    {
-                        ClassID = Class.ID,
-                        AttendanceID = attendance.ID
-                    };
-                    (await context.Classes.Include(c => c.Attendances).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Attendances.Add(attendanceClass);
+                    (await context.Classes.Include(c => c.Attendances).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Attendances.Add(attendance);
                     await context.SaveChangesAsync();
                     return response;
                 }

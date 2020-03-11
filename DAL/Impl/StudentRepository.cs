@@ -151,12 +151,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    StudentEvaluation studentEvaluation = new StudentEvaluation()
-                    {
-                        StudentID = student.ID,
-                        EvaluationID = evaluation.ID
-                    };
-                    (await context.Students.Include(c => c.Evaluations).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Evaluations.Add(studentEvaluation);
+                    (await context.Students.Include(c => c.Evaluations).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Evaluations.Add(evaluation);
                     await context.SaveChangesAsync();
                     return response;
                 }
@@ -201,12 +196,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    StudentAttendance studentAttendance = new StudentAttendance()
-                    {
-                        StudentID = student.ID,
-                        AttendanceID = attendance.ID
-                    };
-                    (await context.Students.Include(c => c.Attendances).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Attendances.Add(studentAttendance);
+                    (await context.Students.Include(c => c.Attendances).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Attendances.Add(attendance);
                     await context.SaveChangesAsync();
                     return response;
                 }

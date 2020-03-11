@@ -133,12 +133,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    CourseClass courseClass = new CourseClass()
-                    {
-                        ClassID = Class.ID,
-                        CourseID = course.ID
-                    };
-                    (await context.Courses.Include(c => c.Classes).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Classes.Add(courseClass);
+                    (await context.Courses.Include(c => c.Classes).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Classes.Add(Class);
                     await context.SaveChangesAsync();
                     return response;
                 }
@@ -158,12 +153,7 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    SubjectCourse subjectCourse = new SubjectCourse()
-                    {
-                        SubjectID = subject.ID,
-                        CourseID = course.ID
-                    };
-                    (await context.Courses.Include(c => c.Subjects).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Subjects.Add(subjectCourse);
+                    (await context.Courses.Include(c => c.Subjects).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Subjects.Add(subject);
                     await context.SaveChangesAsync();
                     return response;
                 }
