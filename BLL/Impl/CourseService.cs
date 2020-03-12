@@ -14,7 +14,12 @@ namespace BLL.Impl
 {
     public class CourseService : ICourseService
     {
-        private ICourseRepository _repository = new CourseRepository();
+        private ICourseRepository _repository;
+
+        public CourseService(ICourseRepository repository)
+        {
+            this._repository = repository;
+        }
 
         public async Task<Response> Create(Course item)
         {

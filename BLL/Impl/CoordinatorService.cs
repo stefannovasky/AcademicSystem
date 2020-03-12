@@ -1,5 +1,6 @@
 ﻿using BLL.Interfaces;
 using DAL.Impl;
+using DAL.Interfaces;
 using Entities;
 using Shared;
 using System;
@@ -11,7 +12,13 @@ namespace BLL.Impl
 {
     class CoordinatorService : ICoordinatorService
     {
-        private CoordinatorRepository _CoordinatorRepo = new CoordinatorRepository();
+        private ICoordinatorRepository _CoordinatorRepo;
+
+        public CoordinatorService(ICoordinatorRepository repository)
+        {
+            this._CoordinatorRepo = repository;
+        }
+
         public async Task<Response> Create(Coordinator item)
         {
             Response response = new Response();

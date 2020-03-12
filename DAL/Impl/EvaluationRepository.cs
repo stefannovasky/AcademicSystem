@@ -12,6 +12,11 @@ namespace DAL.Impl
 {
     public class EvaluationRepository : IEvaluationRepository
     {
+        private AcademyContext _context;
+        public EvaluationRepository(AcademyContext context)
+        {
+            _context = context;
+        }
         public async Task<Response> Create(Evaluation item)
         {
             Response response = new Response();
@@ -19,13 +24,12 @@ namespace DAL.Impl
             {
                 item.Student = null;
                 item.Class = null;
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.CreatedAt = DateTime.Now;
-                    await context.Evaluations.AddAsync(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                item.CreatedAt = DateTime.Now;
+                await _context.Evaluations.AddAsync(item);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -51,15 +55,13 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    Evaluation Evaluation = await context.Evaluations.FindAsync(id);
-                    Evaluation.IsActive = false;
-                    Evaluation.DeletedAt = DateTime.Now;
-                    context.Evaluations.Update(Evaluation);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                Evaluation Evaluation = await _context.Evaluations.FindAsync(id);
+                Evaluation.IsActive = false;
+                Evaluation.DeletedAt = DateTime.Now;
+                _context.Evaluations.Update(Evaluation);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {
@@ -74,11 +76,10 @@ namespace DAL.Impl
             DataResponse<Evaluation> response = new DataResponse<Evaluation>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    response.Data = await context.Evaluations.Where(a => a.IsActive == true).ToListAsync();
-                    return response;
-                }
+
+                response.Data = await _context.Evaluations.Where(a => a.IsActive == true).ToListAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -93,11 +94,9 @@ namespace DAL.Impl
             DataResponse<Evaluation> response = new DataResponse<Evaluation>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    response.Data.Add(await context.Evaluations.Include(c => c.Class).Include(c => c.Student).SingleOrDefaultAsync(e => e.IsActive && e.ID == id));
-                    return response;
-                }
+
+                response.Data.Add(await _context.Evaluations.Include(c => c.Class).Include(c => c.Student).SingleOrDefaultAsync(e => e.IsActive && e.ID == id));
+                return response;
             }
             catch (Exception e)
             {
@@ -112,13 +111,12 @@ namespace DAL.Impl
             DataResponse<Evaluation> response = new DataResponse<Evaluation>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.UpdatedAt = DateTime.Now;
-                    context.Evaluations.Update(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                item.UpdatedAt = DateTime.Now;
+                _context.Evaluations.Update(item);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {

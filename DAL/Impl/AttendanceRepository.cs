@@ -12,6 +12,11 @@ namespace DAL.Impl
 {
     public class AttendanceRepository : IAttendanceRepository
     {
+        private AcademyContext _context; 
+        public AttendanceRepository(AcademyContext context)
+        {
+            this._context = context;
+        }
         public async Task<Response> Create(Attendance item)
         {
             Response response = new Response();
@@ -19,13 +24,11 @@ namespace DAL.Impl
             {
                 item.Student = null;
                 item.Class = null;
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.CreatedAt = DateTime.Now;
-                    await context.Attendances.AddAsync(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+                
+                item.CreatedAt = DateTime.Now;
+                await _context.Attendances.AddAsync(item);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {
@@ -51,15 +54,14 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    Attendance attendance =  await context.Attendances.FindAsync(id);
-                    attendance.IsActive = false;
-                    attendance.DeletedAt = DateTime.Now;
-                    context.Attendances.Update(attendance);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                Attendance attendance = await _context.Attendances.FindAsync(id);
+                attendance.IsActive = false;
+                attendance.DeletedAt = DateTime.Now;
+                _context.Attendances.Update(attendance);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -74,11 +76,10 @@ namespace DAL.Impl
             DataResponse<Attendance> response = new DataResponse<Attendance>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    response.Data = await context.Attendances.Where(a => a.IsActive == true).ToListAsync();
-                    return response;
-                }
+
+                response.Data = await _context.Attendances.Where(a => a.IsActive == true).ToListAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -93,11 +94,10 @@ namespace DAL.Impl
             DataResponse<Attendance> response = new DataResponse<Attendance>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    response.Data.Add(await context.Attendances.Include(a => a.Class).Include(a => a.Student).SingleOrDefaultAsync(a => a.IsActive && a.ID == id));
-                    return response;
-                }
+
+                response.Data.Add(await _context.Attendances.Include(a => a.Class).Include(a => a.Student).SingleOrDefaultAsync(a => a.IsActive && a.ID == id));
+                return response;
+
             }
             catch (Exception e)
             {
@@ -112,13 +112,12 @@ namespace DAL.Impl
             DataResponse<Attendance> response = new DataResponse<Attendance>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.UpdatedAt = DateTime.Now;
-                    context.Attendances.Update(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                item.UpdatedAt = DateTime.Now;
+                _context.Attendances.Update(item);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {

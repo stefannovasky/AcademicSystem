@@ -12,18 +12,22 @@ namespace DAL.Impl
 {
     public class CourseRepository : ICourseRepository
     {
+        private AcademyContext _context;
+        public CourseRepository(AcademyContext context)
+        {
+            _context = context;
+        }
         public async Task<Response> Create(Course item)
         {
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.CreatedAt = DateTime.Now;
-                    await context.Courses.AddAsync(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                item.CreatedAt = DateTime.Now;
+                await _context.Courses.AddAsync(item);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -49,15 +53,14 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    Course Course = await context.Courses.FindAsync(id);
-                    Course.IsActive = false;
-                    Course.DeletedAt = DateTime.Now;
-                    context.Courses.Update(Course);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                Course Course = await _context.Courses.FindAsync(id);
+                Course.IsActive = false;
+                Course.DeletedAt = DateTime.Now;
+                _context.Courses.Update(Course);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -72,11 +75,10 @@ namespace DAL.Impl
             DataResponse<Course> response = new DataResponse<Course>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    response.Data = await context.Courses.Where(a => a.IsActive == true).ToListAsync();
-                    return response;
-                }
+
+                response.Data = await _context.Courses.Where(a => a.IsActive == true).ToListAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -91,11 +93,10 @@ namespace DAL.Impl
             DataResponse<Course> response = new DataResponse<Course>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    response.Data.Add(await context.Courses.Include(c => c.Classes).Include(c => c.Owners).Include(c => c.Subjects).SingleOrDefaultAsync(c => c.IsActive && c.ID == id));
-                    return response;
-                }
+
+                response.Data.Add(await _context.Courses.Include(c => c.Classes).Include(c => c.Owners).Include(c => c.Subjects).SingleOrDefaultAsync(c => c.IsActive && c.ID == id));
+                return response;
+
             }
             catch (Exception e)
             {
@@ -110,13 +111,11 @@ namespace DAL.Impl
             DataResponse<Course> response = new DataResponse<Course>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.UpdatedAt = DateTime.Now;
-                    context.Courses.Update(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                item.UpdatedAt = DateTime.Now;
+                _context.Courses.Update(item);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {
@@ -131,12 +130,11 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    (await context.Courses.Include(c => c.Classes).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Classes.Add(Class);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                (await _context.Courses.Include(c => c.Classes).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Classes.Add(Class);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -151,12 +149,10 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    (await context.Courses.Include(c => c.Subjects).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Subjects.Add(subject);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                (await _context.Courses.Include(c => c.Subjects).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Subjects.Add(subject);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {
@@ -171,17 +167,16 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
+
+                OwnerCourse ownerCourse = new OwnerCourse()
                 {
-                    OwnerCourse ownerCourse = new OwnerCourse()
-                    {
-                        OwnerID = owner.ID,
-                        CourseID = course.ID
-                    };
-                    (await context.Courses.Include(c => c.Owners).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Owners.Add(ownerCourse);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+                    OwnerID = owner.ID,
+                    CourseID = course.ID
+                };
+                (await _context.Courses.Include(c => c.Owners).Where(c => c.ID == course.ID).FirstOrDefaultAsync()).Owners.Add(ownerCourse);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {

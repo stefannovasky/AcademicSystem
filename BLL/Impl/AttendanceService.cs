@@ -14,7 +14,12 @@ namespace BLL.Impl
 {
     public class AttendanceService : IAttendanceService
     {
-        private IAttendanceRepository _repository = new AttendanceRepository();
+        private IAttendanceRepository _repository;
+
+        public AttendanceService(IAttendanceRepository repository)
+        {
+            this._repository = repository;
+        }
 
         public async Task<Response> Create(Attendance item)
         {

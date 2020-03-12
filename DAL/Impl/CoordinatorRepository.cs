@@ -12,19 +12,23 @@ namespace DAL.Impl
 {
     public class CoordinatorRepository : ICoordinatorRepository
     {
+        private AcademyContext _context;
+        public CoordinatorRepository(AcademyContext context)
+        {
+            _context = context;
+        }
         public async Task<Response> Create(Coordinator item)
         {
             Response response = new Response();
             try
             {
                 item.User = null;
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.CreatedAt = DateTime.Now;
-                    await context.Coordinators.AddAsync(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                item.CreatedAt = DateTime.Now;
+                await _context.Coordinators.AddAsync(item);
+                await _context.SaveChangesAsync();
+                return response;
+
             }
             catch (Exception e)
             {
@@ -39,15 +43,13 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    Coordinator Coordinator = await context.Coordinators.FindAsync(id);
-                    Coordinator.IsActive = false;
-                    Coordinator.DeletedAt = DateTime.Now;
-                    context.Coordinators.Update(Coordinator);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+
+                Coordinator Coordinator = await _context.Coordinators.FindAsync(id);
+                Coordinator.IsActive = false;
+                Coordinator.DeletedAt = DateTime.Now;
+                _context.Coordinators.Update(Coordinator);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {
@@ -62,11 +64,9 @@ namespace DAL.Impl
             DataResponse<Coordinator> response = new DataResponse<Coordinator>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    response.Data = await context.Coordinators.Where(a => a.IsActive == true).ToListAsync();
-                    return response;
-                }
+
+                response.Data = await _context.Coordinators.Where(a => a.IsActive == true).ToListAsync();
+                return response;
             }
             catch (Exception e)
             {
@@ -81,22 +81,20 @@ namespace DAL.Impl
             DataResponse<Coordinator> response = new DataResponse<Coordinator>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
+                Coordinator c = new Coordinator();
+                c = await _context.Coordinators
+                    .Include(c => c.User)
+                    .Include(c => c.Classes)
+                    .SingleOrDefaultAsync(c => c.IsActive && c.ID == id);
+                if (c == null)
                 {
-                    Coordinator c = new Coordinator(); 
-                    c = await context.Coordinators
-                        .Include(c => c.User)
-                        .Include(c => c.Classes)
-                        .SingleOrDefaultAsync(c => c.IsActive && c.ID == id);
-                    if (c == null)
-                    {
-                        response.Success = false;
-                        response.ErrorList.Add("User not found");
-                        return response; 
-                    }
-                    response.Data.Add(c);
+                    response.Success = false;
+                    response.ErrorList.Add("User not found");
                     return response;
                 }
+                response.Data.Add(c);
+                return response;
+
             }
             catch (Exception e)
             {
@@ -111,13 +109,10 @@ namespace DAL.Impl
             DataResponse<Coordinator> response = new DataResponse<Coordinator>();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
-                    item.UpdatedAt = DateTime.Now;
-                    context.Coordinators.Update(item);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+                item.UpdatedAt = DateTime.Now;
+                _context.Coordinators.Update(item);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {
@@ -132,17 +127,15 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
+
+                CoordinatorClass coordinatorClass = new CoordinatorClass()
                 {
-                    CoordinatorClass coordinatorClass = new CoordinatorClass()
-                    {
-                        ClassID = Class.ID,
-                        CoordinatorID = coordinator.ID
-                    };
-                    (await context.Coordinators.Include(c => c.Classes).Where(c => c.ID == coordinator.ID).FirstOrDefaultAsync()).Classes.Add(coordinatorClass);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+                    ClassID = Class.ID,
+                    CoordinatorID = coordinator.ID
+                };
+                (await _context.Coordinators.Include(c => c.Classes).Where(c => c.ID == coordinator.ID).FirstOrDefaultAsync()).Classes.Add(coordinatorClass);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {
