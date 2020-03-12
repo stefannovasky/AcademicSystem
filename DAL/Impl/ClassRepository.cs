@@ -84,7 +84,15 @@ namespace DAL.Impl
             {
                 using (AcademyContext context = new AcademyContext())
                 {
-                    response.Data.Add(await context.Classes.FindAsync(id));
+                    response.Data.Add(await context.Classes
+                        .Include(c => c.Attendances)
+                        .Include(c => c.Coordinators)
+                        .Include(c => c.Course)
+                        .Include(c => c.Evaluations)
+                        .Include(c => c.Students)
+                        .Include(c => c.Subject)
+                        .SingleOrDefaultAsync(c => c.ID == id)
+                    );
                     return response;
                 }
             }

@@ -97,7 +97,7 @@ namespace DAL.Impl
 
                 using (AcademyContext ctx = new AcademyContext())
                 {
-                    Subject = await ctx.Subjects.SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
+                    Subject = await ctx.Subjects.Include(s => s.Classes).Include(s => s.Course).Include(s => s.Instructors).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 }
                 if (Subject == null)
                 {
