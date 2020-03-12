@@ -95,5 +95,85 @@ namespace BLL.Impl
                 return response;
             }
         }
+
+        public async Task<Response> AddInstructor(Class Class, Instructor instructor)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _repository.AddInstructor(Class, instructor);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding instructor in class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddCoordinator(Class Class, Coordinator Coordinator)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _repository.AddCoordinator(Class, Coordinator);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding Coordinator in class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddEvaluation(Class Class, Evaluation Evaluation)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _repository.AddEvaluation(Class, Evaluation);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding Evaluation in class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddAttendance(Class Class, Attendance Attendance)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _repository.AddAttendance(Class, Attendance);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding Attendance in class.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddStudent(Class Class, Student Student)
+        {
+            Response response = new Response();
+            try
+            {
+                response = await _repository.AddStudent(Class, Student);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while adding Student in class.");
+                return response;
+            }
+        }
     }
 }
