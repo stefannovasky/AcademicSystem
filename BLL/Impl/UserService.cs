@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Validators;
 using DAL.Impl;
+using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
 using Shared;
@@ -13,7 +14,12 @@ namespace BLL.Impl
 {
     public class UserService : IUserService
     {
-        private UserRepository _userRepo = new UserRepository();
+        private IUserRepository _userRepo;
+
+        public UserService(IUserRepository userRepository)
+        {
+            _userRepo = userRepository;
+        }
 
         public async Task<DataResponse<User>> Authenticate(User user)
         {

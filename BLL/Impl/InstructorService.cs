@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Validators;
 using DAL.Impl;
+using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
 using Shared;
@@ -13,7 +14,11 @@ namespace BLL.Impl
 {
     public class InstructorService : IInstructorService
     {
-        private InstructorRepository _InstructorRepo = new InstructorRepository();
+        private IInstructorRepository _InstructorRepo;
+        public InstructorService(IInstructorRepository instructorRepository)
+        {
+            _InstructorRepo = instructorRepository;
+        }
         public async Task<Response> Create(Instructor item)
         {
             Response response = new Response();

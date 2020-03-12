@@ -12,17 +12,18 @@ namespace DAL.Impl
 {
     public class OwnerRepository : IOwnerRepository
     {
+        private AcademyContext _context;
+        public OwnerRepository(AcademyContext academyContext)
+        {
+            _context = academyContext;
+        }
         public async Task<Response> Create(Owner item)
         {
             try
             {
                 item.User = null;
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    await ctx.Owners.AddAsync(item);
-                    await ctx.SaveChangesAsync();
-                }
-
+                    await _context.Owners.AddAsync(item);
+                    await _context.SaveChangesAsync();
                 return new Response() { Success = true };
             }
             catch (Exception ex)
@@ -46,14 +47,11 @@ namespace DAL.Impl
         {
             try
             {
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Owner u = await ctx.Owners.FindAsync(id);
+                    Owner u = await _context.Owners.FindAsync(id);
                     u.IsActive = false;
                     u.DeletedAt = DateTime.Now;
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                    _context.Update(u);
+                    await _context.SaveChangesAsync();
                 return new Response();
             }
             catch (Exception ex)
@@ -70,13 +68,10 @@ namespace DAL.Impl
             {
                 List<Owner> owners = new List<Owner>();
 
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    owners = await ctx.Owners
+                    owners = await _context.Owners
                         .Include(u => u.User)
                         .Where(u => u.IsActive == true)
                         .ToListAsync();
-                }
                 DataResponse<Owner> r = new DataResponse<Owner>();
                 r.Data = owners;
 
@@ -96,10 +91,7 @@ namespace DAL.Impl
             {
                 Owner owner = new Owner();
 
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    owner = await ctx.Owners.Include(u => u.User).Include(u => u.Courses).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
-                }
+                    owner = await _context.Owners.Include(u => u.User).Include(u => u.Courses).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 if (owner == null)
                 {
                     DataResponse<Owner> response = new DataResponse<Owner>() { Success = false };
@@ -125,14 +117,11 @@ namespace DAL.Impl
             try
             {
                 Owner u = new Owner();
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    u = await ctx.Owners.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
+                    u = await _context.Owners.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
                     u = item;
                     u.UpdatedAt = DateTime.Now;
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                    _context.Update(u);
+                    await _context.SaveChangesAsync();
 
                 DataResponse<Owner> r = new DataResponse<Owner>();
                 r.Data.Add(u);
@@ -151,17 +140,14 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
+                OwnerCourse ownerCourse = new OwnerCourse()
                 {
-                    OwnerCourse ownerCourse = new OwnerCourse()
-                    {
-                        OwnerID = owner.ID,
-                        CourseID = course.ID
-                    };
-                    (await context.Owners.Include(c => c.Courses).Where(c => c.ID == owner.ID).FirstOrDefaultAsync()).Courses.Add(ownerCourse);
-                    await context.SaveChangesAsync();
-                    return response;
-                }
+                    OwnerID = owner.ID,
+                    CourseID = course.ID
+                };
+                (await _context.Owners.Include(c => c.Courses).Where(c => c.ID == owner.ID).FirstOrDefaultAsync()).Courses.Add(ownerCourse);
+                await _context.SaveChangesAsync();
+                return response;
             }
             catch (Exception e)
             {

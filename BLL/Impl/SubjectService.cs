@@ -14,7 +14,12 @@ namespace BLL.Impl
 {
     public class SubjectService : ISubjectService
     {
-        private ISubjectRepository _repository = new SubjectRepository();
+        private ISubjectRepository _repository;
+        public SubjectService(ISubjectRepository subjectRepository)
+        {
+            _repository = subjectRepository;
+        }
+
 
         public async Task<Response> Create(Subject item)
         {

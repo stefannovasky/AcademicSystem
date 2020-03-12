@@ -44,7 +44,6 @@ namespace SistemaAcademico
             // services.AddTransient<IUserService, UserService>()
             //or AddScoped (build 1x per request)
             services.AddDbContextPool<AcademyContext>(c => c.UseSqlServer(Configuration["ConnectionString"]));
-
             services.AddControllers();
         }
 

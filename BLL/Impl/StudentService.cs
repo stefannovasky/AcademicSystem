@@ -1,5 +1,6 @@
 ﻿using BLL.Interfaces;
 using DAL.Impl;
+using DAL.Interfaces;
 using Entities;
 using Shared;
 using System;
@@ -11,7 +12,11 @@ namespace BLL.Impl
 {
     public class StudentService : IStudentService
     {
-        private StudentRepository _studentRepo = new StudentRepository(); 
+        private IStudentRepository _studentRepo;
+        public StudentService(IStudentRepository studentRepository)
+        {
+            _studentRepo = studentRepository;
+        }
         public async Task<Response> Create(Student item)
         {
             Response response = new Response();

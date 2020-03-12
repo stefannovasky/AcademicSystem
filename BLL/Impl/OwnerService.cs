@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Validators;
 using DAL.Impl;
+using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
 using Shared;
@@ -13,7 +14,11 @@ namespace BLL.Impl
 {
     public class OwnerService : IOwnerService
     {
-        private OwnerRepository _OwnerRepo = new OwnerRepository();
+        private IOwnerRepository _OwnerRepo;
+        public OwnerService(IOwnerRepository ownerRepository)
+        {
+            _OwnerRepo = ownerRepository;
+        }
         public async Task<Response> Create(Owner item)
         {
             Response response = new Response();

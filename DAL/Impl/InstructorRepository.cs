@@ -12,16 +12,19 @@ namespace DAL.Impl
 {
     public class InstructorRepository : IInstructorRepository
     {
+        private AcademyContext _context;
+        public InstructorRepository(AcademyContext academyContext)
+        {
+            _context = academyContext;
+        }
+
         public async Task<Response> Create(Instructor item)
         {
             try
             {
                 item.User = null;
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    await ctx.Instructors.AddAsync(item);
-                    await ctx.SaveChangesAsync();
-                }
+                    await _context.Instructors.AddAsync(item);
+                    await _context.SaveChangesAsync();
 
                 return new Response() { Success = true };
             }
@@ -46,14 +49,11 @@ namespace DAL.Impl
         {
             try
             {
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Instructor u = await ctx.Instructors.FindAsync(id);
+                    Instructor u = await _context.Instructors.FindAsync(id);
                     u.IsActive = false;
                     u.DeletedAt = DateTime.Now;
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                    _context.Update(u);
+                    await _context.SaveChangesAsync();
                 return new Response();
             }
             catch (Exception ex)
@@ -70,12 +70,9 @@ namespace DAL.Impl
             {
                 List<Instructor> Instructors = new List<Instructor>();
 
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Instructors = await ctx.Instructors
+                    Instructors = await _context.Instructors
                         .Where(u => u.IsActive == true)
                         .ToListAsync();
-                }
                 DataResponse<Instructor> r = new DataResponse<Instructor>();
                 r.Data = Instructors;
 
@@ -95,10 +92,7 @@ namespace DAL.Impl
             {
                 Instructor Instructor = new Instructor();
 
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Instructor = await ctx.Instructors.Include(u => u.User).Include(u => u.Classes).Include(u => u.Subjects).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
-                }
+                    Instructor = await _context.Instructors.Include(u => u.User).Include(u => u.Classes).Include(u => u.Subjects).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 if (Instructor == null)
                 {
                     DataResponse<Instructor> response = new DataResponse<Instructor>() { Success = false };
@@ -124,14 +118,11 @@ namespace DAL.Impl
             try
             {
                 Instructor u = new Instructor();
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    u = await ctx.Instructors.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
+                    u = await _context.Instructors.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
                     u = item;
                     u.UpdatedAt = DateTime.Now;
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                    _context.Update(u);
+                    await _context.SaveChangesAsync();
 
                 DataResponse<Instructor> r = new DataResponse<Instructor>();
                 r.Data.Add(u);
@@ -150,17 +141,14 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
                     SubjectInstructor subjectInstructor = new SubjectInstructor()
                     {
                         SubjectID = subject.ID,
                         InstructorID = instructor.ID
                     };
-                    (await context.Instructors.Include(c => c.Subjects).Where(c => c.ID == instructor.ID).FirstOrDefaultAsync()).Subjects.Add(subjectInstructor);
-                    await context.SaveChangesAsync();
+                    (await _context.Instructors.Include(c => c.Subjects).Where(c => c.ID == instructor.ID).FirstOrDefaultAsync()).Subjects.Add(subjectInstructor);
+                    await _context.SaveChangesAsync();
                     return response;
-                }
             }
             catch (Exception e)
             {
@@ -175,17 +163,14 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
-                using (AcademyContext context = new AcademyContext())
-                {
                     InstructorClass instructorClass = new InstructorClass()
                     {
                         ClassID = Class.ID,
                         InstructorID = instructor.ID
                     };
-                    (await context.Instructors.Include(c => c.Classes).Where(c => c.ID == instructor.ID).FirstOrDefaultAsync()).Classes.Add(instructorClass);
-                    await context.SaveChangesAsync();
+                    (await _context.Instructors.Include(c => c.Classes).Where(c => c.ID == instructor.ID).FirstOrDefaultAsync()).Classes.Add(instructorClass);
+                    await _context.SaveChangesAsync();
                     return response;
-                }
             }
             catch (Exception e)
             {
