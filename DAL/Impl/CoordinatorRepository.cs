@@ -84,7 +84,10 @@ namespace DAL.Impl
                 using (AcademyContext context = new AcademyContext())
                 {
                     Coordinator c = new Coordinator(); 
-                    c = await context.Coordinators.Include(c => c.User).SingleOrDefaultAsync(c => c.ID == id);
+                    c = await context.Coordinators
+                        .Include(c => c.User)
+                        .Include(c => c.Classes)
+                        .SingleOrDefaultAsync(c => c.IsActive && c.ID == id);
                     if (c == null)
                     {
                         response.Success = false;

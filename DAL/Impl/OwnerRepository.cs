@@ -98,7 +98,7 @@ namespace DAL.Impl
 
                 using (AcademyContext ctx = new AcademyContext())
                 {
-                    owner = await ctx.Owners.Include(u => u.User).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
+                    owner = await ctx.Owners.Include(u => u.User).Include(u => u.Courses).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 }
                 if (owner == null)
                 {
