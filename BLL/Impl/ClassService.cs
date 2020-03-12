@@ -14,7 +14,13 @@ namespace BLL.Impl
 {
     public class ClassService : IClassService
     {
-        private IClassRepository _repository = new ClassRepository();
+        private IClassRepository _repository;
+
+
+        public ClassService(IClassRepository repository)
+        {
+            this._repository = repository;
+        }
 
         public async Task<Response> Create(Class item)
         {

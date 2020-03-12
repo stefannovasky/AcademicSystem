@@ -14,7 +14,11 @@ namespace BLL.Impl
 {
     public class EvaluationService : IEvaluationService
     {
-        private IEvaluationRepository _repository = new EvaluationRepository();
+        private IEvaluationRepository _repository;
+        public EvaluationService(IEvaluationRepository repository)
+        {
+            this._repository = repository;
+        }
 
         public async Task<Response> Create(Evaluation item)
         {
