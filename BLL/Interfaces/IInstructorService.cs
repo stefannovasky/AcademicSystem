@@ -10,6 +10,6 @@ namespace BLL.Interfaces
     public interface IInstructorService : IService<Instructor>
     {
         public Task<Response> AddSubject(Instructor instructor, Subject subject);
-        public Task<Response> AddClass(Instructor instructor, Class Class)
+        public Task<Response> AddClass(Instructor instructor, Class Class);
     }
 }
