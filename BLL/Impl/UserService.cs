@@ -43,6 +43,7 @@ namespace BLL.Impl
                     return r; 
                 }
 
+                r.Data.Add(findedUser);
                 r.Success = true;
                 return r; 
             }
