@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BLL.Interfaces;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
 namespace AcademicSystemApi.Controllers
 {
-    [Route("student")]
+    [Route("students")]
     [ApiController]
     public class StudentController : ControllerBase
     {
@@ -20,6 +22,7 @@ namespace AcademicSystemApi.Controllers
             this._service = service;
         }
 
+        [Authorize]
         public async Task<DataResponse<Student>> GetStudents()
         {
             try
@@ -38,6 +41,7 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         [Route("{id}")]
         public async Task<DataResponse<Student>> GetStudent(int id)
@@ -53,13 +57,17 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<Response> CreateStudent(Student student)
+        public async Task<object> CreateStudent(Student student)
         {
             try
             {
                 Response response = await _service.Create(student);
-                return response;
+                return new
+                {
+                    sucess = response.Success
+                };
             }
             catch (Exception e)
             {
@@ -67,6 +75,7 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<Response> UpdateStudent(Student student)
         {
@@ -81,6 +90,7 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{id}")]
         public async Task<Response> DeleteStudent(int id)
@@ -94,6 +104,12 @@ namespace AcademicSystemApi.Controllers
             {
                 return null;
             }
+        }
+
+        private int GetUserID()
+        {
+            string id = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
+            return Convert.ToInt32(id);
         }
     }
 }

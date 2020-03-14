@@ -49,12 +49,11 @@ namespace DAL.Impl
         {
             try
             {
-
-                    Subject u = await _context.Subjects.FindAsync(id);
-                    u.IsActive = false;
-                    u.DeletedAt = DateTime.Now;
-                    _context.Update(u);
-                    await _context.SaveChangesAsync();
+                Subject u = await _context.Subjects.FindAsync(id);
+                u.IsActive = false;
+                u.DeletedAt = DateTime.Now;
+                _context.Update(u);
+                await _context.SaveChangesAsync();
                 return new Response();
             }
             catch (Exception ex)

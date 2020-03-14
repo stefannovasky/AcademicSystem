@@ -9,8 +9,9 @@ namespace BLL.Interfaces
 {
     public interface ICourseService : IService<Course>
     {
-        public Task<Response> AddClass(Course course, Class Class);
-        public Task<Response> AddSubject(Course course, Subject subject);
-        public Task<Response> AddOwner(Course course, Owner owner);
+        Task<Response> AddClass(Course course, Class Class);
+        Task<Response> AddSubject(Course course, Subject subject);
+        Task<Response> AddOwner(Course course, Owner owner);
+        Task<DataResponse<int>> CreateAndReturnId(Course item);
     }
 }
