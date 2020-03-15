@@ -35,15 +35,12 @@ namespace AcademicSystemApi.Controllers
 
         [Authorize]
         public async Task<DataResponse<Student>> GetStudents()
-        {
+        {//não sera usado, podemos deixar para um admin do sistema ver no futuro.
             try
             {
-                DataResponse<Student> response = await _service.GetAll();
-                foreach (Student student in response.Data)
-                {
-                    if (student.User != null)
-                        student.User.Student = null;
-                }
+                DataResponse<Student> response = new DataResponse<Student>();
+                response.Success = false;
+                response.ErrorList.Add("Permission Denied");
                 return response;
             }
             catch (Exception e)
@@ -64,10 +61,11 @@ namespace AcademicSystemApi.Controllers
                 if (studentResponse.Success)
                 {
                     Student student = studentResponse.Data[0];
-                    isPermited = await PermisionCheckStudentInClass(student);
+                    isPermited = await PermisionCheckStudentInClassViewOrUpdate(student);
                 }
                 if (isPermited)
                 {
+                    studentResponse.Data[0].User.Student = null;
                     return studentResponse;
                 }
                 DataResponse<Student> response = new DataResponse<Student>();
@@ -86,11 +84,16 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Create(student);
-                return new
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                if (student.UserID == user.ID)
                 {
-                    sucess = response.Success
-                };
+                    Response response = await _service.Create(student);
+                    return response;
+                }
+                DataResponse<Student> responseError = new DataResponse<Student>();
+                responseError.Success = false;
+                responseError.ErrorList.Add("Permission Denied");
+                return responseError;
             }
             catch (Exception e)
             {
@@ -104,8 +107,16 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Update(student);
-                return response;
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                if (student.UserID == user.ID)
+                {
+                    Response response = await _service.Update(student);
+                    return response;
+                }
+                DataResponse<Student> responseError = new DataResponse<Student>();
+                responseError.Success = false;
+                responseError.ErrorList.Add("Permission Denied");
+                return responseError;
             }
             catch (Exception e)
             {
@@ -120,8 +131,17 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Delete(id);
-                return response;
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                Student student = (await _service.GetByID(id)).Data[0];
+                if (student.UserID == user.ID)
+                {
+                    Response response = await _service.Delete(id);
+                    return response;
+                }
+                DataResponse<Student> responseError = new DataResponse<Student>();
+                responseError.Success = false;
+                responseError.ErrorList.Add("Permission Denied");
+                return responseError;
             }
             catch (Exception e)
             {
@@ -130,7 +150,7 @@ namespace AcademicSystemApi.Controllers
         }
 
 
-        private async Task<bool> PermisionCheckStudentInClass(Student student)
+        private async Task<bool> PermisionCheckStudentInClassViewOrUpdate(Student student)
         {
             bool isPermited = false;
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
