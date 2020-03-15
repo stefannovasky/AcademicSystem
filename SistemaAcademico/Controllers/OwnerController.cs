@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +25,8 @@ namespace AcademicSystemApi.Controllers
 
         [Authorize]
         public async Task<object> GetOwners()
-        {
+        {//não sera usado
+            /*
             try
             {
                 DataResponse<Owner> response = await _service.GetAll();
@@ -43,6 +45,11 @@ namespace AcademicSystemApi.Controllers
             {
                 return null;
             }
+            */
+            DataResponse<Student> response = new DataResponse<Student>();
+            response.Success = false;
+            response.ErrorList.Add("Permission Denied");
+            return response;
         }
 
         [HttpGet]
@@ -52,6 +59,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                bool isPermited = false;
                 DataResponse<Owner> response = await _service.GetByID(id);
                 response.Data[0].User.Owner = null;
 
@@ -62,12 +70,14 @@ namespace AcademicSystemApi.Controllers
                         course.Owner = null;
                     }
                 }
-
-                return new
+                if (this.GetUserID() == response.Data[0].UserID)
                 {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                    return response;
+                }
+                DataResponse<Student> responseError = new DataResponse<Student>();
+                responseError.Success = false;
+                responseError.ErrorList.Add("Permission Denied");
+                return response;
             }
             catch (Exception e)
             {
@@ -81,11 +91,15 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Create(Owner);
-                return new
+                if(this.GetUserID() == Owner.UserID)
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Create(Owner);
+                    return response;
+                }
+                DataResponse<Student> responseError = new DataResponse<Student>();
+                responseError.Success = false;
+                responseError.ErrorList.Add("Permission Denied");
+                return responseError;
             }
             catch (Exception e)
             {
@@ -99,11 +113,15 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Update(Owner);
-                return new
+                if (this.GetUserID() == Owner.UserID)
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Update(Owner);
+                    return response;
+                }
+                DataResponse<Student> responseError = new DataResponse<Student>();
+                responseError.Success = false;
+                responseError.ErrorList.Add("Permission Denied");
+                return responseError;
             }
             catch (Exception e)
             {
@@ -118,11 +136,15 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Delete(id);
-                return new 
+                if (this.GetUserID() == (await _service.GetByID(id)).Data[0].UserID)
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Delete(id);
+                    return response;
+                }
+                DataResponse<Student> responseError = new DataResponse<Student>();
+                responseError.Success = false;
+                responseError.ErrorList.Add("Permission Denied");
+                return responseError;
             }
             catch (Exception e)
             {
