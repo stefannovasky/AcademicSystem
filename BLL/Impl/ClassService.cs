@@ -181,5 +181,21 @@ namespace BLL.Impl
                 return response;
             }
         }
+
+        public async Task<DataResponse<int>> CreateAndReturnId(Class item)
+        {
+            DataResponse<int> response = new DataResponse<int>();
+            try
+            {
+                response = await _repository.CreateAndReturnID(item);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.ErrorList.Add("Error while creating Service.");
+                response.Success = false;
+                return response;
+            }
+        }
     }
 }

@@ -16,35 +16,32 @@ namespace AcademicSystemApi.Controllers
     [ApiController]
     public class ClassController : ControllerBase
     {
-        IClassService _classService; 
+        IClassService _classService;
         ICourseService _courseService;
         IUserService _userService;
         IOwnerService _ownerService;
-        public CourseController(IClassService classService, ICourseService courseService, IUserService userService, IOwnerService ownerService)
+        public ClassController(IClassService classService, ICourseService courseService, IUserService userService, IOwnerService ownerService)
         {
-            this._classService = classService; 
+            this._classService = classService;
             this._courseService = courseService;
             this._userService = userService;
             this._ownerService = ownerService;
         }
 
-      
-
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateClass(Class Class)
-            //course
+        public async Task<object> Create(Class Class)
         {
             try
             {
-                int coordinatorId = await this.VerifyIfUserIsCoordinatorAndReturnOwnerId();
-                if (coordinatorId == 0)
+                int coordinatorID = await this.VerifyIfUserIsCoordinatorAndReturnOwnerId();
+                if (coordinatorID == 0)
                 {
                     return Forbid();
                 }
 
 
-                DataResponse<int> response = await _courseService.CreateAndReturnId(Course);
+                DataResponse<int> response = await _classService.CreateAndReturnId(Class);
 
                 if (response.HasError())
                 {
@@ -55,7 +52,7 @@ namespace AcademicSystemApi.Controllers
                     };
                 }
 
-                await this._ownerService.AddCourse(new Owner() { ID = ownerId }, new Course() { ID = response.Data[0] });
+                await this._courseService.AddClass(new Course() { ID = Class.CourseID }, new Class() { ID = response.Data[0] });
 
                 return new
                 {
@@ -67,6 +64,70 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
+
+        [Authorize]
+        public async Task<object> GetAll()
+        {
+            try
+            {
+                DataResponse<Class> response = await _classService.GetAll();
+
+
+                return new
+                {
+                    success = response.Success,
+                    data = response.Success ? response.Data : null
+                };
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        [Authorize]
+        public async Task<object> GetClass(int id)
+        {
+            try
+            {
+                DataResponse<Class> response = await _classService.GetByID(id);
+
+                response.Data[0].Course.Classes = null;
+                response.Data[0].Subject.Classes = null;
+                
+                return new
+                {
+                    success = response.Success,
+                    data = response.Success ? response.Data : null
+                };
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<object> DeleteClass(int id)
+        {
+            try
+            {
+                Response response = await _classService.Delete(id);
+                return new
+                {
+                    success = response.Success
+                };
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
 
         /// <summary>
         /// If user isn't a owner return 0

@@ -60,6 +60,14 @@ namespace AcademicSystemApi.Controllers
                     {
                         owner.Course = null;
                     }
+                    foreach (var Class in course.Classes)
+                    {
+                        Class.Course = null; 
+                    }
+                    foreach (var subject in course.Subjects)
+                    {
+                        subject.Course = null;
+                    }
                 }
 
                 return new
