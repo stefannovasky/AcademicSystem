@@ -30,7 +30,7 @@ namespace AcademicSystemApi.Controllers
             this.InstructorService = InstructorService;
             this.CoordinatorService = coordinatorService;
             this.OwnerService = ownerService;
-            this.OwnerService = ownerService;
+            this.CourseService = courseService;
         }
 
         [Authorize]
@@ -60,53 +60,11 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 bool isPermited = false;
-                User user = (await userService.GetByID(this.GetUserID())).Data[0];
                 DataResponse<Student> studentResponse = (await _service.GetByID(id));
                 if (studentResponse.Success)
                 {
                     Student student = studentResponse.Data[0];
-                    if (user.Student != null && user.Student.ID == id)
-                    {
-                        isPermited = true;
-                    }
-                    if (user.Instructor != null)
-                    {
-                        Instructor instructor = (await InstructorService.GetByID(user.Instructor.ID)).Data[0];
-                        foreach (InstructorClass instructorClass in instructor.Classes)
-                        {
-                            if (student.Classes.Where(ic => ic.ClassID == instructorClass.ClassID).Count() > 0)
-                            {
-                                isPermited = true;
-                            }
-                        }
-                    }
-                    if (user.Coordinator != null)
-                    {
-                        Coordinator Coordinator = (await CoordinatorService.GetByID(user.Coordinator.ID)).Data[0];
-
-                        foreach (CoordinatorClass CoordinatorClass in Coordinator.Classes)
-                        {
-                            if (student.Classes.Where(ic => ic.ClassID == CoordinatorClass.ClassID).Count() > 0)
-                            {
-                                isPermited = true;
-                            }
-                        }
-                    }
-                    if (user.Owner != null)
-                    {
-                        Owner Owner = (await OwnerService.GetByID(user.Owner.ID)).Data[0];
-                        foreach (OwnerCourse ownerCourse in Owner.Courses)
-                        {
-                            Course course = (await CourseService.GetByID(ownerCourse.CourseID)).Data[0];
-                            foreach (Class @class in course.Classes)
-                            {
-                                if (student.Classes.Where(sc => sc.ClassID == @class.ID).Count() > 0)
-                                {
-                                    isPermited = true;
-                                }
-                            }
-                        }
-                    }
+                    isPermited = await PermisionCheckStudentInClass(student);
                 }
                 if (isPermited)
                 {
@@ -169,6 +127,56 @@ namespace AcademicSystemApi.Controllers
             {
                 return null;
             }
+        }
+
+
+        private async Task<bool> PermisionCheckStudentInClass(Student student)
+        {
+            bool isPermited = false;
+            User user = (await userService.GetByID(this.GetUserID())).Data[0];
+            if (user.Student != null && user.Student.ID == student.ID)
+            {
+                isPermited = true;
+            }
+            if (user.Instructor != null)
+            {
+                Instructor instructor = (await InstructorService.GetByID(user.Instructor.ID)).Data[0];
+                foreach (InstructorClass instructorClass in instructor.Classes)
+                {
+                    if (student.Classes.Where(ic => ic.ClassID == instructorClass.ClassID).Count() > 0)
+                    {
+                        isPermited = true;
+                    }
+                }
+            }
+            if (user.Coordinator != null)
+            {
+                Coordinator Coordinator = (await CoordinatorService.GetByID(user.Coordinator.ID)).Data[0];
+
+                foreach (CoordinatorClass CoordinatorClass in Coordinator.Classes)
+                {
+                    if (student.Classes.Where(ic => ic.ClassID == CoordinatorClass.ClassID).Count() > 0)
+                    {
+                        isPermited = true;
+                    }
+                }
+            }
+            if (user.Owner != null)
+            {
+                Owner Owner = (await OwnerService.GetByID(user.Owner.ID)).Data[0];
+                foreach (OwnerCourse ownerCourse in Owner.Courses)
+                {
+                    Course course = (await CourseService.GetByID(ownerCourse.CourseID)).Data[0];
+                    foreach (Class @class in course.Classes)
+                    {
+                        if (student.Classes.Where(sc => sc.ClassID == @class.ID).Count() > 0)
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+            }
+            return isPermited;
         }
     }
 }
