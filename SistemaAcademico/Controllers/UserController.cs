@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using AcademicSystemApi.Models;
 using AcademicSystemApi.Services;
 using AutoMapper;
@@ -221,13 +222,6 @@ namespace AcademicSystemApi.Controllers
             {
                 message = response.GetErrorMessage()
             };
-        }
-
-
-        private int GetUserID()
-        {
-            string id = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
-            return Convert.ToInt32(id);
         }
     }
 }

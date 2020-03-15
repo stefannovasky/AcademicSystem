@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +35,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                int coordinatorID = await this.VerifyIfUserIsCoordinatorAndReturnOwnerId();
+                int coordinatorID = await this.VerifyIfUserIsCoordinatorAndReturnCoordinatorId(_userService);
                 if (coordinatorID == 0)
                 {
                     return Forbid();
@@ -129,22 +130,6 @@ namespace AcademicSystemApi.Controllers
         }
 
 
-        /// <summary>
-        /// If user isn't a owner return 0
-        /// </summary>
-        /// <returns></returns>
-        private async Task<int> VerifyIfUserIsCoordinatorAndReturnOwnerId()
-        {
-            string idstring = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
-            int id = Convert.ToInt32(idstring);
 
-            User user = (await this._userService.GetByID(id)).Data[0];
-            if (user.Coordinator != null)
-            {
-                return user.Coordinator.ID;
-            }
-
-            return 0;
-        }
     }
 }

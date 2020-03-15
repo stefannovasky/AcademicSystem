@@ -129,11 +129,5 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
-        private int GetUserID()
-        {
-            string id = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
-            return Convert.ToInt32(id);
-        }
     }
 }

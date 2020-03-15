@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -88,7 +89,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                int ownerId = await this.VerifyIfUserIsOwnerAndReturnOwnerId();
+                int ownerId = await this.VerifyIfUserIsOwnerAndReturnOwnerId(_userService);
                 if (ownerId == 0)
                 {
                     return Forbid(); 
@@ -126,7 +127,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                int ownerID = await this.VerifyIfUserIsOwnerAndReturnOwnerId();
+                int ownerID = await this.VerifyIfUserIsOwnerAndReturnOwnerId(_userService);
                 if (ownerID == 0)
                 {
                     return Forbid();
@@ -151,7 +152,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                int ownerID = await this.VerifyIfUserIsOwnerAndReturnOwnerId();
+                int ownerID = await this.VerifyIfUserIsOwnerAndReturnOwnerId(_userService);
                 if (ownerID == 0)
                 {
                     return Forbid();
@@ -167,24 +168,6 @@ namespace AcademicSystemApi.Controllers
             {
                 return null;
             }
-        }
-
-        /// <summary>
-        /// If user isn't a owner return 0
-        /// </summary>
-        /// <returns></returns>
-        private async Task<int> VerifyIfUserIsOwnerAndReturnOwnerId()
-        {
-            string idstring = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
-            int id = Convert.ToInt32(idstring);
-            
-            User user = (await this._userService.GetByID(id)).Data[0];
-            if (user.Owner != null)
-            {
-                return user.Owner.ID; 
-            }
-
-            return 0; 
         }
     }
 }
