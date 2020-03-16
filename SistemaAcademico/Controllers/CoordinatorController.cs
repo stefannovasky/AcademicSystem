@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -18,9 +19,11 @@ namespace AcademicSystemApi.Controllers
     {
 
         ICoordinatorService _service;
-        public CoordinatorController(ICoordinatorService service)
+        IUserService userService;
+        public CoordinatorController(ICoordinatorService service, IUserService userService)
         {
             this._service = service;
+            this.userService = userService;
         }
 
         [Authorize]
@@ -28,20 +31,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                DataResponse<Coordinator> response = await _service.GetAll();
-                foreach (Coordinator Coordinator in response.Data)
-                {
-                    if (Coordinator.User != null)
-                        Coordinator.User.Coordinator = null;
-                }
-                return new
-                {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -54,15 +48,20 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 DataResponse<Coordinator> response = await _service.GetByID(id);
-                response.Data[0].User.Coordinator = null;
-                return new
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
+                foreach (CoordinatorClass coordinatorClass in response.Data[0].Classes)
                 {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                    if (coordinator.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Count() > 0)
+                    {
+                        return this.SendResponse(response);
+                    }
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -73,14 +72,16 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Create(Coordinator);
-                return new
+                if (Coordinator.UserID == this.GetUserID())
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Create(Coordinator);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -91,14 +92,16 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Update(Coordinator);
-                return new
+                if (Coordinator.UserID == this.GetUserID())
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Update(Coordinator);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -110,11 +113,12 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Delete(id);
-                return new
-                {
-                    success = response.Success
-                };
+                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
+                if (this.GetUserID() == coordinator.UserID) {
+                    Response response = await _service.Delete(id);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
