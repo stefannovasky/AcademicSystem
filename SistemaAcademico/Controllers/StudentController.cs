@@ -34,14 +34,11 @@ namespace AcademicSystemApi.Controllers
         }
 
         [Authorize]
-        public async Task<DataResponse<Student>> GetStudents()
-        {//não sera usado, podemos deixar para um admin do sistema ver no futuro.
+        public async Task<object> GetStudents()
+        {
             try
             {
-                DataResponse<Student> response = new DataResponse<Student>();
-                response.Success = false;
-                response.ErrorList.Add("Permission Denied");
-                return response;
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -52,7 +49,7 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpGet]
         [Route("{id}")]
-        public async Task<DataResponse<Student>> GetStudent(int id)
+        public async Task<object> GetStudent(int id)
         {
             try
             {
@@ -66,12 +63,9 @@ namespace AcademicSystemApi.Controllers
                 if (isPermited)
                 {
                     studentResponse.Data[0].User.Student = null;
-                    return studentResponse;
+                    return this.SendResponse(studentResponse);
                 }
-                DataResponse<Student> response = new DataResponse<Student>();
-                response.Success = false;
-                response.ErrorList.Add("Permission Denied");
-                return response;
+                return Forbid();
             } catch (Exception e)
             {
                 return null;
@@ -88,12 +82,9 @@ namespace AcademicSystemApi.Controllers
                 if (student.UserID == user.ID)
                 {
                     Response response = await _service.Create(student);
-                    return response;
+                    return this.SendResponse(response);
                 }
-                DataResponse<Student> responseError = new DataResponse<Student>();
-                responseError.Success = false;
-                responseError.ErrorList.Add("Permission Denied");
-                return responseError;
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -103,7 +94,7 @@ namespace AcademicSystemApi.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<Response> UpdateStudent(Student student)
+        public async Task<object> UpdateStudent(Student student)
         {
             try
             {
@@ -111,12 +102,9 @@ namespace AcademicSystemApi.Controllers
                 if (student.UserID == user.ID)
                 {
                     Response response = await _service.Update(student);
-                    return response;
+                    return this.SendResponse(response);
                 }
-                DataResponse<Student> responseError = new DataResponse<Student>();
-                responseError.Success = false;
-                responseError.ErrorList.Add("Permission Denied");
-                return responseError;
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -127,7 +115,7 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
-        public async Task<Response> DeleteStudent(int id)
+        public async Task<object> DeleteStudent(int id)
         {
             try
             {
@@ -136,12 +124,9 @@ namespace AcademicSystemApi.Controllers
                 if (student.UserID == user.ID)
                 {
                     Response response = await _service.Delete(id);
-                    return response;
+                    return this.SendResponse(response);
                 }
-                DataResponse<Student> responseError = new DataResponse<Student>();
-                responseError.Success = false;
-                responseError.ErrorList.Add("Permission Denied");
-                return responseError;
+                return Forbid();
             }
             catch (Exception e)
             {

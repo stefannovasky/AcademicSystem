@@ -25,31 +25,16 @@ namespace AcademicSystemApi.Controllers
 
         [Authorize]
         public async Task<object> GetOwners()
-        {//não sera usado
-            /*
+        {
             try
             {
-                DataResponse<Owner> response = await _service.GetAll();
-                foreach (Owner Owner in response.Data)
-                {
-                    if (Owner.User != null)
-                        Owner.User.Owner = null;
-                }
-                return new
-                {
-                    success = response.Success, 
-                    data = response.Success ? response.Data : null
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
-            */
-            DataResponse<Student> response = new DataResponse<Student>();
-            response.Success = false;
-            response.ErrorList.Add("Permission Denied");
-            return response;
         }
 
         [HttpGet]
@@ -59,28 +44,16 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                bool isPermited = false;
                 DataResponse<Owner> response = await _service.GetByID(id);
-                response.Data[0].User.Owner = null;
-
-                foreach (var owner in response.Data)
-                {
-                    foreach (var course in owner.Courses)
-                    {
-                        course.Owner = null;
-                    }
-                }
                 if (this.GetUserID() == response.Data[0].UserID)
                 {
-                    return response;
+                    return this.SendResponse(response);
                 }
-                DataResponse<Student> responseError = new DataResponse<Student>();
-                responseError.Success = false;
-                responseError.ErrorList.Add("Permission Denied");
-                return response;
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -94,15 +67,13 @@ namespace AcademicSystemApi.Controllers
                 if(this.GetUserID() == Owner.UserID)
                 {
                     Response response = await _service.Create(Owner);
-                    return response;
+                    return this.SendResponse(response);
                 }
-                DataResponse<Student> responseError = new DataResponse<Student>();
-                responseError.Success = false;
-                responseError.ErrorList.Add("Permission Denied");
-                return responseError;
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -116,15 +87,13 @@ namespace AcademicSystemApi.Controllers
                 if (this.GetUserID() == Owner.UserID)
                 {
                     Response response = await _service.Update(Owner);
-                    return response;
+                    return this.SendResponse(response);
                 }
-                DataResponse<Student> responseError = new DataResponse<Student>();
-                responseError.Success = false;
-                responseError.ErrorList.Add("Permission Denied");
-                return responseError;
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -139,15 +108,13 @@ namespace AcademicSystemApi.Controllers
                 if (this.GetUserID() == (await _service.GetByID(id)).Data[0].UserID)
                 {
                     Response response = await _service.Delete(id);
-                    return response;
+                    return this.SendResponse(response);
                 }
-                DataResponse<Student> responseError = new DataResponse<Student>();
-                responseError.Success = false;
-                responseError.ErrorList.Add("Permission Denied");
-                return responseError;
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
