@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -18,9 +19,20 @@ namespace AcademicSystemApi.Controllers
     public class SubjectController : ControllerBase
     {
         ISubjectService _service;
-        public SubjectController(ISubjectService service)
+        IUserService _userService;
+        IInstructorService _instructorService;
+        IStudentService _studentService;
+        ICoordinatorService _coordinatorService;
+        IClassService _classService;
+
+        public SubjectController(ISubjectService service, IUserService userService, IInstructorService instructorService, IStudentService studentService, ICoordinatorService coordinatorService, IClassService classService)
         {
             this._service = service;
+            this._userService = userService;
+            this._instructorService = instructorService;
+            this._studentService = studentService;
+            this._coordinatorService = coordinatorService;
+            this._classService = classService;
         }
 
         [Authorize]
@@ -42,6 +54,55 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        private async Task<bool> PermissionCheckToReadSubject(Subject subject)
+        {
+            bool hasPermissionToRead = false;
+
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+            if (user.Instructor != null)
+            {
+                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                if (subject.Instructors != null)
+                {
+                    foreach (SubjectInstructor subjectInstructor in subject.Instructors)
+                    {
+                        if (instructor.Subjects.Where(s => s.InstructorID == subjectInstructor.InstructorID).ToList().Count > 0) 
+                        {
+                            hasPermissionToRead = true;
+                        }
+                    }
+                }
+            }
+
+            if (user.Student != null)
+            {
+                Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
+                foreach (Class Class in subject.Classes)
+                {
+                    if (student.Classes.Where(c => c.ClassID == Class.ID).ToList().Count > 0)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+
+            if (user.Coordinator != null)
+            {
+                Coordinator coordinator = (await this._coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
+
+                foreach (CoordinatorClass coordinatorClass in coordinator.Classes)
+                {
+                    Class Class = (await this._classService.GetByID(coordinatorClass.ClassID)).Data[0];
+                    if (Class.CourseID == subject.CourseID)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+
+            return hasPermissionToRead;
+        }
+
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -51,13 +112,17 @@ namespace AcademicSystemApi.Controllers
             {
                 DataResponse<Subject> response = await _service.GetByID(id);
 
-                response.Data.ForEach(subject => subject.Course.Subjects = null);
-
-                return new
+                if (response.HasError())
                 {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                    return response;
+                }
+
+                if (await this.PermissionCheckToReadSubject(response.Data[0]))
+                {
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
             }
             catch (Exception e)
             {
