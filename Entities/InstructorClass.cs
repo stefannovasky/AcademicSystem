@@ -7,8 +7,8 @@ namespace Entities
     public class InstructorClass
     {
         public int InstructorID { get; set; }
-        public Instructor Instructor { get; set; }
+        public virtual Instructor Instructor { get; set; }
         public int ClassID { get; set; }
-        public Class Class { get; set; }
+        public virtual Class Class { get; set; }
     }
 }
