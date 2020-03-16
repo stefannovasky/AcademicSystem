@@ -38,7 +38,25 @@ namespace AcademicSystemApi.Extensions
         }
 
         /// <summary>
-        /// If user isn't a owner return 0
+        /// If user isn't a coordinator return 0
+        /// </summary>
+        /// <returns></returns>
+        public async static Task<int> VerifyIfUserIsInstructorAndReturnInstructorId(this ControllerBase controller, IUserService _userService)
+        {
+            string idstring = controller.HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
+            int id = Convert.ToInt32(idstring);
+
+            User user = (await _userService.GetByID(id)).Data[0];
+            if (user.Instructor != null)
+            {
+                return user.Instructor.ID;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// If user isn't a coordinator return 0
         /// </summary>
         /// <returns></returns>
         public async static Task<int> VerifyIfUserIsCoordinatorAndReturnCoordinatorId(this ControllerBase controller, IUserService _userService)

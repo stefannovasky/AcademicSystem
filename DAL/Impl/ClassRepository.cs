@@ -5,6 +5,7 @@ using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -86,6 +87,7 @@ namespace DAL.Impl
             {
 
                 response.Data.Add(await _context.Classes
+                    .AsNoTracking()
                     .Include(c => c.Attendances)
                     .Include(c => c.Coordinators)
                     .Include(c => c.Course)
@@ -93,8 +95,8 @@ namespace DAL.Impl
                     .Include(c => c.Subject)
                     .SingleOrDefaultAsync(c => c.IsActive && c.ID == id)
                 );
-                return response;
 
+                return response;
             }
             catch (Exception e)
             {
@@ -103,6 +105,7 @@ namespace DAL.Impl
                 return response;
             }
         }
+
 
         public async Task<DataResponse<Class>> Update(Class item)
         {

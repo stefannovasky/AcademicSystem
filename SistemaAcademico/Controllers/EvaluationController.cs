@@ -26,6 +26,8 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         public async Task<object> GetEvaluations()
         {
+
+
             try
             {
                 DataResponse<Evaluation> response = await _service.GetAll();
