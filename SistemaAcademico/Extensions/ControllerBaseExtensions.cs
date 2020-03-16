@@ -3,6 +3,7 @@ using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,6 +72,16 @@ namespace AcademicSystemApi.Extensions
             }
 
             return 0;
+        }
+
+
+        public static string SendResponse(this ControllerBase controller, object obj)
+        {
+            return JsonConvert.SerializeObject(obj, Formatting.Indented,
+                                new JsonSerializerSettings
+                                {
+                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                });
         }
     }
 }

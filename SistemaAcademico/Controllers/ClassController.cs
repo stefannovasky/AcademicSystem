@@ -99,14 +99,10 @@ namespace AcademicSystemApi.Controllers
                 DataResponse<Class> response = await _classService.GetByID(id);
 
                 // verify 
-                
-                if (await this.PermissionCheckToReadClass(response))
+                Class Class = (await _classService.GetByID(id)).Data[0];
+                if (await this.PermissionCheckToReadClass(Class))
                 {
-                    return JsonConvert.SerializeObject(response.Data, Formatting.Indented,
-                                new JsonSerializerSettings
-                                {
-                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                });
+                    return this.SendResponse(response);
                 }
 
                 return Forbid();
@@ -155,16 +151,15 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
-        private async Task<bool> PermissionCheckToReadClass(DataResponse<Class> response)
+        private async Task<bool> PermissionCheckToReadClass(Class Class)
         {
             bool hasPermissionToRead = false;
             int userID = this.GetUserID();
             User u = (await this._userService.GetByID(userID)).Data[0];
 
-            if (response.Data[0].Students != null)
+            if (Class.Students != null)
             {
-                foreach (StudentClass student in response.Data[0].Students)
+                foreach (StudentClass student in Class.Students)
                 {
                     if (student.StudentID == u.Student.ID)
                     {
@@ -172,9 +167,9 @@ namespace AcademicSystemApi.Controllers
                     }
                 }
             }
-            if (response.Data[0].Instructors != null)
+            if (Class.Instructors != null)
             {
-                foreach (InstructorClass instructor in response.Data[0].Instructors)
+                foreach (InstructorClass instructor in Class.Instructors)
                 {
                     if (instructor.InstructorID == u.Instructor.ID)
                     {
@@ -183,11 +178,11 @@ namespace AcademicSystemApi.Controllers
                 }
             }
             Coordinator coordinator = (await this._coordinatorService.GetByID(u.Coordinator.ID)).Data[0];
-            if (response.Data[0].Coordinators != null)
+            if (Class.Coordinators != null)
             {
-                foreach (CoordinatorClass coordinatorClass in response.Data[0].Coordinators)
+                foreach (CoordinatorClass coordinatorClass in Class.Coordinators)
                 {
-                    if ((coordinator.Classes.Where(c => c.ClassID == response.Data[0].ID).ToList().Count) > 0)
+                    if ((coordinator.Classes.Where(c => c.ClassID == Class.ID).ToList().Count) > 0)
                     {
                         hasPermissionToRead = true;
                     }
@@ -195,5 +190,7 @@ namespace AcademicSystemApi.Controllers
             }
             return hasPermissionToRead;
         }
+
+
     }
 }
