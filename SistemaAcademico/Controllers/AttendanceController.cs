@@ -27,6 +27,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+
                 DataResponse<Attendance> response = await _service.GetAll();
 
                 return new

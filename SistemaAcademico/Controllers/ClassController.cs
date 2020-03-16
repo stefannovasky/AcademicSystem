@@ -9,6 +9,7 @@ using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Shared;
 
 namespace AcademicSystemApi.Controllers
@@ -21,12 +22,14 @@ namespace AcademicSystemApi.Controllers
         ICourseService _courseService;
         IUserService _userService;
         IOwnerService _ownerService;
-        public ClassController(IClassService classService, ICourseService courseService, IUserService userService, IOwnerService ownerService)
+        ICoordinatorService _coordinatorService;
+        public ClassController(IClassService classService, ICourseService courseService, IUserService userService, IOwnerService ownerService, ICoordinatorService coordinatorService)
         {
             this._classService = classService;
             this._courseService = courseService;
             this._userService = userService;
             this._ownerService = ownerService;
+            this._coordinatorService = coordinatorService;
         }
 
         [HttpPost]
@@ -95,18 +98,18 @@ namespace AcademicSystemApi.Controllers
             {
                 DataResponse<Class> response = await _classService.GetByID(id);
 
-                response.Data[0].Course.Classes = null;
-                response.Data[0].Subject.Classes = null;
-                
-                return new
+                // verify 
+                Class Class = (await _classService.GetByID(id)).Data[0];
+                if (await this.PermissionCheckToReadClass(Class))
                 {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
             }
             catch (Exception e)
             {
-                return null;
+                return Forbid();
             }
         }
 
@@ -129,6 +132,64 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        [Route("student")]
+        public async Task<object> AddStudent([FromBody] StudentClass item)
+        {
+            try
+            {
+                Response response = await _classService.AddStudent(new Class() { ID = item.ClassID }, new Student() { ID = item.StudentID });
+                return new
+                {
+                    success = response.Success
+                };
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        private async Task<bool> PermissionCheckToReadClass(Class Class)
+        {
+            bool hasPermissionToRead = false;
+            int userID = this.GetUserID();
+            User u = (await this._userService.GetByID(userID)).Data[0];
+
+            if (Class.Students != null)
+            {
+                foreach (StudentClass student in Class.Students)
+                {
+                    if (student.StudentID == u.Student.ID)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+            if (Class.Instructors != null)
+            {
+                foreach (InstructorClass instructor in Class.Instructors)
+                {
+                    if (instructor.InstructorID == u.Instructor.ID)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+            Coordinator coordinator = (await this._coordinatorService.GetByID(u.Coordinator.ID)).Data[0];
+            if (Class.Coordinators != null)
+            {
+                foreach (CoordinatorClass coordinatorClass in Class.Coordinators)
+                {
+                    if ((coordinator.Classes.Where(c => c.ClassID == Class.ID).ToList().Count) > 0)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+            return hasPermissionToRead;
+        }
 
 
     }
