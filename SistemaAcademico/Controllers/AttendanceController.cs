@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +18,20 @@ namespace AcademicSystemApi.Controllers
     public class AttendanceController : ControllerBase
     {
         IAttendanceService _service;
-        public AttendanceController(IAttendanceService service)
+        IUserService _userService; 
+        ICoordinatorService _coordinatorService;
+        IClassService _classService;
+        IStudentService _studentService;
+        IInstructorService _instructorService; 
+
+        public AttendanceController(IAttendanceService service, IUserService userService, ICoordinatorService coordinatorService, IClassService classService, IStudentService studentService, IInstructorService instructorService)
         {
             this._service = service;
+            this._userService = userService;
+            this._coordinatorService = coordinatorService;
+            this._classService = classService;
+            this._studentService = studentService;
+            this._instructorService = instructorService;
         }
 
         [Authorize]
@@ -42,6 +54,41 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        private async Task<bool> PermissionCheckToReadAttendance(Attendance attendance)
+        {
+            bool hasPermissionToRead = false;
+
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+            //Ser Coordinator/ Instructor da classe que a attendance foi registrada
+            //Ser o aluno registrado pelo atendance
+
+            if (user.Coordinator != null)
+            {
+                Coordinator coordinator = (await this._coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
+                if (coordinator.Classes.Where(c => c.ClassID == attendance.ClassID).ToList().Count > 0)
+                {
+                    hasPermissionToRead = true;
+                }
+            }
+            if (user.Instructor != null)
+            {
+                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                if (instructor.Classes.Where(i => i.ClassID == attendance.ClassID).ToList().Count > 0) 
+                {
+                    hasPermissionToRead = true;
+                }
+            }
+            if (user.Student != null)
+            {
+                if (user.Student.ID == attendance.StudentID)
+                {
+                    hasPermissionToRead = true; 
+                }
+            }
+
+            return hasPermissionToRead;
+        }
+
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -51,13 +98,17 @@ namespace AcademicSystemApi.Controllers
             {
                 DataResponse<Attendance> response = await _service.GetByID(id);
 
-                //response.Data.ForEach(Attendance => Attendance.Course.Attendances = null);
-
-                return new
+                if (response.HasError())
                 {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                    return response; 
+                }
+
+                if (await this.PermissionCheckToReadAttendance(response.Data[0]))
+                {
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
             }
             catch (Exception e)
             {
