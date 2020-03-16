@@ -19,17 +19,23 @@ namespace AcademicSystemApi.Controllers
     {        
         ICourseService _courseService;
         IUserService _userService;
-        IOwnerService _ownerService; 
-        public CourseController(ICourseService service, IUserService userService, IOwnerService ownerService)
+        IOwnerService _ownerService;
+        IStudentService _studentService;
+        IClassService _classService;
+        ICoordinatorService _coordinatorService;
+        public CourseController(ICourseService service, IUserService userService, IOwnerService ownerService, IStudentService studentService, IClassService classService, ICoordinatorService coordinatorService)
         {
             this._courseService = service;
             this._userService = userService;
             this._ownerService = ownerService;
+            this._studentService = studentService;
+            this._classService = classService;
+            this._coordinatorService = coordinatorService;
         }
 
         [Authorize]
         public async Task<object> GetCourses()
-        {
+        {                                                                                                                     
             try
             {
                 DataResponse<Course> response = await _courseService.GetAll();
@@ -46,6 +52,53 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+
+        private async Task<bool> PermissionCheckToReadCourse(Course c)
+        {
+            User u = (await _userService.GetByID(this.GetUserID())).Data[0];
+
+            // verify 
+            bool hasPermissionToRead = false;
+            if (u.Owner != null)
+            {
+                Owner o = (await _ownerService.GetByID(u.Owner.ID)).Data[0];
+                foreach (OwnerCourse ownerCourse in o.Courses)
+                {
+                    if ((c.Owners.Where(owner => owner.CourseID == ownerCourse.OwnerID).ToList()).Count > 0)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+            if (u.Student != null)
+            {
+                Student student = (await this._studentService.GetByID(u.Student.ID)).Data[0];
+                foreach (StudentClass studentClass in student.Classes)
+                {
+                    Class Class = (await this._classService.GetByID(studentClass.ClassID)).Data[0];
+                    if (Class.CourseID == c.ID)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+            if (u.Coordinator != null)
+            {
+                Coordinator coordinator = (await this._coordinatorService.GetByID(u.Coordinator.ID)).Data[0];
+                foreach (CoordinatorClass coordinatorClass in coordinator.Classes)
+                {
+                    Class Class = (await this._classService.GetByID(coordinatorClass.ClassID)).Data[0];
+                    if (Class.Coordinators.Where(c => c.CoordinatorID == coordinator.ID).ToList().Count > 0)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+
+            return hasPermissionToRead;
+        }
+
+
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -55,27 +108,18 @@ namespace AcademicSystemApi.Controllers
             {
                 DataResponse<Course> response = await _courseService.GetByID(id);
 
-                foreach (var course in response.Data)
+                if (response.HasError())
                 {
-                    foreach (var owner in course.Owners)
-                    {
-                        owner.Course = null;
-                    }
-                    foreach (var Class in course.Classes)
-                    {
-                        Class.Course = null; 
-                    }
-                    foreach (var subject in course.Subjects)
-                    {
-                        subject.Course = null;
-                    }
+                    return this.SendResponse(response);
                 }
 
-                return new
+                // verify
+                if (await this.PermissionCheckToReadCourse(response.Data[0]))
                 {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
             }
             catch (Exception e)
             {
