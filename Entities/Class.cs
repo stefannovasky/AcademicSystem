@@ -13,14 +13,14 @@ namespace Entities
         public DateTime DeletedAt { get; set; }
 
         public int SubjectID { get; set; }
-        public virtual Subject Subject { get; set; }
+        public  Subject Subject { get; set; }
         public int CourseID { get; set; }
-        public virtual Course Course { get; set; }
+        public  Course Course { get; set; }
 
-        public virtual ICollection<StudentClass> Students { get; set; }
-        public virtual ICollection<Evaluation> Evaluations { get; set; }
-        public virtual ICollection<Attendance> Attendances { get; set; }
-        public virtual ICollection<InstructorClass> Instructors { get; set; }
-        public virtual ICollection<CoordinatorClass> Coordinators { get; set; }
+        public  ICollection<StudentClass> Students { get; set; }
+        public  ICollection<Evaluation> Evaluations { get; set; }
+        public  ICollection<Attendance> Attendances { get; set; }
+        public  ICollection<InstructorClass> Instructors { get; set; }
+        public  ICollection<CoordinatorClass> Coordinators { get; set; }
     }
 }

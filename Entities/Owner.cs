@@ -12,7 +12,7 @@ namespace Entities
         public DateTime UpdatedAt { get; set; }
         public DateTime DeletedAt { get; set; }
         public int UserID { get; set; }
-        public virtual User User { get; set; }
-        public virtual ICollection<OwnerCourse> Courses {get; set;}
+        public  User User { get; set; }
+        public  ICollection<OwnerCourse> Courses {get; set;}
     }   
 }

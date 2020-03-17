@@ -12,8 +12,8 @@ namespace Entities
         public DateTime UpdatedAt { get; set; }
         public DateTime DeletedAt { get; set; }
         public int UserID { get; set; }
-        public virtual User User { get; set; }
-        public virtual ICollection<SubjectInstructor> Subjects { get; set; }
-        public virtual ICollection<InstructorClass> Classes { get; set; }
+        public  User User { get; set; }
+        public  ICollection<SubjectInstructor> Subjects { get; set; }
+        public  ICollection<InstructorClass> Classes { get; set; }
     }
 }

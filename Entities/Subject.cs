@@ -13,9 +13,9 @@ namespace Entities
         public DateTime DeletedAt { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<SubjectInstructor> Instructors { get; set; }
+        public  ICollection<SubjectInstructor> Instructors { get; set; }
         public int CourseID { get; set; }
-        public virtual Course Course { get; set; }
-        public virtual ICollection<Class> Classes { get; set; }
+        public  Course Course { get; set; }
+        public  ICollection<Class> Classes { get; set; }
     }
 }

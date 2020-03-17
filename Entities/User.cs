@@ -18,11 +18,11 @@ namespace Entities
         public string Number { get; set; }
         public string State {get; set; }
         public string Name { get; set; }
-        public virtual Student Student { get; set; }
+        public  Student Student { get; set; }
 
-        public virtual Owner Owner { get; set; }
-        public virtual Coordinator Coordinator { get; set; }
-        public virtual Instructor Instructor { get; set; }
+        public  Owner Owner { get; set; }
+        public  Coordinator Coordinator { get; set; }
+        public  Instructor Instructor { get; set; }
     }
 
 

@@ -50,7 +50,7 @@ namespace SistemaAcademico
             }
             // services.AddTransient<IUserService, UserService>()
             //or AddScoped (build 1x per request)
-            services.AddDbContextPool<AcademyContext>(c => c.UseLazyLoadingProxies().UseSqlServer(Configuration["ConnectionString"]));
+            services.AddDbContextPool<AcademyContext>(c => c.UseSqlServer(Configuration["ConnectionString"]));
             #endregion
 
             services.AddCors();
