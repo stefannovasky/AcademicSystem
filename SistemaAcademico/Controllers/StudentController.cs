@@ -94,8 +94,10 @@ namespace AcademicSystemApi.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<object> UpdateStudent(Student student)
+        [Route("{id}")]
+        public async Task<object> UpdateStudent(Student student, int id)
         {
+            student.ID = id;
             try
             {
                 User user = (await userService.GetByID(this.GetUserID())).Data[0];
@@ -137,20 +139,19 @@ namespace AcademicSystemApi.Controllers
 
         private async Task<bool> PermisionCheckStudentInClassViewOrUpdate(Student student)
         {
-            bool isPermited = false;
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
             if (user.Student != null && user.Student.ID == student.ID)
             {
-                isPermited = true;
+                return true;
             }
             if (user.Instructor != null)
             {
                 Instructor instructor = (await InstructorService.GetByID(user.Instructor.ID)).Data[0];
                 foreach (InstructorClass instructorClass in instructor.Classes)
                 {
-                    if (student.Classes.Where(ic => ic.ClassID == instructorClass.ClassID).Count() > 0)
+                    if (student.Classes.Where(ic => ic.ClassID == instructorClass.ClassID).Any())
                     {
-                        isPermited = true;
+                        return true;
                     }
                 }
             }
@@ -160,9 +161,9 @@ namespace AcademicSystemApi.Controllers
 
                 foreach (CoordinatorClass CoordinatorClass in Coordinator.Classes)
                 {
-                    if (student.Classes.Where(ic => ic.ClassID == CoordinatorClass.ClassID).Count() > 0)
+                    if (student.Classes.Where(ic => ic.ClassID == CoordinatorClass.ClassID).Any())
                     {
-                        isPermited = true;
+                        return true;
                     }
                 }
             }
@@ -174,14 +175,14 @@ namespace AcademicSystemApi.Controllers
                     Course course = (await CourseService.GetByID(ownerCourse.CourseID)).Data[0];
                     foreach (Class @class in course.Classes)
                     {
-                        if (student.Classes.Where(sc => sc.ClassID == @class.ID).Count() > 0)
+                        if (student.Classes.Where(sc => sc.ClassID == @class.ID).Any())
                         {
-                            isPermited = true;
+                            return true;
                         }
                     }
                 }
             }
-            return isPermited;
+            return false;
         }
     }
 }

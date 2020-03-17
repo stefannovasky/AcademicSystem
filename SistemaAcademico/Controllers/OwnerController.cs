@@ -80,8 +80,10 @@ namespace AcademicSystemApi.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<object> UpdateOwner(Owner Owner)
+        [Route("{id}")]
+        public async Task<object> UpdateOwner(Owner Owner, int id)
         {
+            Owner.ID = id;
             try
             {
                 if (this.GetUserID() == Owner.UserID)

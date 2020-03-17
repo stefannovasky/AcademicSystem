@@ -90,8 +90,10 @@ namespace AcademicSystemApi.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<object> UpdateInstructor(Instructor Instructor)
+        [Route("{id}")]
+        public async Task<object> UpdateInstructor(Instructor Instructor, int id)
         {
+            Instructor.ID = id;
             try
             {
                 if (this.GetUserID() == Instructor.UserID) {
@@ -130,43 +132,42 @@ namespace AcademicSystemApi.Controllers
         private async Task<bool> VerifyPermision(Instructor instructor) 
         {
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
-            bool isPermited = false;
             if (user.Instructor.ID == instructor.ID)
             {
-                isPermited = true;
+                return true;
             }
             foreach (CoordinatorClass coordinatorClass in (await coordinatorService.GetByID(user.Coordinator.ID)).Data[0].Classes)
             {
-                if (instructor.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Count() > 0)
+                if (instructor.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Any())
                 {
-                    isPermited = true;
+                    return true;
                 }
             }
             foreach (OwnerCourse ownerCourse in (await ownerService.GetByID(user.Owner.ID)).Data[0].Courses)
             {
                 foreach (Class @class in (await courseService.GetByID(ownerCourse.CourseID)).Data[0].Classes)
                 {
-                    if (instructor.Classes.Where(c => c.ClassID == @class.ID).Count() > 0)
+                    if (instructor.Classes.Where(c => c.ClassID == @class.ID).Any())
                     {
-                        isPermited = true;
+                        return true;
                     }
                 }
             }
             foreach (InstructorClass instructorClass in (await _service.GetByID(user.Instructor.ID)).Data[0].Classes)
             {
-                if (instructor.Classes.Where(c => c.ClassID == instructorClass.ClassID).Count() > 0) 
+                if (instructor.Classes.Where(c => c.ClassID == instructorClass.ClassID).Any()) 
                 {
-                    isPermited = true;
+                    return true;
                 }
             }
             foreach (StudentClass StudentClass in (await studentService.GetByID(user.Student.ID)).Data[0].Classes)
             {
-                if (instructor.Classes.Where(c => c.ClassID == StudentClass.ClassID).Count() > 0)
+                if (instructor.Classes.Where(c => c.ClassID == StudentClass.ClassID).Any())
                 {
-                    isPermited = true;
+                    return true;
                 }
             }
-            return isPermited;
+            return false;
         }
     }
 }

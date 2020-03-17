@@ -52,7 +52,7 @@ namespace AcademicSystemApi.Controllers
                 Coordinator coordinator = (await _service.GetByID(id)).Data[0];
                 foreach (CoordinatorClass coordinatorClass in response.Data[0].Classes)
                 {
-                    if (coordinator.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Count() > 0)
+                    if (coordinator.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Any())
                     {
                         return this.SendResponse(response);
                     }
@@ -88,8 +88,10 @@ namespace AcademicSystemApi.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<object> UpdateCoordinator(Coordinator Coordinator)
+        [Route("{id}")]
+        public async Task<object> UpdateCoordinator(Coordinator Coordinator, int id)
         {
+            Coordinator.ID = id;
             try
             {
                 if (Coordinator.UserID == this.GetUserID())
