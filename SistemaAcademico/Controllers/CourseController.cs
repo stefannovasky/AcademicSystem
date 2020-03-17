@@ -203,5 +203,27 @@ namespace AcademicSystemApi.Controllers
             }
             return false;
         }
+
+        [HttpPost]
+        [Route("{CourseID}/owners")]
+        [Authorize]
+        public async Task<object> AddOwner(Owner owner, int CourseID)
+        {
+            try
+            {
+                User user = (await _userService.GetByID(this.GetUserID())).Data[0];
+                Owner userOwner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                if (userOwner.Courses.Where(c => c.CourseID == CourseID).Any())
+                {
+                    return await _courseService.AddOwner((await _courseService.GetByID(CourseID)).Data[0] , owner);
+                }
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
     }
 }
