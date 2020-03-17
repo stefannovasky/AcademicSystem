@@ -34,6 +34,7 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
+        /*
         [Authorize]
         public async Task<object> GetAttendances()
         {
@@ -53,7 +54,7 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        */
         private async Task<bool> PermissionCheckToReadAttendance(Attendance attendance)
         {
             bool hasPermissionToRead = false;
@@ -122,6 +123,12 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Instructor == null)
+                {
+                    return Forbid();
+                }
+
                 Response response = await _service.Create(Attendance);
                 return new
                 {
@@ -143,6 +150,11 @@ namespace AcademicSystemApi.Controllers
             Attendance.ID = id;
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Instructor == null)
+                {
+                    return Forbid();
+                }
                 Response response = await _service.Update(Attendance);
                 return new
                 {
@@ -162,6 +174,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Instructor == null)
+                {
+                    return Forbid();
+                }
                 Response response = await _service.Delete(id);
 
                 return new

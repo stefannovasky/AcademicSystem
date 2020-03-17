@@ -30,6 +30,7 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
+        /*
         [Authorize]
         public async Task<object> GetEvaluations()
         {
@@ -48,7 +49,7 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        */
 
         private async Task<bool> PermissionCheckToReadEvaluation(Evaluation e)
         {
@@ -110,6 +111,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Instructor == null)
+                {
+                    return Forbid();
+                }
                 Response response = await _service.Create(Evaluation);
                 return new
                 {
@@ -131,6 +137,11 @@ namespace AcademicSystemApi.Controllers
             Evaluation.ID = id;
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Instructor == null)
+                {
+                    return Forbid();
+                }
                 Response response = await _service.Update(Evaluation);
                 return new
                 {
@@ -150,6 +161,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Instructor == null)
+                {
+                    return Forbid();
+                }
                 Response response = await _service.Delete(id);
 
                 return new

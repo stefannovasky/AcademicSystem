@@ -34,7 +34,7 @@ namespace AcademicSystemApi.Controllers
             this._coordinatorService = coordinatorService;
             this._classService = classService;
         }
-
+        /*
         [Authorize]
         public async Task<object> GetSubjects()
         {
@@ -53,7 +53,7 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        */
         private async Task<bool> PermissionCheckToReadSubject(Subject subject)
         {
             bool hasPermissionToRead = false;
@@ -136,6 +136,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Owner == null)
+                {
+                    return Forbid();
+                }
                 Response response = await _service.Create(Subject);
                 return new
                 {
@@ -153,6 +158,11 @@ namespace AcademicSystemApi.Controllers
         [Route("{id}")]
         public async Task<object> UpdateSubject(Subject Subject, int id)
         {
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+            if (user.Owner == null)
+            {
+                return Forbid();
+            }
             Subject.ID = id; 
             try
             {
@@ -175,6 +185,12 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Owner == null)
+                {
+                    return Forbid();
+                }
+
                 Response response = await _service.Delete(id);
 
                 return new

@@ -69,9 +69,10 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /*
         [Authorize]
         public async Task<object> GetAll()
-        {
+        { 
             try
             {
                 DataResponse<Class> response = await _classService.GetAll();
@@ -88,6 +89,7 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
+        */
 
         [HttpGet]
         [Route("{id}")]
@@ -120,6 +122,12 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Owner == null && user.Instructor == null && user.Coordinator == null)
+                {
+                    return Forbid();
+                }
+
                 Response response = await _classService.Delete(id);
                 return new
                 {

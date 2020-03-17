@@ -32,7 +32,7 @@ namespace AcademicSystemApi.Controllers
             this._classService = classService;
             this._coordinatorService = coordinatorService;
         }
-
+        /*
         [Authorize]
         public async Task<object> GetCourses()
         {                                                                                                                     
@@ -51,7 +51,7 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        */
 
         private async Task<bool> PermissionCheckToReadCourse(Course c)
         {
