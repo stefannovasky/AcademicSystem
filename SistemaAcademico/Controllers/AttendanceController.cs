@@ -124,16 +124,22 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-                if (user.Instructor == null)
+
+                if (user.Instructor != null)
                 {
-                    return Forbid();
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+
+                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
+                    {
+                        Response response = await _service.Create(Attendance);
+                        return new
+                        {
+                            success = response.Success
+                        };
+                    }
                 }
 
-                Response response = await _service.Create(Attendance);
-                return new
-                {
-                    success = response.Success
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -151,15 +157,22 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-                if (user.Instructor == null)
+
+                if (user.Instructor != null)
                 {
-                    return Forbid();
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+
+                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
+                    {
+                        Response response = await _service.Update(Attendance);
+                        return new
+                        {
+                            success = response.Success
+                        };
+                    }
                 }
-                Response response = await _service.Update(Attendance);
-                return new
-                {
-                    success = response.Success
-                };
+
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -175,16 +188,22 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-                if (user.Instructor == null)
-                {
-                    return Forbid();
-                }
-                Response response = await _service.Delete(id);
 
-                return new
+                if (user.Instructor != null)
                 {
-                    success = response.Success
-                };
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                    Attendance Attendance = (await this._service.GetByID(id)).Data[0];
+                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
+                    {
+                        Response response = await _service.Delete(id);
+                        return new
+                        {
+                            success = response.Success
+                        };
+                    }
+                }
+
+                return Forbid();
             }
             catch (Exception e)
             {
