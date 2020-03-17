@@ -139,6 +139,12 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Owner == null && user.Instructor == null && user.Coordinator == null)
+                {
+                    return Forbid();
+                }
+
                 Response response = await _classService.AddStudent(new Class() { ID = item.ClassID }, new Student() { ID = item.StudentID });
                 return new
                 {
@@ -150,6 +156,58 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("instructor")]
+        public async Task<object> AddInstructor([FromBody] InstructorClass item)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Owner == null && user.Instructor == null && user.Coordinator == null)
+                {
+                    return Forbid();
+                }
+
+                Response response = await _classService.AddInstructor(new Class() { ID = item.ClassID }, new Instructor() { ID = item.InstructorID });
+                return new
+                {
+                    success = response.Success
+                };
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("coordinator")]
+        public async Task<object> AddCoordinator([FromBody] CoordinatorClass item)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                if (user.Owner == null && user.Coordinator == null)
+                {
+                    return Forbid();
+                }
+
+                Response response = await _classService.AddCoordinator(new Class() { ID = item.ClassID }, new Coordinator() { ID = item.CoordinatorID });
+                return new
+                {
+                    success = response.Success
+                };
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        
 
         private async Task<bool> PermissionCheckToReadClass(Class Class)
         {
