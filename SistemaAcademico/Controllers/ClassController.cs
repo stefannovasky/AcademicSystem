@@ -223,13 +223,16 @@ namespace AcademicSystemApi.Controllers
             int userID = this.GetUserID();
             User u = (await this._userService.GetByID(userID)).Data[0];
 
-            if (Class.Students != null)
+            if (u.Student != null)
             {
-                foreach (StudentClass student in Class.Students)
+                if (Class.Students != null)
                 {
-                    if (student.StudentID == u.Student.ID)
+                    foreach (StudentClass student in Class.Students)
                     {
-                        hasPermissionToRead = true;
+                        if (student.StudentID == u.Student.ID)
+                        {
+                            hasPermissionToRead = true;
+                        }
                     }
                 }
             }

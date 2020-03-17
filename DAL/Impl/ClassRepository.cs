@@ -89,6 +89,7 @@ namespace DAL.Impl
                 response.Data.Add(await _context.Classes
                     .AsNoTracking()
                     .Include(c => c.Attendances)
+                    .Include(c => c.Instructors)
                     .Include(c => c.Coordinators)
                     .Include(c => c.Course)
                     .Include(c => c.Students)
@@ -138,7 +139,10 @@ namespace DAL.Impl
                     ClassID = Class.ID,
                     InstructorID = instructor.ID
                 };
-                (await _context.Classes.Include(c => c.Instructors).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Instructors.Add(instructorClass);
+                
+                //??_context.
+
+                (await _context.Classes.Include(c => c.Instructors).Where(c => c.ID == Class.ID).AsNoTracking().FirstOrDefaultAsync()).Instructors.Add(instructorClass);
                 await _context.SaveChangesAsync();
                 return response;
 
