@@ -24,8 +24,9 @@ namespace AcademicSystemApi.Controllers
         IStudentService _studentService;
         ICoordinatorService _coordinatorService;
         IClassService _classService;
-
-        public SubjectController(ISubjectService service, IUserService userService, IInstructorService instructorService, IStudentService studentService, ICoordinatorService coordinatorService, IClassService classService)
+        ICourseService _courseService;
+        IOwnerService _ownerService;
+        public SubjectController(ISubjectService service, IUserService userService, IInstructorService instructorService, IStudentService studentService, ICoordinatorService coordinatorService, IClassService classService, ICourseService courseService, IOwnerService ownerService)
         {
             this._service = service;
             this._userService = userService;
@@ -33,6 +34,8 @@ namespace AcademicSystemApi.Controllers
             this._studentService = studentService;
             this._coordinatorService = coordinatorService;
             this._classService = classService;
+            this._courseService = courseService;
+            this._ownerService = ownerService;
         }
         /*
         [Authorize]
@@ -56,7 +59,6 @@ namespace AcademicSystemApi.Controllers
         */
         private async Task<bool> PermissionCheckToReadSubject(Subject subject)
         {
-            bool hasPermissionToRead = false;
 
             User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
             if (user.Instructor != null)
@@ -68,7 +70,7 @@ namespace AcademicSystemApi.Controllers
                     {
                         if (instructor.Subjects.Where(s => s.InstructorID == subjectInstructor.InstructorID).ToList().Count > 0) 
                         {
-                            hasPermissionToRead = true;
+                            return true;
                         }
                     }
                 }
@@ -81,7 +83,7 @@ namespace AcademicSystemApi.Controllers
                 {
                     if (student.Classes.Where(c => c.ClassID == Class.ID).ToList().Count > 0)
                     {
-                        hasPermissionToRead = true;
+                        return true;
                     }
                 }
             }
@@ -95,12 +97,12 @@ namespace AcademicSystemApi.Controllers
                     Class Class = (await this._classService.GetByID(coordinatorClass.ClassID)).Data[0];
                     if (Class.CourseID == subject.CourseID)
                     {
-                        hasPermissionToRead = true;
+                        return true;
                     }
                 }
             }
 
-            return hasPermissionToRead;
+            return false;
         }
 
         [HttpGet]
@@ -137,15 +139,26 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-                if (user.Owner == null)
+
+                if (user.Owner != null)
                 {
-                    return Forbid();
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == Subject.CourseID).Any())
+                        {
+                            Response response = await _service.Create(Subject);
+                            return new
+                            {
+                                success = response.Success
+                            };
+                        }
+                    }
                 }
-                Response response = await _service.Create(Subject);
-                return new
-                {
-                    success = response.Success
-                };
+
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -158,19 +171,30 @@ namespace AcademicSystemApi.Controllers
         [Route("{id}")]
         public async Task<object> UpdateSubject(Subject Subject, int id)
         {
-            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-            if (user.Owner == null)
-            {
-                return Forbid();
-            }
             Subject.ID = id; 
             try
             {
-                Response response = await _service.Update(Subject);
-                return new
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null)
                 {
-                    success = response.Success
-                };
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == Subject.CourseID).Any())
+                        {
+                            Response response = await _service.Update(Subject);
+                            return new
+                            {
+                                success = response.Success
+                            };
+                        }
+                    }
+                }
+
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -186,17 +210,26 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-                if (user.Owner == null)
+
+                if (user.Owner != null)
                 {
-                    return Forbid();
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == id).Any())
+                        {
+                            Response response = await _service.Delete(id);
+                            return new
+                            {
+                                success = response.Success
+                            };
+                        }
+                    }
                 }
 
-                Response response = await _service.Delete(id);
-
-                return new
-                {
-                    success = response.Success
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
