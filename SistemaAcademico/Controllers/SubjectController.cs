@@ -150,10 +150,7 @@ namespace AcademicSystemApi.Controllers
                         if (course.Classes.Where(c => c.ID == Subject.CourseID).Any())
                         {
                             Response response = await _service.Create(Subject);
-                            return new
-                            {
-                                success = response.Success
-                            };
+                            return this.SendResponse(response);
                         }
                     }
                 }
@@ -186,10 +183,7 @@ namespace AcademicSystemApi.Controllers
                         if (course.Classes.Where(c => c.ID == Subject.CourseID).Any())
                         {
                             Response response = await _service.Update(Subject);
-                            return new
-                            {
-                                success = response.Success
-                            };
+                            return this.SendResponse(response);
                         }
                     }
                 }
@@ -221,10 +215,7 @@ namespace AcademicSystemApi.Controllers
                         if (course.Classes.Where(c => c.ID == id).Any())
                         {
                             Response response = await _service.Delete(id);
-                            return new
-                            {
-                                success = response.Success
-                            };
+                            return this.SendResponse(response);
                         }
                     }
                 }

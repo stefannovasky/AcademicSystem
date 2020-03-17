@@ -40,17 +40,6 @@ namespace AcademicSystemApi.Controllers
             {
                 response.Data[0].Password = "";
 
-                foreach (User user in response.Data)
-                {
-                    if (user.Student != null)
-                        user.Student.User = null;
-                    if (user.Owner != null)
-                        user.Owner.User = null;
-                    if (user.Instructor != null)
-                        user.Instructor.User = null;
-                    if (user.Coordinator != null)
-                        user.Coordinator.User = null;
-                }
 
                 return new
                 {
@@ -76,17 +65,7 @@ namespace AcademicSystemApi.Controllers
             {
                 response.Data[0].Password = "";
 
-                foreach (User user in response.Data)
-                {
-                    if (user.Student != null)
-                        user.Student.User = null;
-                    if (user.Owner != null)
-                        user.Owner.User = null;
-                    if (user.Instructor != null)
-                        user.Instructor.User = null;
-                    if (user.Coordinator != null)
-                        user.Coordinator.User = null;
-                }
+
 
                 return new
                 {
@@ -113,23 +92,7 @@ namespace AcademicSystemApi.Controllers
                 string token = TokenService.GenerateToken(response.Data[0]);
                 response.Data[0].Password = "";
 
-                foreach (User user in response.Data)
-                {
-                    if (user.Student != null)
-                        user.Student.User = null;
-                    if (user.Owner != null)
-                        user.Owner.User = null;
-                    if (user.Instructor != null)
-                        user.Instructor.User = null;
-                    if (user.Coordinator != null)
-                        user.Coordinator.User = null;
-                }
-
-                return new
-                {
-                    user = response.Data[0], 
-                    token = token
-                };
+                return this.SendResponse(response);
             }
 
             return new

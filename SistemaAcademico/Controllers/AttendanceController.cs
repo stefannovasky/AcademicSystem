@@ -132,10 +132,7 @@ namespace AcademicSystemApi.Controllers
                     if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
                     {
                         Response response = await _service.Create(Attendance);
-                        return new
-                        {
-                            success = response.Success
-                        };
+                        return this.SendResponse(response);
                     }
                 }
 
@@ -165,10 +162,7 @@ namespace AcademicSystemApi.Controllers
                     if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
                     {
                         Response response = await _service.Update(Attendance);
-                        return new
-                        {
-                            success = response.Success
-                        };
+                        return this.SendResponse(response);
                     }
                 }
 
@@ -196,10 +190,7 @@ namespace AcademicSystemApi.Controllers
                     if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
                     {
                         Response response = await _service.Delete(id);
-                        return new
-                        {
-                            success = response.Success
-                        };
+                        return this.SendResponse(response);
                     }
                 }
 
