@@ -264,7 +264,7 @@ namespace AcademicSystemApi.Controllers
                 Owner userOwner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
                 if (userOwner.Courses.Where(c => c.CourseID == CourseID).Any())
                 {
-                    return await _courseService.AddSubject((await _courseService.GetByID(CourseID)).Data[0], (await _subjectService.GetByID(SubjectCourse.SubjectID)).Data[0]);
+                    return await _courseService.AddSubject((await _courseService.GetByID(CourseID)).Data[0], (await _subjectService.GetByID(SubjectID)).Data[0]);
                 }
                 return Forbid();
             }

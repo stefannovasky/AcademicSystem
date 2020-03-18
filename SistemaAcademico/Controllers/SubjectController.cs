@@ -102,6 +102,21 @@ namespace AcademicSystemApi.Controllers
                 }
             }
 
+            if (user.Owner != null)
+            {
+                Owner owner = (await this._ownerService.GetByID(user.Owner.ID)).Data[0];
+
+                foreach (OwnerCourse ownerCourse in owner.Courses)
+                {
+                    Course course = (await this._courseService.GetByID(ownerCourse.CourseID)).Data[0];
+
+                    if (course.Subjects.Where(s => s.ID == subject.ID).Any()) 
+                    {
+                        return true; 
+                    }
+                }
+            }
+
             return false;
         }
 
