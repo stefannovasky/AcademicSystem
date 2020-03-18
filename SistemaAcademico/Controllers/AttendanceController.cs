@@ -34,27 +34,6 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
-        /*
-        [Authorize]
-        public async Task<object> GetAttendances()
-        {
-            try
-            {
-
-                DataResponse<Attendance> response = await _service.GetAll();
-
-                return new
-                {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
-        */
         private async Task<bool> PermissionCheckToReadAttendance(Attendance attendance)
         {
             bool hasPermissionToRead = false;
@@ -113,6 +92,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -140,6 +120,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -198,6 +179,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }

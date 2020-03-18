@@ -64,6 +64,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -110,7 +111,8 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
-                return Forbid();
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
             }
         }
 
@@ -144,6 +146,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -206,6 +209,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -257,6 +261,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -292,6 +297,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -379,52 +385,8 @@ namespace AcademicSystemApi.Controllers
             catch (Exception)
             {
                 Response.StatusCode = StatusCode(500).StatusCode;
-                return null; 
+                return null;
             }
         }
-
-
-
-        /*
-        private async Task<bool> PermissionCheckToAddClass(Class Class) 
-        {
-            // Ser um dos coordinator do curso em que a classe está sendo cadastrada 
-            //    class Course 
-            //     Co
-            //Ser owner do curso em que a classe esta sendo cadastrada
-
-            bool hasPermissionToRead = false;
-            int userID = this.GetUserID();
-            User u = (await this._userService.GetByID(userID)).Data[0];
-
-            if (u.Owner != null)
-            {
-                Owner owner = (await _ownerService.GetByID(u.Owner.ID)).Data[0];
-                foreach (OwnerCourse ownerCourse in owner.Courses)
-                {
-                    if (ownerCourse.CourseID == Class.CourseID)
-                    {
-                        hasPermissionToRead = true;
-                    }
-                }
-            }
-
-            if (u.Coordinator != null && Class.Coordinators != null)
-            {
-                //Coordinator coordinator = (await _coordinatorService.GetByID(u.Coordinator.ID)).Data[0];
-
-                //Course course = (await _courseService.GetByID(Class.CourseID)).Data[0];
-                
-                foreach (var coordinator in Class.Coordinators)
-                {
-                    if (coordinator.ClassID == Class.ID)
-                    {
-                        hasPermissionToRead = true;
-                    }
-                }
-            }
-
-            return true; 
-        }*/
     }
 }

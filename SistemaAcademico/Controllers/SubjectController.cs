@@ -128,6 +128,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -159,6 +160,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -192,6 +194,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -224,6 +227,7 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
