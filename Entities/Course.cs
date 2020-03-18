@@ -7,13 +7,14 @@ namespace Entities
     public class Course : IEntity
     {
         public int ID { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public bool IsActive { get; set; } = true;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
         public DateTime DeletedAt { get; set; }
         public string Name { get; set; }
         public string Period { get; set; }
-
-        //n notas, 1 diciplina, n alunos, n frequencias
+        public  ICollection<Class> Classes { get; set; }
+        public  ICollection<Subject> Subjects { get; set; }
+        public  ICollection<OwnerCourse> Owners { get; set; }
     }
 }
