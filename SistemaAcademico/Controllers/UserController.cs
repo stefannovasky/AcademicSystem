@@ -65,12 +65,7 @@ namespace AcademicSystemApi.Controllers
             {
                 response.Data[0].Password = "";
 
-
-
-                return new
-                {
-                    user = response.Data[0]
-                };
+                return this.SendResponse(response);
             }
 
             return new
@@ -92,7 +87,7 @@ namespace AcademicSystemApi.Controllers
                 string token = TokenService.GenerateToken(response.Data[0]);
                 response.Data[0].Password = "";
 
-                return this.SendResponse(response);
+                return this.SendResponse(new { data = response.Data, token = token });
             }
 
             return new
