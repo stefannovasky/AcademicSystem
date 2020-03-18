@@ -66,7 +66,7 @@ namespace AcademicSystemApi.Controllers
             if (user.Coordinator != null)
             {
                 Coordinator coordinator = (await this._coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
-                if (coordinator.Classes.Where(c => c.ClassID == attendance.ClassID).ToList().Count > 0)
+                if (coordinator.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
                 {
                     hasPermissionToRead = true;
                 }
@@ -74,7 +74,7 @@ namespace AcademicSystemApi.Controllers
             if (user.Instructor != null)
             {
                 Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                if (instructor.Classes.Where(i => i.ClassID == attendance.ClassID).ToList().Count > 0) 
+                if (instructor.Classes.Where(i => i.ClassID == attendance.ClassID).Any()) 
                 {
                     hasPermissionToRead = true;
                 }
