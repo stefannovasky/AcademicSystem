@@ -1,10 +1,12 @@
 ﻿using DAL.Interfaces;
 using Entities;
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,8 @@ namespace DAL.Impl
     public class SubjectRepository : ISubjectRepository
     {
         private AcademyContext _context;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public SubjectRepository(AcademyContext academyContext)
         {
             _context = academyContext;
@@ -28,11 +32,11 @@ namespace DAL.Impl
 
                 return new Response() { Success = true };
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 Response r = new Response() { Success = false };
 
-                if (ex.InnerException.Message.Contains("unique index"))
+                if (e.InnerException.Message.Contains("unique index"))
                 {
                     r.ErrorList.Add("Subject already exists");
                 }
@@ -40,6 +44,9 @@ namespace DAL.Impl
                 {
                     r.ErrorList.Add("Insert Subject error");
                 }
+
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
 
                 return r;
             }
@@ -56,8 +63,10 @@ namespace DAL.Impl
                 await _context.SaveChangesAsync();
                 return new Response();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 Response r = new Response() { Success = false };
                 r.ErrorList.Add("Delete Subject error");
                 return r;
@@ -78,8 +87,10 @@ namespace DAL.Impl
 
                 return r;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Subject> r = new DataResponse<Subject>() { Success = false };
                 r.ErrorList.Add("Get all Subjects error");
                 return r;
@@ -105,8 +116,10 @@ namespace DAL.Impl
 
                 return r;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Subject> r = new DataResponse<Subject>() { Success = false };
                 r.ErrorList.Add("Get Subject error");
                 return r;
@@ -128,8 +141,10 @@ namespace DAL.Impl
                 r.Data.Add(u);
                 return r;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Subject> r = new DataResponse<Subject>() { Success = false };
                 r.ErrorList.Add("Update Subject error");
                 return r;
@@ -152,6 +167,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while addind instructor to subject.");
                 return response;
@@ -169,6 +186,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while addind class to subject.");
                 return response;

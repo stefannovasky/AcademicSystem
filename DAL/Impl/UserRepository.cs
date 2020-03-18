@@ -1,10 +1,12 @@
 ﻿using DAL.Interfaces;
 using Entities;
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,8 @@ namespace DAL.Impl
     public class UserRepository : IUserRepository
     {
         private AcademyContext _context;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public UserRepository(AcademyContext context)
         {
             _context = context;
@@ -27,8 +31,10 @@ namespace DAL.Impl
                     await _context.SaveChangesAsync();
                 return r; 
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 r.Success = false;
                 r.ErrorList.Add("Error on add coordinator to user");
                 return r; 
@@ -44,8 +50,10 @@ namespace DAL.Impl
                     await _context.SaveChangesAsync();
                 return r;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 r.Success = false;
                 r.ErrorList.Add("Error on add instructor to user");
                 return r;
@@ -61,8 +69,10 @@ namespace DAL.Impl
                     await _context.SaveChangesAsync();
                 return r;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 r.Success = false;
                 r.ErrorList.Add("Error on add owner to user");
                 return r;
@@ -78,8 +88,10 @@ namespace DAL.Impl
                     await _context.SaveChangesAsync();
                 return r;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 r.Success = false;
                 r.ErrorList.Add("Error on add owner to user");
                 return r;
@@ -94,21 +106,21 @@ namespace DAL.Impl
                     await _context.SaveChangesAsync();
                 return new Response(); 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 Response r = new Response() { Success = false };
 
-                if (ex.InnerException.Message.Contains("unique index"))
+                if (e.InnerException.Message.Contains("unique index"))
                 {
-                    if (ex.InnerException.Message.Contains("Cpf"))
+                    if (e.InnerException.Message.Contains("Cpf"))
                     {
                         r.ErrorList.Add("Cpf already exists"); 
                     }
-                    else if (ex.InnerException.Message.Contains("Rg"))
+                    else if (e.InnerException.Message.Contains("Rg"))
                     {
                         r.ErrorList.Add("Rg already exists");
                     }
-                    else if (ex.InnerException.Message.Contains("Email"))
+                    else if (e.InnerException.Message.Contains("Email"))
                     {
                         r.ErrorList.Add("Email already exists");
                     }
@@ -117,6 +129,9 @@ namespace DAL.Impl
                         r.ErrorList.Add("Create user error");
                     }
                 }
+
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
 
                 return r; 
             }
@@ -133,8 +148,10 @@ namespace DAL.Impl
                     await _context.SaveChangesAsync();
                 return new Response();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 Response r = new Response() { Success = false };
                 r.ErrorList.Add("Delete user error");
                 return r;
@@ -154,8 +171,10 @@ namespace DAL.Impl
 
                 return r;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<User> r = new DataResponse<User>() { Success = false };
                 r.ErrorList.Add("Get all users error");
                 return r; 
@@ -186,8 +205,10 @@ namespace DAL.Impl
 
                 return r;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<User> r = new DataResponse<User>() { Success = false };
                 r.ErrorList.Add("Get user error");
                 return r;
@@ -218,8 +239,10 @@ namespace DAL.Impl
 
                 return r;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<User> r = new DataResponse<User>() { Success = false };
                 r.ErrorList.Add("Get user error");
                 return r;
@@ -240,8 +263,10 @@ namespace DAL.Impl
                 r.Data.Add(u);
                 return r; 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<User> r = new DataResponse<User>() { Success = false };
                 r.ErrorList.Add("Update user error");
                 return r;

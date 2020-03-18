@@ -1,10 +1,12 @@
 ﻿using DAL.Interfaces;
 using Entities;
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +14,8 @@ namespace DAL.Impl
 {
     public class AttendanceRepository : IAttendanceRepository
     {
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private AcademyContext _context; 
         public AttendanceRepository(AcademyContext context)
         {
@@ -45,6 +49,8 @@ namespace DAL.Impl
                 {
                     response.ErrorList.Add("Error while adding Attendance.");
                 }
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -67,6 +73,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Invalid Attendance Id");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -85,6 +93,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while getting Attendances.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -103,6 +113,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while getting Attendance.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -123,6 +135,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while updating attendance.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }

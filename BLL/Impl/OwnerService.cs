@@ -4,9 +4,11 @@ using DAL.Impl;
 using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
+using log4net;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +17,8 @@ namespace BLL.Impl
     public class OwnerService : IOwnerService
     {
         private IOwnerRepository _OwnerRepo;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public OwnerService(IOwnerRepository ownerRepository)
         {
             _OwnerRepo = ownerRepository;
@@ -27,8 +31,10 @@ namespace BLL.Impl
                 response = await _OwnerRepo.Create(item);
                 return response;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString()); 
                 response.ErrorList.Add("Error on create Owner");
                 response.Success = false;
                 return response;
@@ -42,8 +48,10 @@ namespace BLL.Impl
                 Response response = await _OwnerRepo.Delete(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 Response r = new Response() { Success = false };
                 r.ErrorList.Add("Error on delete Owner");
                 return r;
@@ -57,8 +65,10 @@ namespace BLL.Impl
                 DataResponse<Owner> response = await _OwnerRepo.GetAll();
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Owner> r = new DataResponse<Owner>() { Success = false };
                 r.ErrorList.Add("Error on read Owners");
                 return r;
@@ -72,8 +82,10 @@ namespace BLL.Impl
                 DataResponse<Owner> response = await _OwnerRepo.GetByID(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Owner> r = new DataResponse<Owner>() { Success = false };
                 r.ErrorList.Add("Error on get Owner");
                 return r;
@@ -88,8 +100,10 @@ namespace BLL.Impl
                 response = await _OwnerRepo.Update(item);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error on update Owner");
                 response.Success = false;
                 return response;
@@ -113,6 +127,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro While adding course");
                 return response;
