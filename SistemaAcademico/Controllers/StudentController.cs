@@ -140,11 +140,11 @@ namespace AcademicSystemApi.Controllers
         private async Task<bool> PermisionCheckStudentInClassViewOrUpdate(Student student)
         {
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
-            if (user.Student != null && user.Student.ID == student.ID)
+            if (user.Student != null && user.Student.IsActive && user.Student.ID == student.ID )
             {
                 return true;
             }
-            if (user.Instructor != null)
+            if (user.Instructor != null && user.Instructor.IsActive)
             {
                 Instructor instructor = (await InstructorService.GetByID(user.Instructor.ID)).Data[0];
                 foreach (InstructorClass instructorClass in instructor.Classes)
@@ -155,7 +155,7 @@ namespace AcademicSystemApi.Controllers
                     }
                 }
             }
-            if (user.Coordinator != null)
+            if (user.Coordinator != null && user.Coordinator.IsActive)
             {
                 Coordinator Coordinator = (await CoordinatorService.GetByID(user.Coordinator.ID)).Data[0];
 
@@ -167,7 +167,7 @@ namespace AcademicSystemApi.Controllers
                     }
                 }
             }
-            if (user.Owner != null)
+            if (user.Owner != null && user.Owner.IsActive)
             {
                 Owner Owner = (await OwnerService.GetByID(user.Owner.ID)).Data[0];
                 foreach (OwnerCourse ownerCourse in Owner.Courses)

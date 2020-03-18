@@ -37,34 +37,14 @@ namespace AcademicSystemApi.Controllers
             this._courseService = courseService;
             this._ownerService = ownerService;
         }
-        /*
-        [Authorize]
-        public async Task<object> GetSubjects()
-        {
-            try
-            {
-                DataResponse<Subject> response = await _service.GetAll();
-
-                return new
-                {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
-        */
         private async Task<bool> PermissionCheckToReadSubject(Subject subject)
         {
 
             User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-            if (user.Instructor != null)
+            if (user.Instructor != null && user.Instructor.IsActive)
             {
                 Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                if (subject.Instructors != null)
+                if (subject.Instructors != null && user.Instructor.IsActive)
                 {
                     foreach (SubjectInstructor subjectInstructor in subject.Instructors)
                     {
@@ -76,7 +56,7 @@ namespace AcademicSystemApi.Controllers
                 }
             }
 
-            if (user.Student != null)
+            if (user.Student != null && user.Student.IsActive)
             {
                 Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
                 foreach (Class Class in subject.Classes)
@@ -88,7 +68,7 @@ namespace AcademicSystemApi.Controllers
                 }
             }
 
-            if (user.Coordinator != null)
+            if (user.Coordinator != null && user.Coordinator.IsActive)
             {
                 Coordinator coordinator = (await this._coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
 
@@ -102,7 +82,7 @@ namespace AcademicSystemApi.Controllers
                 }
             }
 
-            if (user.Owner != null)
+            if (user.Owner != null && user.Owner.IsActive)
             {
                 Owner owner = (await this._ownerService.GetByID(user.Owner.ID)).Data[0];
 
@@ -156,7 +136,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
 
@@ -190,7 +170,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
 
@@ -223,7 +203,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
 
