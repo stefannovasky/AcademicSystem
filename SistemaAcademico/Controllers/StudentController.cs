@@ -34,17 +34,11 @@ namespace AcademicSystemApi.Controllers
         }
 
         [Authorize]
-        public async Task<DataResponse<Student>> GetStudents()
+        public async Task<object> GetStudents()
         {
             try
             {
-                DataResponse<Student> response = await _service.GetAll();
-                foreach (Student student in response.Data)
-                {
-                    if (student.User != null)
-                        student.User.Student = null;
-                }
-                return response;
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -55,7 +49,7 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpGet]
         [Route("{id}")]
-        public async Task<DataResponse<Student>> GetStudent(int id)
+        public async Task<object> GetStudent(int id)
         {
             try
             {
@@ -64,16 +58,14 @@ namespace AcademicSystemApi.Controllers
                 if (studentResponse.Success)
                 {
                     Student student = studentResponse.Data[0];
-                    isPermited = await PermisionCheckStudentInClass(student);
+                    isPermited = await PermisionCheckStudentInClassViewOrUpdate(student);
                 }
                 if (isPermited)
                 {
-                    return studentResponse;
+                    studentResponse.Data[0].User.Student = null;
+                    return this.SendResponse(studentResponse);
                 }
-                DataResponse<Student> response = new DataResponse<Student>();
-                response.Success = false;
-                response.ErrorList.Add("Permission Denied");
-                return response;
+                return Forbid();
             } catch (Exception e)
             {
                 return null;
@@ -86,11 +78,13 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Create(student);
-                return new
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                if (student.UserID == user.ID)
                 {
-                    sucess = response.Success
-                };
+                    Response response = await _service.Create(student);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -100,12 +94,19 @@ namespace AcademicSystemApi.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<Response> UpdateStudent(Student student)
+        [Route("{id}")]
+        public async Task<object> UpdateStudent(Student student, int id)
         {
+            student.ID = id;
             try
             {
-                Response response = await _service.Update(student);
-                return response;
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                if (student.UserID == user.ID)
+                {
+                    Response response = await _service.Update(student);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -116,12 +117,18 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
-        public async Task<Response> DeleteStudent(int id)
+        public async Task<object> DeleteStudent(int id)
         {
             try
             {
-                Response response = await _service.Delete(id);
-                return response;
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                Student student = (await _service.GetByID(id)).Data[0];
+                if (student.UserID == user.ID)
+                {
+                    Response response = await _service.Delete(id);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -130,13 +137,12 @@ namespace AcademicSystemApi.Controllers
         }
 
 
-        private async Task<bool> PermisionCheckStudentInClass(Student student)
+        private async Task<bool> PermisionCheckStudentInClassViewOrUpdate(Student student)
         {
-            bool isPermited = false;
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
             if (user.Student != null && user.Student.ID == student.ID)
             {
-                isPermited = true;
+                return true;
             }
             if (user.Instructor != null)
             {
@@ -145,7 +151,7 @@ namespace AcademicSystemApi.Controllers
                 {
                     if (student.Classes.Where(ic => ic.ClassID == instructorClass.ClassID).Any())
                     {
-                        isPermited = true;
+                        return true;
                     }
                 }
             }
@@ -157,7 +163,7 @@ namespace AcademicSystemApi.Controllers
                 {
                     if (student.Classes.Where(ic => ic.ClassID == CoordinatorClass.ClassID).Any())
                     {
-                        isPermited = true;
+                        return true;
                     }
                 }
             }
@@ -171,12 +177,12 @@ namespace AcademicSystemApi.Controllers
                     {
                         if (student.Classes.Where(sc => sc.ClassID == @class.ID).Any())
                         {
-                            isPermited = true;
+                            return true;
                         }
                     }
                 }
             }
-            return isPermited;
+            return false;
         }
     }
 }

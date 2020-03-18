@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -27,20 +28,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                DataResponse<Owner> response = await _service.GetAll();
-                foreach (Owner Owner in response.Data)
-                {
-                    if (Owner.User != null)
-                        Owner.User.Owner = null;
-                }
-                return new
-                {
-                    success = response.Success, 
-                    data = response.Success ? response.Data : null
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -53,24 +45,15 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 DataResponse<Owner> response = await _service.GetByID(id);
-                response.Data[0].User.Owner = null;
-
-                foreach (var owner in response.Data)
+                if (this.GetUserID() == response.Data[0].UserID)
                 {
-                    foreach (var course in owner.Courses)
-                    {
-                        course.Owner = null;
-                    }
+                    return this.SendResponse(response);
                 }
-
-                return new
-                {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -81,32 +64,38 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Create(Owner);
-                return new
+                if(this.GetUserID() == Owner.UserID)
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Create(Owner);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
 
         [HttpPut]
         [Authorize]
-        public async Task<object> UpdateOwner(Owner Owner)
+        [Route("{id}")]
+        public async Task<object> UpdateOwner(Owner Owner, int id)
         {
+            Owner.ID = id;
             try
             {
-                Response response = await _service.Update(Owner);
-                return new
+                if (this.GetUserID() == Owner.UserID)
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Update(Owner);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -118,14 +107,16 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Delete(id);
-                return new 
+                if (this.GetUserID() == (await _service.GetByID(id)).Data[0].UserID)
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Delete(id);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }

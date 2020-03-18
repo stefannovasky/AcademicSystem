@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AcademicSystemApi.Extensions;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -18,9 +19,19 @@ namespace AcademicSystemApi.Controllers
     {
 
         IInstructorService _service;
-        public InstructorController(IInstructorService service)
+        IUserService userService;
+        ICoordinatorService coordinatorService;
+        ICourseService courseService;
+        IOwnerService ownerService;
+        IStudentService studentService;
+        public InstructorController(IInstructorService service, IUserService userService, ICoordinatorService coordinatorService, ICourseService courseService, IOwnerService ownerService, IStudentService studentService)
         {
             this._service = service;
+            this.userService = userService;
+            this.coordinatorService = coordinatorService;
+            this.courseService = courseService;
+            this.ownerService = ownerService;
+            this.studentService = studentService;
         }
 
         [Authorize]
@@ -28,20 +39,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                DataResponse<Instructor> response = await _service.GetAll();
-                foreach (Instructor Instructor in response.Data)
-                {
-                    if (Instructor.User != null)
-                        Instructor.User.Instructor = null;
-                }
-                return new
-                {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -54,15 +56,15 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 DataResponse<Instructor> response = await _service.GetByID(id);
-                response.Data[0].User.Instructor = null;
-                return new
+                if (await VerifyPermision(response.Data[0]))
                 {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -73,29 +75,32 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Create(Instructor);
-                return new
-                {
-                    success = response.Success
-                };
+                if (this.GetUserID() == Instructor.UserID) {
+                    Response response = await _service.Create(Instructor);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
 
         [HttpPut]
         [Authorize]
-        public async Task<object> UpdateInstructor(Instructor Instructor)
+        [Route("{id}")]
+        public async Task<object> UpdateInstructor(Instructor Instructor, int id)
         {
+            Instructor.ID = id;
             try
             {
-                Response response = await _service.Update(Instructor);
-                return new
-                {
-                    success = response.Success
-                };
+                if (this.GetUserID() == Instructor.UserID) {
+                    Response response = await _service.Update(Instructor);
+                    return this.SendResponse(response);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
@@ -110,16 +115,59 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _service.Delete(id);
-                return new
+                Instructor instructor = (await _service.GetByID(id)).Data[0];
+                if (this.GetUserID() == instructor.UserID)
                 {
-                    success = response.Success
-                };
+                    Response response = await _service.Delete(id);
+                }
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
+        }
+
+        private async Task<bool> VerifyPermision(Instructor instructor) 
+        {
+            User user = (await userService.GetByID(this.GetUserID())).Data[0];
+            if (user.Instructor.ID == instructor.ID)
+            {
+                return true;
+            }
+            foreach (CoordinatorClass coordinatorClass in (await coordinatorService.GetByID(user.Coordinator.ID)).Data[0].Classes)
+            {
+                if (instructor.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Any())
+                {
+                    return true;
+                }
+            }
+            foreach (OwnerCourse ownerCourse in (await ownerService.GetByID(user.Owner.ID)).Data[0].Courses)
+            {
+                foreach (Class @class in (await courseService.GetByID(ownerCourse.CourseID)).Data[0].Classes)
+                {
+                    if (instructor.Classes.Where(c => c.ClassID == @class.ID).Any())
+                    {
+                        return true;
+                    }
+                }
+            }
+            foreach (InstructorClass instructorClass in (await _service.GetByID(user.Instructor.ID)).Data[0].Classes)
+            {
+                if (instructor.Classes.Where(c => c.ClassID == instructorClass.ClassID).Any()) 
+                {
+                    return true;
+                }
+            }
+            foreach (StudentClass StudentClass in (await studentService.GetByID(user.Student.ID)).Data[0].Classes)
+            {
+                if (instructor.Classes.Where(c => c.ClassID == StudentClass.ClassID).Any())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
