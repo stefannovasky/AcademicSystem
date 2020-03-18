@@ -60,7 +60,7 @@ namespace AcademicSystemApi.Controllers
             {
                 Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
                 // ver se a evaluation StudentID == Student.ID
-                if (student.Evaluations.Where(evaluation => evaluation.StudentID == e.StudentID).ToList().Count > 0)
+                if (student.Evaluations.Where(evaluation => evaluation.StudentID == e.StudentID).Any())
                 {
                     hasPermissionToRead = true;
                 }
@@ -68,7 +68,7 @@ namespace AcademicSystemApi.Controllers
             if (user.Instructor != null)
             {
                 Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                if (instructor.Classes.Where(instructorClass => instructorClass.ClassID == e.ClassID).ToList().Count > 0)
+                if (instructor.Classes.Where(instructorClass => instructorClass.ClassID == e.ClassID).Any())
                 {
                     hasPermissionToRead = true;
                 }

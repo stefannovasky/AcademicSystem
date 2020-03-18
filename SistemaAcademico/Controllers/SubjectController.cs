@@ -68,7 +68,7 @@ namespace AcademicSystemApi.Controllers
                 {
                     foreach (SubjectInstructor subjectInstructor in subject.Instructors)
                     {
-                        if (instructor.Subjects.Where(s => s.InstructorID == subjectInstructor.InstructorID).ToList().Count > 0) 
+                        if (instructor.Subjects.Where(s => s.InstructorID == subjectInstructor.InstructorID).Any()) 
                         {
                             return true;
                         }
@@ -81,7 +81,7 @@ namespace AcademicSystemApi.Controllers
                 Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
                 foreach (Class Class in subject.Classes)
                 {
-                    if (student.Classes.Where(c => c.ClassID == Class.ID).ToList().Count > 0)
+                    if (student.Classes.Where(c => c.ClassID == Class.ID).Any())
                     {
                         return true;
                     }

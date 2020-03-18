@@ -337,7 +337,7 @@ namespace AcademicSystemApi.Controllers
                 {
                     foreach (CoordinatorClass coordinatorClass in Class.Coordinators)
                     {
-                        if ((coordinator.Classes.Where(c => c.ClassID == Class.ID).ToList().Count) > 0)
+                        if (coordinator.Classes.Where(c => c.ClassID == Class.ID).Any())
                         {
                             hasPermissionToRead = true;
                         }

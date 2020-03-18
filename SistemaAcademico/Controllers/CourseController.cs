@@ -64,7 +64,7 @@ namespace AcademicSystemApi.Controllers
                 Owner o = (await _ownerService.GetByID(u.Owner.ID)).Data[0];
                 foreach (OwnerCourse ownerCourse in o.Courses)
                 {
-                    if ((c.Owners.Where(owner => owner.CourseID == ownerCourse.OwnerID).ToList()).Count > 0)
+                    if (c.Owners.Where(owner => owner.CourseID == ownerCourse.OwnerID).Any())
                     {
                         hasPermissionToRead = true;
                     }
@@ -88,7 +88,7 @@ namespace AcademicSystemApi.Controllers
                 foreach (CoordinatorClass coordinatorClass in coordinator.Classes)
                 {
                     Class Class = (await this._classService.GetByID(coordinatorClass.ClassID)).Data[0];
-                    if (Class.Coordinators.Where(c => c.CoordinatorID == coordinator.ID).ToList().Count > 0)
+                    if (Class.Coordinators.Where(c => c.CoordinatorID == coordinator.ID).Any())
                     {
                         hasPermissionToRead = true;
                     }
