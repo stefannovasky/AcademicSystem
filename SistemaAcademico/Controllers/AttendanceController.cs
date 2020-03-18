@@ -42,7 +42,7 @@ namespace AcademicSystemApi.Controllers
             //Ser Coordinator/ Instructor da classe que a attendance foi registrada
             //Ser o aluno registrado pelo atendance
 
-            if (user.Coordinator != null && user.IsActive)
+            if (user.Coordinator != null)
             {
                 Coordinator coordinator = (await this._coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
                 if (coordinator.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
@@ -50,7 +50,7 @@ namespace AcademicSystemApi.Controllers
                     hasPermissionToRead = true;
                 }
             }
-            if (user.Instructor != null && user.IsActive)
+            if (user.Instructor != null)
             {
                 Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
                 if (instructor.Classes.Where(i => i.ClassID == attendance.ClassID).Any()) 
@@ -58,7 +58,7 @@ namespace AcademicSystemApi.Controllers
                     hasPermissionToRead = true;
                 }
             }
-            if (user.Student != null && user.IsActive)
+            if (user.Student != null)
             {
                 if (user.Student.ID == attendance.StudentID)
                 {
@@ -105,7 +105,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Instructor != null && user.IsActive)
+                if (user.Instructor != null)
                 {
                     Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
 
@@ -136,7 +136,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Instructor != null && user.IsActive)
+                if (user.Instructor != null)
                 {
                     Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
 
@@ -164,7 +164,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Instructor != null && user.IsActive)
+                if (user.Instructor != null)
                 {
                     Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
                     Attendance Attendance = (await this._service.GetByID(id)).Data[0];

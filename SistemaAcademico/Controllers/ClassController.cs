@@ -42,7 +42,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
 
@@ -69,27 +69,6 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-        /*
-        [Authorize]
-        public async Task<object> GetAll()
-        { 
-            try
-            {
-                DataResponse<Class> response = await _classService.GetAll();
-
-
-                return new
-                {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
-        */
 
         [HttpGet]
         [Route("{id}")]
@@ -125,7 +104,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
                     foreach (OwnerCourse oc in owner.Courses)
@@ -161,7 +140,7 @@ namespace AcademicSystemApi.Controllers
                 bool isPermited = false; 
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
                     foreach (OwnerCourse oc in owner.Courses)
@@ -175,7 +154,7 @@ namespace AcademicSystemApi.Controllers
                 }
                 if (!isPermited)
                 {
-                    if (user.Instructor != null)
+                    if (user.Instructor != null && user.Instructor.IsActive)
                         {
                             Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
                             if (instructor.Classes.Where(ic => ic.ClassID == item.ClassID).Any())
@@ -186,7 +165,7 @@ namespace AcademicSystemApi.Controllers
                     }
                 if (!isPermited)
                 {
-                    if (user.Coordinator != null)
+                    if (user.Coordinator != null && user.Coordinator.IsActive)
                     {
                         Coordinator coordinator = (await this._coordinatorService.GetByID(user.Instructor.ID)).Data[0];
                         if (coordinator.Classes.Where(cc => cc.ClassID == item.ClassID).Any())
@@ -276,7 +255,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
                     foreach (OwnerCourse oc in owner.Courses)
@@ -310,7 +289,7 @@ namespace AcademicSystemApi.Controllers
             int userID = this.GetUserID();
             User u = (await this._userService.GetByID(userID)).Data[0];
 
-            if (u.Student != null)
+            if (u.Student != null && u.Student.IsActive)
             {
                 if (Class.Students != null)
                 {
@@ -325,7 +304,7 @@ namespace AcademicSystemApi.Controllers
             }
             if (!hasPermissionToRead)
             {
-                if (Class.Instructors != null)
+                if (Class.Instructors != null && u.Instructor.IsActive)
                 {
                     foreach (InstructorClass instructor in Class.Instructors)
                     {
@@ -362,7 +341,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive) 
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
 
