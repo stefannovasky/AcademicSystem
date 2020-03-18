@@ -19,17 +19,9 @@ namespace DAL
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public AcademyContext() : base ()
+        public AcademyContext(DbContextOptions<AcademyContext> options) : base (options)
         {
-
         }
-        
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\900193\Documents\AcademyDB.mdf;Integrated Security=True;Connect Timeout=30");
-            base.OnConfiguring(optionsBuilder);
-        }
-        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

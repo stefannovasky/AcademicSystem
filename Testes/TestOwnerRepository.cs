@@ -21,7 +21,7 @@ namespace Tests
         {
             OwnerRepository repo = new OwnerRepository();
 
-            int id = (await new UserRepository().GetAll()).Data[0].ID;
+            int id = 6;
 
             Owner u = new Owner
             {

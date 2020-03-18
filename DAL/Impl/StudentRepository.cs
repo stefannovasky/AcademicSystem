@@ -12,16 +12,19 @@ namespace DAL.Impl
 {
     public class StudentRepository : IStudentRepository
     {
+        private AcademyContext _context;
+        public StudentRepository(AcademyContext academyContext)
+        {
+            _context = academyContext;
+        }
+
         public async Task<Response> Create(Student item)
         {
             try
             {
                 item.User = null;
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    await ctx.Students.AddAsync(item);
-                    await ctx.SaveChangesAsync();
-                }
+                    await _context.Students.AddAsync(item);
+                    await _context.SaveChangesAsync();
 
                 return new Response() { Success = true };
             }
@@ -45,14 +48,11 @@ namespace DAL.Impl
         {
             try
             {
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Student u = await ctx.Students.FindAsync(id);
+                    Student u = await _context.Students.FindAsync(id);
                     u.IsActive = false;
                     u.DeletedAt = DateTime.Now; 
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                    _context.Update(u);
+                    await _context.SaveChangesAsync();
                 return new Response();
             }
             catch (Exception ex)
@@ -68,13 +68,9 @@ namespace DAL.Impl
             try
             {
                 List<Student> students = new List<Student>();
-
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    students = await ctx.Students
+                    students = await _context.Students
                         .Where(u => u.IsActive == true)
                         .ToListAsync();
-                }
                 DataResponse<Student> r = new DataResponse<Student>();
                 r.Data = students;
 
@@ -93,11 +89,7 @@ namespace DAL.Impl
             try
             {
                 Student student = new Student();
-
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    student = await ctx.Students.Include(u => u.User).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
-                }
+                    student = await _context.Students.Include(u => u.User).Include(s => s.Classes).Include(s => s.Evaluations).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 if (student == null)
                 {
                     DataResponse<Student> response = new DataResponse<Student>() { Success = false };
@@ -123,14 +115,12 @@ namespace DAL.Impl
             try
             {
                 Student u = new Student();
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    u = await ctx.Students.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
+                    u = await _context.Students.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
                     u = item;
                     u.UpdatedAt = DateTime.Now; 
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                    _context.Update(u);
+                    await _context.SaveChangesAsync();
+
 
                 DataResponse<Student> r = new DataResponse<Student>();
                 r.Data.Add(u);
@@ -141,6 +131,64 @@ namespace DAL.Impl
                 DataResponse<Student> r = new DataResponse<Student>() { Success = false };
                 r.ErrorList.Add("Update student error");
                 return r;
+            }
+        }
+
+        public async Task<Response> AddEvaluation(Student student, Evaluation evaluation)
+        {
+            Response response = new Response();
+            try
+            {
+
+                (await _context.Students.Include(c => c.Evaluations).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Evaluations.Add(evaluation);
+                await _context.SaveChangesAsync();
+                return response;
+
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind evaluation to student.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddClass(Student student, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                    StudentClass studentClass = new StudentClass()
+                    {
+                        StudentID = student.ID,
+                        ClassID = Class.ID
+                    };
+                    (await _context.Students.Include(c => c.Classes).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Classes.Add(studentClass);
+                    await _context.SaveChangesAsync();
+                    return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind class to student.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddAttendance(Student student, Attendance attendance)
+        {
+            Response response = new Response();
+            try
+            {
+                    (await _context.Students.Include(c => c.Attendances).Where(c => c.ID == student.ID).FirstOrDefaultAsync()).Attendances.Add(attendance);
+                    await _context.SaveChangesAsync();
+                    return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind attendance to student.");
+                return response;
             }
         }
     }

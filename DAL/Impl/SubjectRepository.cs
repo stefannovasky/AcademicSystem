@@ -12,16 +12,19 @@ namespace DAL.Impl
 {
     public class SubjectRepository : ISubjectRepository
     {
+        private AcademyContext _context;
+        public SubjectRepository(AcademyContext academyContext)
+        {
+            _context = academyContext;
+        }
+
         public async Task<Response> Create(Subject item)
         {
             try
             {
                 item.Course = null; 
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    await ctx.Subjects.AddAsync(item);
-                    await ctx.SaveChangesAsync();
-                }
+                    await _context.Subjects.AddAsync(item);
+                    await _context.SaveChangesAsync();
 
                 return new Response() { Success = true };
             }
@@ -46,14 +49,11 @@ namespace DAL.Impl
         {
             try
             {
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Subject u = await ctx.Subjects.FindAsync(id);
-                    u.IsActive = false;
-                    u.DeletedAt = DateTime.Now;
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                Subject u = await _context.Subjects.FindAsync(id);
+                u.IsActive = false;
+                u.DeletedAt = DateTime.Now;
+                _context.Update(u);
+                await _context.SaveChangesAsync();
                 return new Response();
             }
             catch (Exception ex)
@@ -70,12 +70,9 @@ namespace DAL.Impl
             {
                 List<Subject> Subjects = new List<Subject>();
 
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Subjects = await ctx.Subjects
+                    Subjects = await _context.Subjects
                         .Where(u => u.IsActive == true)
                         .ToListAsync();
-                }
                 DataResponse<Subject> r = new DataResponse<Subject>();
                 r.Data = Subjects;
 
@@ -95,10 +92,7 @@ namespace DAL.Impl
             {
                 Subject Subject = new Subject();
 
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    Subject = await ctx.Subjects.SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
-                }
+                    Subject = await _context.Subjects.Include(s => s.Classes).Include(s => s.Course).Include(s => s.Instructors).SingleOrDefaultAsync(u => u.IsActive == true && u.ID == id);
                 if (Subject == null)
                 {
                     DataResponse<Subject> response = new DataResponse<Subject>() { Success = false };
@@ -124,14 +118,11 @@ namespace DAL.Impl
             try
             {
                 Subject u = new Subject();
-                using (AcademyContext ctx = new AcademyContext())
-                {
-                    u = await ctx.Subjects.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
+                    u = await _context.Subjects.AsNoTracking().SingleOrDefaultAsync(u => u.ID == item.ID);
                     u = item;
                     u.UpdatedAt = DateTime.Now;
-                    ctx.Update(u);
-                    await ctx.SaveChangesAsync();
-                }
+                    _context.Update(u);
+                    await _context.SaveChangesAsync();
 
                 DataResponse<Subject> r = new DataResponse<Subject>();
                 r.Data.Add(u);
@@ -142,6 +133,45 @@ namespace DAL.Impl
                 DataResponse<Subject> r = new DataResponse<Subject>() { Success = false };
                 r.ErrorList.Add("Update Subject error");
                 return r;
+            }
+        }
+
+        public async Task<Response> AddInstructor(Subject subject, Instructor instructor)
+        {
+            Response response = new Response();
+            try
+            {
+                    SubjectInstructor subjectInstructor = new SubjectInstructor()
+                    {
+                        SubjectID = subject.ID,
+                        InstructorID = instructor.ID
+                    };
+                    (await _context.Subjects.Include(c => c.Instructors).Where(c => c.ID == subject.ID).FirstOrDefaultAsync()).Instructors.Add(subjectInstructor);
+                    await _context.SaveChangesAsync();
+                    return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind instructor to subject.");
+                return response;
+            }
+        }
+
+        public async Task<Response> AddClass(Subject subject, Class Class)
+        {
+            Response response = new Response();
+            try
+            {
+                    (await _context.Subjects.Include(c => c.Classes).Where(c => c.ID == subject.ID).FirstOrDefaultAsync()).Classes.Add(Class);
+                    await _context.SaveChangesAsync();
+                    return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.ErrorList.Add("Error while addind class to subject.");
+                return response;
             }
         }
     }
