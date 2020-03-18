@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AcademicSystemApi;
 using BLL.Impl;
 using DAL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace SistemaAcademico
 {
@@ -54,7 +56,7 @@ namespace SistemaAcademico
             services.AddCors();
             services.AddControllers();
 
-            byte[] key = Encoding.UTF8.GetBytes(ApiExplorerSettingsAttribute.);
+            byte[] key = Encoding.UTF8.GetBytes(Settings.SecretKey);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -71,6 +73,8 @@ namespace SistemaAcademico
                     ValidateAudience = false
                 };
             });
+
+            services.AddControllers().AddJsonOptions(option => { option.JsonSerializerOptions.PropertyNamingPolicy = null; option.JsonSerializerOptions.MaxDepth = 256; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

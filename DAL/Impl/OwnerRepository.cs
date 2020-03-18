@@ -140,6 +140,9 @@ namespace DAL.Impl
             Response response = new Response();
             try
             {
+                _context.Entry(owner).State = EntityState.Detached;
+                _context.Entry(course).State = EntityState.Detached;
+
                 OwnerCourse ownerCourse = new OwnerCourse()
                 {
                     OwnerID = owner.ID,

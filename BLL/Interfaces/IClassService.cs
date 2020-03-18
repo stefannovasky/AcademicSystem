@@ -14,5 +14,7 @@ namespace BLL.Interfaces
         public Task<Response> AddEvaluation(Class Class, Evaluation evaluation);
         public Task<Response> AddAttendance(Class Class, Attendance attendance);
         public Task<Response> AddCoordinator(Class Class, Coordinator coordinator);
+        Task<DataResponse<int>> CreateAndReturnId(Class item);
+
     }
 }

@@ -22,5 +22,7 @@ namespace DAL.Interfaces
  
 
         public Task<Response> AddCoordinator(Class Class, Coordinator coordinator);
+        Task<DataResponse<int>> CreateAndReturnID(Class item);
+
     }
 }

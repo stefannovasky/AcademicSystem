@@ -5,6 +5,7 @@ using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -86,16 +87,17 @@ namespace DAL.Impl
             {
 
                 response.Data.Add(await _context.Classes
+                    .AsNoTracking()
                     .Include(c => c.Attendances)
+                    .Include(c => c.Instructors)
                     .Include(c => c.Coordinators)
                     .Include(c => c.Course)
-                    .Include(c => c.Evaluations)
                     .Include(c => c.Students)
                     .Include(c => c.Subject)
                     .SingleOrDefaultAsync(c => c.IsActive && c.ID == id)
                 );
-                return response;
 
+                return response;
             }
             catch (Exception e)
             {
@@ -104,6 +106,7 @@ namespace DAL.Impl
                 return response;
             }
         }
+
 
         public async Task<DataResponse<Class>> Update(Class item)
         {
@@ -136,7 +139,10 @@ namespace DAL.Impl
                     ClassID = Class.ID,
                     InstructorID = instructor.ID
                 };
-                (await _context.Classes.Include(c => c.Instructors).Where(c => c.ID == Class.ID).FirstOrDefaultAsync()).Instructors.Add(instructorClass);
+                
+                //??_context.
+
+                (await _context.Classes.Include(c => c.Instructors).Where(c => c.ID == Class.ID).AsNoTracking().FirstOrDefaultAsync()).Instructors.Add(instructorClass);
                 await _context.SaveChangesAsync();
                 return response;
 
@@ -230,6 +236,39 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while addind coordinator to class.");
+                return response;
+            }
+        }
+
+        public async Task<DataResponse<int>> CreateAndReturnID(Class item)
+        {
+            DataResponse<int> response = new DataResponse<int>();
+            try
+            {
+                item.CreatedAt = DateTime.Now;
+                
+                await _context.Classes.AddAsync(item);
+                await _context.SaveChangesAsync();
+                await _context.Entry(item).GetDatabaseValuesAsync();
+                
+                response.Data.Add(item.ID);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                if (e.Message.Contains("Name"))
+                {
+                    response.ErrorList.Add("Name is required.");
+                }
+                if (e.Message.Contains("Period"))
+                {
+                    response.ErrorList.Add("Period is required.");
+                }
+                else
+                {
+                    response.ErrorList.Add("Error while adding Course.");
+                }
                 return response;
             }
         }

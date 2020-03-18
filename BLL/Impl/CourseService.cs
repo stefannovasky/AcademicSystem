@@ -44,6 +44,29 @@ namespace BLL.Impl
             }
         }
 
+        public async Task<DataResponse<int>> CreateAndReturnId(Course item)
+        {
+            DataResponse<int> response = new DataResponse<int>();
+            try
+            {
+                ValidationResult validationResponse = await new CourseValidator().ValidateAsync(item);
+                if (!validationResponse.IsValid)
+                {
+                    response.Success = false;
+                    response.ErrorList.Add("Validation Error");
+                    return response;
+                }
+                response = await _repository.CreateAndReturnID(item);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.ErrorList.Add("Error while creating Service.");
+                response.Success = false;
+                return response;
+            }
+        }
+
         public async Task<Response> Delete(int id)
         {
             Response response = new Response();

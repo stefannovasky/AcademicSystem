@@ -12,5 +12,6 @@ namespace DAL.Interfaces
         Task<Response> AddOwner(Course course, Owner owner);
         Task<Response> AddSubject(Course course, Subject subject);
         Task<Response> AddClass(Course course, Class Class);
+        Task<DataResponse<int>> CreateAndReturnID(Course item);
     }
 }
