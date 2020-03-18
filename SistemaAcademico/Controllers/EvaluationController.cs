@@ -30,33 +30,13 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
-        /*
-        [Authorize]
-        public async Task<object> GetEvaluations()
-        {
-            try
-            {
-                DataResponse<Evaluation> response = await _service.GetAll();
-
-                return new
-                {
-                    success = response.Success,
-                    data = response.Success ? response.Data : null
-                };
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
-        */
 
         private async Task<bool> PermissionCheckToReadEvaluation(Evaluation e)
         {
             bool hasPermissionToRead = false;
 
             User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-            if (user.Student != null)
+            if (user.Student != null && user.Student.IsActive)
             {
                 Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
                 // ver se a evaluation StudentID == Student.ID
@@ -65,7 +45,7 @@ namespace AcademicSystemApi.Controllers
                     hasPermissionToRead = true;
                 }
             }
-            if (user.Instructor != null)
+            if (user.Instructor != null && user.Instructor.IsActive)
             {
                 Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
                 if (instructor.Classes.Where(instructorClass => instructorClass.ClassID == e.ClassID).Any())
@@ -114,7 +94,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Instructor != null)
+                if (user.Instructor != null && user.Instructor.IsActive)
                 {
                     Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
 
@@ -145,7 +125,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Instructor != null)
+                if (user.Instructor != null && user.Instructor.IsActive)
                 {
                     Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
 
@@ -174,7 +154,7 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Instructor != null)
+                if (user.Instructor != null && user.Instructor.IsActive)
                 {
                     Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
                     Evaluation Evaluation = (await this._service.GetByID(id)).Data[0];

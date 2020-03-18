@@ -36,21 +36,6 @@ namespace AcademicSystemApi.Controllers
             this._studentService = studentService;
             this._subjectService = subjectService;
         }
-        /*
-        [Authorize]
-        public async Task<object> GetCourses()
-        {                                                                                                                     
-            try
-            {
-                return Forbid();
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
-            }
-        }
-        */
 
         private async Task<bool> PermissionCheckToReadCourse(Course c)
         {
@@ -58,7 +43,7 @@ namespace AcademicSystemApi.Controllers
 
             // verify 
             bool hasPermissionToRead = false;
-            if (u.Owner != null)
+            if (u.Owner != null && u.Owner.IsActive)
             {
                 Owner o = (await _ownerService.GetByID(u.Owner.ID)).Data[0];
                 foreach (OwnerCourse ownerCourse in o.Courses)
@@ -126,7 +111,7 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 User user = (await _userService.GetByID(this.GetUserID())).Data[0];
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Course.Owners.Clear();
                     int id = (await _courseService.CreateAndReturnId(Course)).Data[0];
@@ -151,7 +136,7 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 User user = (await _userService.GetByID(this.GetUserID())).Data[0];
-                if (user.Owner != null)
+                if (user.Owner != null && user.Owner.IsActive)
                 {
                     Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
                     foreach (OwnerCourse ownerCourse in Course.Owners)
@@ -206,7 +191,7 @@ namespace AcademicSystemApi.Controllers
         private async Task<bool> VerifyPermisionCourse(Course course)
         {
             User user = (await _userService.GetByID(this.GetUserID())).Data[0];
-            if (user.Owner != null)
+            if (user.Owner != null && user.Owner.IsActive)
             {
                 Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
                 foreach (OwnerCourse ownerCourse in course.Owners)
