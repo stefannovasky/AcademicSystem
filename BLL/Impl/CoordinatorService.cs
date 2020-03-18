@@ -2,9 +2,11 @@
 using DAL.Impl;
 using DAL.Interfaces;
 using Entities;
+using log4net;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,7 @@ namespace BLL.Impl
     class CoordinatorService : ICoordinatorService
     {
         private ICoordinatorRepository _CoordinatorRepo;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public CoordinatorService(ICoordinatorRepository repository)
         {
@@ -27,8 +30,10 @@ namespace BLL.Impl
                 response = await _CoordinatorRepo.Create(item);
                 return response;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error on create Coordinator");
                 response.Success = false;
                 return response;
@@ -42,8 +47,10 @@ namespace BLL.Impl
                 Response response = await _CoordinatorRepo.Delete(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 Response r = new Response() { Success = false };
                 r.ErrorList.Add("Error on delete Coordinator");
                 return r;
@@ -57,8 +64,10 @@ namespace BLL.Impl
                 DataResponse<Coordinator> response = await _CoordinatorRepo.GetAll();
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Coordinator> r = new DataResponse<Coordinator>() { Success = false };
                 r.ErrorList.Add("Error on read Coordinators");
                 return r;
@@ -72,8 +81,10 @@ namespace BLL.Impl
                 DataResponse<Coordinator> response = await _CoordinatorRepo.GetByID(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Coordinator> r = new DataResponse<Coordinator>() { Success = false };
                 r.ErrorList.Add("Error on get Coordinator");
                 return r;
@@ -88,8 +99,10 @@ namespace BLL.Impl
                 response = await _CoordinatorRepo.Update(item);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error on update Coordinator");
                 response.Success = false;
                 return response;
@@ -106,6 +119,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while addding Class in coordinator");
                 return response;

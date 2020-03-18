@@ -4,9 +4,11 @@ using DAL.Impl;
 using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
+using log4net;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +17,8 @@ namespace BLL.Impl
     public class InstructorService : IInstructorService
     {
         private IInstructorRepository _InstructorRepo;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public InstructorService(IInstructorRepository instructorRepository)
         {
             _InstructorRepo = instructorRepository;
@@ -27,8 +31,10 @@ namespace BLL.Impl
                 response = await _InstructorRepo.Create(item);
                 return response;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error on create Instructor");
                 response.Success = false;
                 return response;
@@ -42,8 +48,10 @@ namespace BLL.Impl
                 Response response = await _InstructorRepo.Delete(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 Response r = new Response() { Success = false };
                 r.ErrorList.Add("Error on delete Instructor");
                 return r;
@@ -57,8 +65,10 @@ namespace BLL.Impl
                 DataResponse<Instructor> response = await _InstructorRepo.GetAll();
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Instructor> r = new DataResponse<Instructor>() { Success = false };
                 r.ErrorList.Add("Error on read Instructors");
                 return r;
@@ -72,8 +82,10 @@ namespace BLL.Impl
                 DataResponse<Instructor> response = await _InstructorRepo.GetByID(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<Instructor> r = new DataResponse<Instructor>() { Success = false };
                 r.ErrorList.Add("Error on get Instructor");
                 return r;
@@ -88,8 +100,10 @@ namespace BLL.Impl
                 response = await _InstructorRepo.Update(item);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error on update Instructor");
                 response.Success = false;
                 return response;
@@ -113,6 +127,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while adding Subject into instryuctor");
                 return response;
@@ -129,6 +145,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while adding Class in Instructor");
                 return response;

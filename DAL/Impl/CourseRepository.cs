@@ -1,10 +1,12 @@
 ﻿using DAL.Interfaces;
 using Entities;
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,8 @@ namespace DAL.Impl
     public class CourseRepository : ICourseRepository
     {
         private AcademyContext _context;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public CourseRepository(AcademyContext context)
         {
             _context = context;
@@ -44,6 +48,9 @@ namespace DAL.Impl
                 {
                     response.ErrorList.Add("Error while adding Course.");
                 }
+
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -64,6 +71,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Invalid Course Id");
                 return response;
@@ -82,6 +91,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while getting Courses.");
                 return response;
@@ -100,6 +111,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while getting Course.");
                 return response;
@@ -119,6 +132,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while updating Course.");
                 return response;
@@ -138,6 +153,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while addind class to course.");
                 return response;
@@ -156,6 +173,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while addind subject to course.");
                 return response;
@@ -180,6 +199,8 @@ namespace DAL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while addind owner to course.");
                 return response;
@@ -213,6 +234,8 @@ namespace DAL.Impl
                 {
                     response.ErrorList.Add("Error while adding Course.");
                 }
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }

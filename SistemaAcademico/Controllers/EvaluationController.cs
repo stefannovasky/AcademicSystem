@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
+using log4net.Config;
+using log4net;
+using System.Reflection;
 
 namespace AcademicSystemApi.Controllers
 {
@@ -17,7 +20,7 @@ namespace AcademicSystemApi.Controllers
     [ApiController]
     public class EvaluationController : ControllerBase
     {
-
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         IEvaluationService _service;
         IUserService _userService;
         IStudentService _studentService;
@@ -39,7 +42,6 @@ namespace AcademicSystemApi.Controllers
             if (user.Student != null && user.Student.IsActive)
             {
                 Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
-                // ver se a evaluation StudentID == Student.ID
                 if (student.Evaluations.Where(evaluation => evaluation.StudentID == e.StudentID).Any())
                 {
                     hasPermissionToRead = true;
@@ -66,12 +68,11 @@ namespace AcademicSystemApi.Controllers
             {
                 DataResponse<Evaluation> response = await _service.GetByID(id);
 
-  
+                
                 if (response.HasError())
                 {
                     return response;
                 }
-
                 if (await this.PermissionCheckToReadEvaluation(response.Data[0]))
                 {
                     return this.SendResponse(response);

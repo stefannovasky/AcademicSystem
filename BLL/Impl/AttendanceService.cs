@@ -4,9 +4,11 @@ using DAL.Impl;
 using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
+using log4net;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +17,7 @@ namespace BLL.Impl
     public class AttendanceService : IAttendanceService
     {
         private IAttendanceRepository _repository;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public AttendanceService(IAttendanceRepository repository)
         {
@@ -38,7 +41,9 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
-                response.ErrorList.Add("Error while creating Service.");
+                StringBuilder sb = new StringBuilder(); 
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
+                response.ErrorList.Add("Error while creating Attendance.");
                 response.Success = false;
                 return response;
             }
@@ -54,6 +59,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro while deleting Attendance");
                 return response;
@@ -70,6 +77,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro inesperado");
                 return response;
@@ -86,6 +95,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro inesperado");
                 return response;
@@ -109,6 +120,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro inesperado");
                 return response;

@@ -4,9 +4,11 @@ using DAL.Impl;
 using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
+using log4net;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +17,8 @@ namespace BLL.Impl
     public class UserService : IUserService
     {
         private IUserRepository _userRepo;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public UserService(IUserRepository userRepository)
         {
@@ -47,8 +51,11 @@ namespace BLL.Impl
                 r.Success = true;
                 return r; 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
+
                 r.Success = false;
                 r.ErrorList.Add("Error on user authentication");
                 return r; 
@@ -72,8 +79,10 @@ namespace BLL.Impl
                 response = await _userRepo.Create(item);
                 return response;                
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error on create user");
                 response.Success = false; 
                 return response; 
@@ -87,8 +96,10 @@ namespace BLL.Impl
                 Response response = await _userRepo.Delete(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 Response r = new Response() { Success = false };
                 r.ErrorList.Add("Error on delete user");
                 return r; 
@@ -102,8 +113,10 @@ namespace BLL.Impl
                 DataResponse<User> response = await _userRepo.GetAll();
                 return response; 
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<User> r = new DataResponse<User>() { Success = false };
                 r.ErrorList.Add("Error on read users");
                 return r;
@@ -117,8 +130,10 @@ namespace BLL.Impl
                 DataResponse<User> response = await _userRepo.GetByID(id);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 DataResponse<User> r = new DataResponse<User>() { Success = false };
                 r.ErrorList.Add("Error on get user");
                 return r;
@@ -141,14 +156,14 @@ namespace BLL.Impl
                 response = await _userRepo.Update(item);
                 return response;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error on update user");
                 response.Success = false;
                 return response;
             }
         }
-
-       
     }
 }

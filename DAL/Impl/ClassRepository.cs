@@ -1,5 +1,6 @@
 ﻿using DAL.Interfaces;
 using Entities;
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using System;
@@ -14,6 +15,8 @@ namespace DAL.Impl
     public class ClassRepository : IClassRepository
     {
         private AcademyContext _context;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public ClassRepository(AcademyContext context)
         {
             _context = context;
@@ -36,6 +39,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while adding Class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -58,6 +63,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Invalid Class Id");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -76,6 +83,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while getting Classs.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -103,6 +112,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while getting Class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -124,6 +135,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while updating Class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -151,6 +164,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while addind instructor to class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -175,6 +190,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while addind student to class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -194,6 +211,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while addind evaluation to class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -212,6 +231,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while addind attendance to class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -236,6 +257,8 @@ namespace DAL.Impl
             {
                 response.Success = false;
                 response.ErrorList.Add("Error while addind coordinator to class.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }
@@ -269,6 +292,8 @@ namespace DAL.Impl
                 {
                     response.ErrorList.Add("Error while adding Course.");
                 }
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 return response;
             }
         }

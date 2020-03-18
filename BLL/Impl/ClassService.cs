@@ -4,9 +4,11 @@ using DAL.Impl;
 using DAL.Interfaces;
 using Entities;
 using FluentValidation.Results;
+using log4net;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +17,8 @@ namespace BLL.Impl
     public class ClassService : IClassService
     {
         private IClassRepository _repository;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
 
 
         public ClassService(IClassRepository repository)
@@ -32,7 +36,9 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
-                response.ErrorList.Add("Error while creating Service.");
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
+                response.ErrorList.Add("Error while creating Class.");
                 response.Success = false;
                 return response;
             }
@@ -48,6 +54,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro while deleting Class");
                 return response;
@@ -64,6 +72,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro inesperado");
                 return response;
@@ -80,6 +90,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro inesperado");
                 return response;
@@ -96,6 +108,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Erro inesperado");
                 return response;
@@ -112,6 +126,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while adding instructor in class.");
                 return response;
@@ -128,6 +144,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while adding Coordinator in class.");
                 return response;
@@ -144,6 +162,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while adding Evaluation in class.");
                 return response;
@@ -160,6 +180,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while adding Attendance in class.");
                 return response;
@@ -176,6 +198,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.Success = false;
                 response.ErrorList.Add("Error while adding Student in class.");
                 return response;
@@ -192,6 +216,8 @@ namespace BLL.Impl
             }
             catch (Exception e)
             {
+                StringBuilder sb = new StringBuilder();
+                log.Error(sb.AppendLine(e.Message).AppendLine(e.StackTrace).ToString());
                 response.ErrorList.Add("Error while creating Service.");
                 response.Success = false;
                 return response;
