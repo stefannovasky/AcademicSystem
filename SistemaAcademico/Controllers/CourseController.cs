@@ -239,7 +239,7 @@ namespace AcademicSystemApi.Controllers
         }
 
         [HttpPost]
-        [Route("/subject")]
+        [Route("subject")]
         [Authorize]
         public async Task<object> AddSubject(int CourseID, int SubjectID)
         {
@@ -261,7 +261,7 @@ namespace AcademicSystemApi.Controllers
         }
 
         [HttpPost]
-        [Route("/owner")]
+        [Route("owner")]
         [Authorize]
         public async Task<object> AddOwner(OwnerCourse ownerCourse)
         {

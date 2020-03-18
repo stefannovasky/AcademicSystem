@@ -26,20 +26,6 @@ namespace AcademicSystemApi.Controllers
             this.userService = userService;
         }
 
-        [Authorize]
-        public async Task<object> GetCoordinators()
-        {
-            try
-            {
-                return Forbid();
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
-            }
-        }
-
         [HttpGet]
         [Route("{id}")]
         [Authorize]
