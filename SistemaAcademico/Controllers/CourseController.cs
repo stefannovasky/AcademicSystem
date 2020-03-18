@@ -36,10 +36,10 @@ namespace AcademicSystemApi.Controllers
             this._studentService = studentService;
             this._subjectService = subjectService;
         }
-
+        /*
         [Authorize]
         public async Task<object> GetCourses()
-        {
+        {                                                                                                                     
             try
             {
                 return Forbid();
@@ -50,6 +50,53 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
+        */
+
+        private async Task<bool> PermissionCheckToReadCourse(Course c)
+        {
+            User u = (await _userService.GetByID(this.GetUserID())).Data[0];
+
+            // verify 
+            bool hasPermissionToRead = false;
+            if (u.Owner != null)
+            {
+                Owner o = (await _ownerService.GetByID(u.Owner.ID)).Data[0];
+                foreach (OwnerCourse ownerCourse in o.Courses)
+                {
+                    if (c.Owners.Where(owner => owner.CourseID == ownerCourse.OwnerID).Any())
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+            if (u.Student != null)
+            {
+                Student student = (await this._studentService.GetByID(u.Student.ID)).Data[0];
+                foreach (StudentClass studentClass in student.Classes)
+                {
+                    Class Class = (await this._classService.GetByID(studentClass.ClassID)).Data[0];
+                    if (Class.CourseID == c.ID)
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+            if (u.Coordinator != null)
+            {
+                Coordinator coordinator = (await this._coordinatorService.GetByID(u.Coordinator.ID)).Data[0];
+                foreach (CoordinatorClass coordinatorClass in coordinator.Classes)
+                {
+                    Class Class = (await this._classService.GetByID(coordinatorClass.ClassID)).Data[0];
+                    if (Class.Coordinators.Where(c => c.CoordinatorID == coordinator.ID).Any())
+                    {
+                        hasPermissionToRead = true;
+                    }
+                }
+            }
+
+            return hasPermissionToRead;
+        }
+
 
         [HttpGet]
         [Route("{id}")]

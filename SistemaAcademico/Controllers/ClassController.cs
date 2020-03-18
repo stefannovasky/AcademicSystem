@@ -23,13 +23,15 @@ namespace AcademicSystemApi.Controllers
         IUserService _userService;
         IOwnerService _ownerService;
         ICoordinatorService _coordinatorService;
-        public ClassController(IClassService classService, ICourseService courseService, IUserService userService, IOwnerService ownerService, ICoordinatorService coordinatorService)
+        IInstructorService _instructorService;
+        public ClassController(IClassService classService, ICourseService courseService, IUserService userService, IOwnerService ownerService, ICoordinatorService coordinatorService, IInstructorService instructorService)
         {
             this._classService = classService;
             this._courseService = courseService;
             this._userService = userService;
             this._ownerService = ownerService;
             this._coordinatorService = coordinatorService;
+            this._instructorService = instructorService;
         }
 
         [HttpPost]
@@ -38,40 +40,39 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                int coordinatorID = await this.VerifyIfUserIsCoordinatorAndReturnCoordinatorId(_userService);
-                if (coordinatorID == 0)
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null)
                 {
-                    return Forbid();
-                }
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
 
-
-                DataResponse<int> response = await _classService.CreateAndReturnId(Class);
-
-                if (response.HasError())
-                {
-                    return new
+                    foreach (OwnerCourse oc in owner.Courses)
                     {
-                        success = response.Success,
-                        message = response.GetErrorMessage()
-                    };
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == Class.CourseID).Any())
+                        {
+                            Response response = await _classService.Create(Class);
+                            return new
+                            {
+                                success = response.Success
+                            };
+                        }
+                    }
                 }
 
-                await this._courseService.AddClass(new Course() { ID = Class.CourseID }, new Class() { ID = response.Data[0] });
-
-                return new
-                {
-                    success = response.Success
-                };
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
 
+        /*
         [Authorize]
         public async Task<object> GetAll()
-        {
+        { 
             try
             {
                 DataResponse<Class> response = await _classService.GetAll();
@@ -88,6 +89,7 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
+        */
 
         [HttpGet]
         [Route("{id}")]
@@ -109,7 +111,8 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
-                return Forbid();
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
             }
         }
 
@@ -120,14 +123,30 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _classService.Delete(id);
-                return new
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null)
                 {
-                    success = response.Success
-                };
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == id).Any())
+                        {
+                            Response response = await _classService.Delete(id);
+                            return new
+                            {
+                                success = response.Success
+                            };
+                        }
+                    }
+                }
+
+                return Forbid(); 
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
@@ -139,17 +158,151 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Response response = await _classService.AddStudent(new Class() { ID = item.ClassID }, new Student() { ID = item.StudentID });
-                return new
+                bool isPermited = false; 
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null)
                 {
-                    success = response.Success
-                };
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == item.ClassID).Any())
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+                if (!isPermited)
+                {
+                    if (user.Instructor != null)
+                        {
+                            Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                            if (instructor.Classes.Where(ic => ic.ClassID == item.ClassID).Any())
+                            {
+                                isPermited = true; 
+                            }
+                        }
+                    }
+                if (!isPermited)
+                {
+                    if (user.Coordinator != null)
+                    {
+                        Coordinator coordinator = (await this._coordinatorService.GetByID(user.Instructor.ID)).Data[0];
+                        if (coordinator.Classes.Where(cc => cc.ClassID == item.ClassID).Any())
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+
+                if (isPermited)
+                {
+                    Response response = await _classService.AddStudent(new Class() { ID = item.ClassID }, new Student() { ID = item.StudentID });
+                    return new
+                    {
+                        success = response.Success
+                    };
+                }
+
+                return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("instructor")]
+        public async Task<object> AddInstructor([FromBody] InstructorClass item)
+        {
+            try
+            {
+                bool isPermited = false; 
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+                
+                if (user.Owner == null && user.Coordinator == null)
+                {
+                    return Forbid();
+                }
+
+                Coordinator coordinator = (await _coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
+                if (coordinator.Classes.Where(c => c.ClassID == item.ClassID).Any()) 
+                {
+                    isPermited = true; 
+                }
+
+                if (!isPermited)
+                {
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == item.ClassID).Any())
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+
+                if (isPermited)
+                {
+                    Response response = await _classService.AddInstructor(new Class() { ID = item.ClassID }, new Instructor() { ID = item.InstructorID });
+                    return new
+                    {
+                        success = response.Success
+                    };
+                }
+
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        [Route("coordinator")]
+        public async Task<object> AddCoordinator([FromBody] CoordinatorClass item)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null)
+                {
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == item.ClassID).Any())
+                        {
+                            Response response = await _classService.AddCoordinator(new Class() { ID = item.ClassID }, new Coordinator() { ID = item.CoordinatorID });
+                            return new
+                            {
+                                success = response.Success
+                            };
+                        }
+                    }
+                }
+
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+
+        
 
         private async Task<bool> PermissionCheckToReadClass(Class Class)
         {
@@ -157,40 +310,83 @@ namespace AcademicSystemApi.Controllers
             int userID = this.GetUserID();
             User u = (await this._userService.GetByID(userID)).Data[0];
 
-            if (Class.Students != null)
+            if (u.Student != null)
             {
-                foreach (StudentClass student in Class.Students)
+                if (Class.Students != null)
                 {
-                    if (student.StudentID == u.Student.ID)
+                    foreach (StudentClass student in Class.Students)
                     {
-                        hasPermissionToRead = true;
+                        if (student.StudentID == u.Student.ID)
+                        {
+                            hasPermissionToRead = true;
+                        }
                     }
                 }
             }
-            if (Class.Instructors != null)
+            if (!hasPermissionToRead)
             {
-                foreach (InstructorClass instructor in Class.Instructors)
+                if (Class.Instructors != null)
                 {
-                    if (instructor.InstructorID == u.Instructor.ID)
+                    foreach (InstructorClass instructor in Class.Instructors)
                     {
-                        hasPermissionToRead = true;
+                        if (instructor.InstructorID == u.Instructor.ID)
+                        {
+                            hasPermissionToRead = true;
+                        }
                     }
                 }
             }
-            Coordinator coordinator = (await this._coordinatorService.GetByID(u.Coordinator.ID)).Data[0];
-            if (Class.Coordinators != null)
+            if (!hasPermissionToRead)
             {
-                foreach (CoordinatorClass coordinatorClass in Class.Coordinators)
+                Coordinator coordinator = (await this._coordinatorService.GetByID(u.Coordinator.ID)).Data[0];
+                if (Class.Coordinators != null)
                 {
-                    if ((coordinator.Classes.Where(c => c.ClassID == Class.ID).ToList().Count) > 0)
+                    foreach (CoordinatorClass coordinatorClass in Class.Coordinators)
                     {
-                        hasPermissionToRead = true;
+                        if (coordinator.Classes.Where(c => c.ClassID == Class.ID).Any())
+                        {
+                            hasPermissionToRead = true;
+                        }
                     }
                 }
             }
             return hasPermissionToRead;
         }
 
+        [Authorize]
+        [HttpPut]
+        [Route("")]
+        public async Task<object> Update(Class Class)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
+                if (user.Owner != null)
+                {
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == Class.CourseID).Any())
+                        {
+                            Response response = await _classService.Update(Class);
+                            return new
+                            {
+                                success = response.Success
+                            };
+                        }
+                    }
+                }
+
+                return Forbid();
+            }
+            catch (Exception)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
     }
 }
