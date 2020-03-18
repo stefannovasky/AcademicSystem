@@ -33,18 +33,6 @@ namespace AcademicSystemApi.Controllers
             this.CourseService = courseService;
         }
 
-        [Authorize]
-        public async Task<object> GetStudents()
-        {
-            try
-            {
-                return Forbid();
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
 
         [Authorize]
         [HttpGet]

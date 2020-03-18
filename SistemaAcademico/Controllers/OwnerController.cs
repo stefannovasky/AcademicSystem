@@ -23,20 +23,6 @@ namespace AcademicSystemApi.Controllers
             this._service = service;
         }
 
-        [Authorize]
-        public async Task<object> GetOwners()
-        {
-            try
-            {
-                return Forbid();
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
-            }
-        }
-
         [HttpGet]
         [Route("{id}")]
         [Authorize]
