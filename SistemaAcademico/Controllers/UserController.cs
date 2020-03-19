@@ -39,8 +39,8 @@ namespace AcademicSystemApi.Controllers
             if (!response.HasError())
             {
                 response.Data[0].Password = "";
-
-
+                response.Data[0].Cpf = "";
+                response.Data[0].Rg = "";
                 return new
                 {
                     user = response.Data[0]
