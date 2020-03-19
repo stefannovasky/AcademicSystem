@@ -33,7 +33,9 @@ namespace AcademicSystemApi.Controllers
             this.CourseService = courseService;
         }
 
-
+        /// <summary>
+        /// Metodo Pega um Student.
+        /// </summary>
         [Authorize]
         [HttpGet]
         [Route("{id}")]
@@ -41,33 +43,36 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                bool isPermited = false;
-                DataResponse<Student> studentResponse = (await _service.GetByID(id));
-                if (studentResponse.Success)
+                DataResponse<Student> response = (await _service.GetByID(id));
+
+                if (response.HasError())
                 {
-                    Student student = studentResponse.Data[0];
-                    isPermited = await PermisionCheckStudentInClassViewOrUpdate(student);
+                    return response;
                 }
-                if (isPermited)
+
+                if (await CheckPermisionToGetStudent(response.Data[0]))
                 {
-                    studentResponse.Data[0].User.Student = null;
-                    return this.SendResponse(studentResponse);
+                    return this.SendResponse(response);
                 }
+
                 return Forbid();
-            } catch (Exception e)
+            } 
+            catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo cria um Student.
+        /// </summary>
         [Authorize]
         [HttpPost]
         public async Task<object> CreateStudent(Student student)
         {
             try
             {
-                User user = (await userService.GetByID(this.GetUserID())).Data[0];
-                if (student.UserID == user.ID)
+                if (await CheckPermissionToCreateUpdateStudent(student))
                 {
                     Response response = await _service.Create(student);
                     return this.SendResponse(response);
@@ -76,10 +81,13 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo Atualiza um Student.
+        /// </summary>
         [Authorize]
         [HttpPut]
         [Route("{id}")]
@@ -88,8 +96,7 @@ namespace AcademicSystemApi.Controllers
             student.ID = id;
             try
             {
-                User user = (await userService.GetByID(this.GetUserID())).Data[0];
-                if (student.UserID == user.ID)
+                if (await CheckPermissionToCreateUpdateStudent(student))
                 {
                     Response response = await _service.Update(student);
                     return this.SendResponse(response);
@@ -98,10 +105,13 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo Deleta um Student.
+        /// </summary>
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
@@ -109,9 +119,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                User user = (await userService.GetByID(this.GetUserID())).Data[0];
-                Student student = (await _service.GetByID(id)).Data[0];
-                if (student.UserID == user.ID)
+                if (await CheckPermissionToDeleteStudent(id))
                 {
                     Response response = await _service.Delete(id);
                     return this.SendResponse(response);
@@ -120,12 +128,39 @@ namespace AcademicSystemApi.Controllers
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
         }
-
-
-        private async Task<bool> PermisionCheckStudentInClassViewOrUpdate(Student student)
+        /// <summary>
+        /// Metodo checa as permisoes de criação e atualização de um Student.
+        /// </summary>>
+        private async Task<bool> CheckPermissionToCreateUpdateStudent(Student student)
+        {
+            User user = (await userService.GetByID(this.GetUserID())).Data[0];
+            if (student.UserID == user.ID)
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Metodo checa as permissoes de delete de um student.
+        /// </summary>
+        private async Task<bool> CheckPermissionToDeleteStudent(int id)
+        {
+            User user = (await userService.GetByID(this.GetUserID())).Data[0];
+            Student student = (await _service.GetByID(id)).Data[0];
+            if (student.UserID == user.ID)
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        ///     Metodo checa as permissoes de pegar um student.
+        /// </summary>
+        private async Task<bool> CheckPermisionToGetStudent(Student student)
         {
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
             if (user.Student != null && user.Student.IsActive && user.Student.ID == student.ID )

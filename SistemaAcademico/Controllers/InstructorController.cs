@@ -33,8 +33,9 @@ namespace AcademicSystemApi.Controllers
             this.ownerService = ownerService;
             this.studentService = studentService;
         }
-
-
+        /// <summary>
+        /// pegar um instructor.
+        /// </summary>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -43,7 +44,7 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 DataResponse<Instructor> response = await _service.GetByID(id);
-                if (await VerifyPermision(response.Data[0]))
+                if (await CheckPermissionToGetInstructor(response.Data[0]))
                 {
                     return this.SendResponse(response);
                 }
@@ -55,14 +56,16 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Metodo cria um instrcutor.
+        /// </summary>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateInstructor(Instructor Instructor)
         {
             try
             {
-                if (this.GetUserID() == Instructor.UserID) {
+                if (await CheckPermissionToCreateUpdateInstructor(Instructor)) {
                     Response response = await _service.Create(Instructor);
                     return this.SendResponse(response);
                 }
@@ -74,7 +77,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Atualiza um instructor.
+        /// </summary>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -83,7 +88,7 @@ namespace AcademicSystemApi.Controllers
             Instructor.ID = id;
             try
             {
-                if (this.GetUserID() == Instructor.UserID) {
+                if (await CheckPermissionToCreateUpdateInstructor(Instructor)) {
                     Response response = await _service.Update(Instructor);
                     return this.SendResponse(response);
                 }
@@ -94,7 +99,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo deleta um instructor.
+        /// </summary>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -102,8 +109,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Instructor instructor = (await _service.GetByID(id)).Data[0];
-                if (this.GetUserID() == instructor.UserID)
+                if (await CheckPermissionToDeleteInstructor(id))
                 {
                     Response response = await _service.Delete(id);
                 }
@@ -115,8 +121,38 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
-        private async Task<bool> VerifyPermision(Instructor instructor) 
+        /// <summary>
+        /// Metodo checa permissão de criação e atualização de um instrcutor.
+        /// </summary>
+        private async Task<bool> CheckPermissionToCreateUpdateInstructor(Instructor instructor)
+        {
+            User user = (await userService.GetByID(this.GetUserID())).Data[0];
+            if (user.Instructor != null && user.Instructor.IsActive)
+            {
+                if (this.GetUserID() == instructor.UserID)
+                {
+                    return true;
+                } 
+            }
+            return false;
+        }
+        /// <summary>
+        ///     Verifica se o usuario autenticado tem autorização para deletar um instructor.
+        /// </summary>
+        private async Task<bool> CheckPermissionToDeleteInstructor(int id)
+        {
+            User user = (await userService.GetByID(this.GetUserID())).Data[0];
+            Instructor instructor = (await _service.GetByID(id)).Data[0];
+            if (user.Instructor != null && user.Instructor.IsActive && instructor != null && this.GetUserID() == instructor.UserID)
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Verifica se o usuario autenticado tem autorização para
+        /// </summary>
+        private async Task<bool> CheckPermissionToGetInstructor(Instructor instructor) 
         {
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
             if (user.Instructor.ID == instructor.ID)
