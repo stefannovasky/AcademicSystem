@@ -171,7 +171,6 @@ namespace AcademicSystemApi.Controllers
         }
 
 
-
         private async Task<bool> CheckPermissionToCreateCourse(Course course)
         {
             try
@@ -189,57 +188,6 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
-
-        private async Task<bool> VerifyPermisionCourse(Course course)
-        {
-            User user = (await _userService.GetByID(this.GetUserID())).Data[0];
-            if (user.Owner != null && user.Owner.IsActive)
-            {
-                Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
-                foreach (OwnerCourse ownerCourse in course.Owners)
-                {
-                    if (owner.Courses.Contains(ownerCourse))
-                    {
-                        return true;
-                    }
-                }
-            }
-            if (user.Coordinator != null)
-            {
-                Coordinator coordinator = (await _coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
-                foreach (CoordinatorClass coordinatorClass in coordinator.Classes)
-                {
-                    if (course.Classes.Where(c => c.ID == coordinatorClass.ClassID).Any())
-                    {
-                        return true;
-                    }
-                }
-            }
-            if (user.Instructor != null)
-            {
-                Instructor instructor = (await _instructorService.GetByID(user.Instructor.ID)).Data[0];
-                foreach (InstructorClass instructorClass in instructor.Classes)
-                {
-                    if (course.Classes.Where(c => c.ID == instructorClass.ClassID).Any())
-                    {
-                        return true;
-                    }
-                }
-            }
-            if (user.Student != null)
-            {
-                Student student = (await _studentService.GetByID(user.Student.ID)).Data[0];
-                foreach (StudentClass studentClass in student.Classes)
-                {
-                    if (course.Classes.Where(c => c.ID == studentClass.ClassID).Any())
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
         private async Task<bool> CheckPermissionToDeleteCourse(int id)
         {
             try
@@ -285,7 +233,6 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
-
         private async Task<bool> PermissionCheckToAddSubject(int courseID)
         {
             try
@@ -304,7 +251,6 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
-
         private async Task<bool> PermissionCheckToAddOwner(OwnerCourse ownerCourse)
         {
             try
@@ -323,7 +269,6 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
-
         private async Task<bool> PermissionCheckToReadCourse(Course c)
         {
             User u = (await _userService.GetByID(this.GetUserID())).Data[0];
