@@ -26,6 +26,11 @@ namespace AcademicSystemApi.Controllers
             this.userService = userService;
         }
 
+        /// <summary>
+        ///     Pega um Coordinator através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -33,15 +38,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                DataResponse<Coordinator> response = await _service.GetByID(id);
-                User user = (await userService.GetByID(this.GetUserID())).Data[0];
-                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
-                foreach (CoordinatorClass coordinatorClass in response.Data[0].Classes)
+                if (await CheckPermissionToReadCoordinator(id))
                 {
-                    if (coordinator.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Any())
-                    {
-                        return this.SendResponse(response);
-                    }
+                    DataResponse<Coordinator> response = await _service.GetByID(id);
+
+                    return this.SendResponse(response);
                 }
                 return Forbid();
             }
@@ -52,6 +53,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Cria um Coordinator 
+        /// </summary>
+        /// <param name="Coordinator"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateCoordinator(Coordinator Coordinator)
@@ -72,6 +78,12 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Altera um Coordinator pelo corpo da requisição através de seu ID 
+        /// </summary>
+        /// <param name="Coordinator"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -80,7 +92,7 @@ namespace AcademicSystemApi.Controllers
             Coordinator.ID = id;
             try
             {
-                if (Coordinator.UserID == this.GetUserID())
+                if (await this.CheckPermissionToUpdateOrDeleteCoordinator(id))
                 {
                     Response response = await _service.Update(Coordinator);
                     return this.SendResponse(response);
@@ -94,6 +106,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Deleta um Coordinator através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -101,8 +118,8 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
-                if (this.GetUserID() == coordinator.UserID) {
+                if (await CheckPermissionToUpdateOrDeleteCoordinator(id))
+                {
                     Response response = await _service.Delete(id);
                     return this.SendResponse(response);
                 }
@@ -111,6 +128,57 @@ namespace AcademicSystemApi.Controllers
             catch (Exception e)
             {
                 return null;
+            }
+        }
+
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para alterar ou deletar determinado Coordinator 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToUpdateOrDeleteCoordinator(int id) 
+        {
+            try
+            {
+                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
+                if (this.GetUserID() == coordinator.UserID)
+                {
+                    return true; 
+                }
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
+        }
+
+
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para ler determinado Coordinator
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToReadCoordinator(int id)
+        {
+            try
+            {
+                DataResponse<Coordinator> response = await _service.GetByID(id);
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
+                foreach (CoordinatorClass coordinatorClass in response.Data[0].Classes)
+                {
+                    if (coordinator.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Any())
+                    {
+                        return true;
+                    }
+                }
+
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false; 
             }
         }
     }
