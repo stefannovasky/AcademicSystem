@@ -33,32 +33,6 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
-
-        private async Task<bool> PermissionCheckToReadEvaluation(Evaluation e)
-        {
-            bool hasPermissionToRead = false;
-
-            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-            if (user.Student != null && user.Student.IsActive)
-            {
-                Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
-                if (student.Evaluations.Where(evaluation => evaluation.StudentID == e.StudentID).Any())
-                {
-                    hasPermissionToRead = true;
-                }
-            }
-            if (user.Instructor != null && user.Instructor.IsActive)
-            {
-                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                if (instructor.Classes.Where(instructorClass => instructorClass.ClassID == e.ClassID).Any())
-                {
-                    hasPermissionToRead = true;
-                }
-            }
-
-            return hasPermissionToRead;
-        }
-
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -89,23 +63,16 @@ namespace AcademicSystemApi.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateEvaluation(Evaluation Evaluation)
+        public async Task<object> CreateEvaluation(Evaluation evaluation)
         {
             try
             {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null && user.Instructor.IsActive)
+                if (await this.CheckPermissionToCreateEvaluation(evaluation))
                 {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-
-                    if (instructor.Classes.Where(c => c.ClassID == Evaluation.ClassID).Any())
-                    {
-                        Response response = await _service.Create(Evaluation);
-                        return this.SendResponse(response);
-                    }
+                    Response response = await _service.Create(evaluation);
+                    return this.SendResponse(response);
                 }
-
+                
                 return Forbid();
             }
             catch (Exception e)
@@ -114,7 +81,6 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
 
         [HttpPut]
         [Authorize]
@@ -126,15 +92,10 @@ namespace AcademicSystemApi.Controllers
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (user.Instructor != null && user.Instructor.IsActive)
+                if (await this.CheckPermissionToUpdateEvaluation(Evaluation))
                 {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-
-                    if (instructor.Classes.Where(c => c.ClassID == Evaluation.ClassID).Any())
-                    {
-                        Response response = await _service.Update(Evaluation);
-                        return this.SendResponse(response);
-                    }
+                    Response response = await _service.Update(Evaluation);
+                    return this.SendResponse(response);
                 }
 
                 return Forbid();
@@ -153,17 +114,10 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null && user.Instructor.IsActive)
+                if (await this.CheckPermissionToDeleteEvaluation(id))
                 {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                    Evaluation Evaluation = (await this._service.GetByID(id)).Data[0];
-                    if (instructor.Classes.Where(c => c.ClassID == Evaluation.ClassID).Any())
-                    {
-                        Response response = await _service.Delete(id);
-                        return this.SendResponse(response);
-                    }
+                    Response response = await _service.Delete(id);
+                    return this.SendResponse(response);
                 }
 
                 return Forbid();
@@ -173,6 +127,101 @@ namespace AcademicSystemApi.Controllers
                 Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
+        }
+
+
+
+        private async Task<bool> CheckPermissionToCreateEvaluation(Evaluation evaluation)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Instructor != null && user.Instructor.IsActive)
+                {
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+
+                    if (instructor.Classes.Where(c => c.ClassID == evaluation.ClassID).Any())
+                    {
+                        return true; 
+                    }
+                }
+
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
+        }
+        private async Task<bool> CheckPermissionToUpdateEvaluation(Evaluation evaluation)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Instructor != null && user.Instructor.IsActive)
+                {
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+
+                    if (instructor.Classes.Where(c => c.ClassID == evaluation.ClassID).Any())
+                    {
+                        return true; 
+                    }
+                }
+
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
+        }
+        private async Task<bool> CheckPermissionToDeleteEvaluation(int id)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Instructor != null && user.Instructor.IsActive)
+                {
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                    Evaluation Evaluation = (await this._service.GetByID(id)).Data[0];
+                    if (instructor.Classes.Where(c => c.ClassID == Evaluation.ClassID).Any())
+                    {
+                        return true; 
+                    }
+                }
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
+        }
+        private async Task<bool> PermissionCheckToReadEvaluation(Evaluation e)
+        {
+            bool hasPermissionToRead = false;
+
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+            if (user.Student != null && user.Student.IsActive)
+            {
+                Student student = (await this._studentService.GetByID(user.Student.ID)).Data[0];
+                if (student.Evaluations.Where(evaluation => evaluation.StudentID == e.StudentID).Any())
+                {
+                    hasPermissionToRead = true;
+                }
+            }
+            if (user.Instructor != null && user.Instructor.IsActive)
+            {
+                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                if (instructor.Classes.Where(instructorClass => instructorClass.ClassID == e.ClassID).Any())
+                {
+                    hasPermissionToRead = true;
+                }
+            }
+
+            return hasPermissionToRead;
         }
     }
 }
