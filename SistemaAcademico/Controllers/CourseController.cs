@@ -46,7 +46,7 @@ namespace AcademicSystemApi.Controllers
             try
             {
                 DataResponse<Course> response = await _courseService.GetByID(id);
-                if (await this.PermissionCheckToReadCourse(response.Data[0]))
+                if (await this.CheckPermissionToReadCourse(response.Data[0]))
                 {
                     return this.SendResponse(response);
                 }
@@ -135,7 +135,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                if (await this.PermissionCheckToAddSubject(courseID))
+                if (await this.CheckPermissionToAddSubject(courseID))
                 {
                     return await _courseService.AddSubject((await _courseService.GetByID(courseID)).Data[0], (await _subjectService.GetByID(subjectID)).Data[0]);
                 }
@@ -157,7 +157,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                if (await this.PermissionCheckToAddOwner(ownerCourse))
+                if (await this.CheckPermissionToAddOwner(ownerCourse))
                 {
                     return await _courseService.AddOwner((await _courseService.GetByID(ownerCourse.CourseID)).Data[0], (await _ownerService.GetByID(ownerCourse.OwnerID)).Data[0]);
                 }
@@ -233,7 +233,7 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
-        private async Task<bool> PermissionCheckToAddSubject(int courseID)
+        private async Task<bool> CheckPermissionToAddSubject(int courseID)
         {
             try
             {
@@ -251,7 +251,7 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
-        private async Task<bool> PermissionCheckToAddOwner(OwnerCourse ownerCourse)
+        private async Task<bool> CheckPermissionToAddOwner(OwnerCourse ownerCourse)
         {
             try
             {
@@ -269,7 +269,7 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
-        private async Task<bool> PermissionCheckToReadCourse(Course c)
+        private async Task<bool> CheckPermissionToReadCourse(Course c)
         {
             User u = (await _userService.GetByID(this.GetUserID())).Data[0];
 
