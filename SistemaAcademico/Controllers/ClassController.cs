@@ -34,30 +34,21 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
+        /// <summary>
+        ///     Cria uma Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<object> Create(Class Class)
         {
             try
             {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Owner != null && user.Owner.IsActive)
+                if (await this.CheckPermissionToCreateOrUpdateClass(Class))
                 {
-                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
-
-                    foreach (OwnerCourse oc in owner.Courses)
-                    {
-                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
-                        if (course.Classes.Where(c => c.ID == Class.CourseID).Any())
-                        {
-                            Response response = await _classService.Create(Class);
-                            return new
-                            {
-                                success = response.Success
-                            };
-                        }
-                    }
+                    Response response = await _classService.Create(Class);
+                    return response;
                 }
 
                 return Forbid();
@@ -70,6 +61,11 @@ namespace AcademicSystemApi.Controllers
         }
 
 
+        /// <summary>
+        ///     Pega um Class através de seu ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -81,7 +77,7 @@ namespace AcademicSystemApi.Controllers
 
                 // verify 
                 Class Class = (await _classService.GetByID(id)).Data[0];
-                if (await this.PermissionCheckToReadClass(Class))
+                if (await this.CheckPermissionToReadClass(Class))
                 {
                     return this.SendResponse(response);
                 }
@@ -95,6 +91,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Deleta uma Class através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
@@ -102,23 +103,10 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Owner != null && user.Owner.IsActive)
+                if (await this.CheckPermissionToDeleteClass(id))
                 {
-                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
-                    foreach (OwnerCourse oc in owner.Courses)
-                    {
-                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
-                        if (course.Classes.Where(c => c.ID == id).Any())
-                        {
-                            Response response = await _classService.Delete(id);
-                            return new
-                            {
-                                success = response.Success
-                            };
-                        }
-                    }
+                    Response response = await _classService.Delete(id);
+                    return response; 
                 }
 
                 return Forbid(); 
@@ -130,6 +118,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Adiciona um Student em uma Class
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [Route("student")]
@@ -137,45 +130,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                bool isPermited = false; 
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Owner != null && user.Owner.IsActive)
-                {
-                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
-                    foreach (OwnerCourse oc in owner.Courses)
-                    {
-                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
-                        if (course.Classes.Where(c => c.ID == item.ClassID).Any())
-                        {
-                            isPermited = true;
-                        }
-                    }
-                }
-                if (!isPermited)
-                {
-                    if (user.Instructor != null && user.Instructor.IsActive)
-                        {
-                            Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                            if (instructor.Classes.Where(ic => ic.ClassID == item.ClassID).Any())
-                            {
-                                isPermited = true; 
-                            }
-                        }
-                    }
-                if (!isPermited)
-                {
-                    if (user.Coordinator != null && user.Coordinator.IsActive)
-                    {
-                        Coordinator coordinator = (await this._coordinatorService.GetByID(user.Instructor.ID)).Data[0];
-                        if (coordinator.Classes.Where(cc => cc.ClassID == item.ClassID).Any())
-                        {
-                            isPermited = true;
-                        }
-                    }
-                }
-
-                if (isPermited)
+                if (await this.CheckPermissionToAddStudent(item))
                 {
                     Response response = await _classService.AddStudent(new Class() { ID = item.ClassID }, new Student() { ID = item.StudentID });
                     return new
@@ -193,6 +148,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Adiciona um Instrucor em uma Class
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [Route("instructor")]
@@ -200,34 +160,7 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                bool isPermited = false; 
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-                
-                if (user.Owner == null && user.Coordinator == null)
-                {
-                    return Forbid();
-                }
-
-                Coordinator coordinator = (await _coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
-                if (coordinator.Classes.Where(c => c.ClassID == item.ClassID).Any()) 
-                {
-                    isPermited = true; 
-                }
-
-                if (!isPermited)
-                {
-                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
-                    foreach (OwnerCourse oc in owner.Courses)
-                    {
-                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
-                        if (course.Classes.Where(c => c.ID == item.ClassID).Any())
-                        {
-                            isPermited = true;
-                        }
-                    }
-                }
-
-                if (isPermited)
+                if (await this.CheckPermissionToAddInstructor(item))
                 {
                     Response response = await _classService.AddInstructor(new Class() { ID = item.ClassID }, new Instructor() { ID = item.InstructorID });
                     return new
@@ -245,11 +178,228 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Adiciona um Coordinator em uma Class
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [Route("coordinator")]
         public async Task<object> AddCoordinator([FromBody] CoordinatorClass item)
+        {
+            try
+            {
+                if (await CheckPermissionToAddCoordinator(item))
+                {
+                    Response response = await _classService.AddCoordinator(new Class() { ID = item.ClassID }, new Coordinator() { ID = item.CoordinatorID });
+                    return response; 
+                }
+
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///     Altera uma Class pelo corpo da requisição através de seu ID
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<object> Update(Class Class, int id)
+        {
+            Class.ID = id; 
+            try
+            {
+                if (await this.CheckPermissionToCreateOrUpdateClass(Class))
+                {
+                    Response response = await _classService.Update(Class);
+                    return response;
+                }
+
+                return Forbid();
+            }
+            catch (Exception)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+        
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para criar ou alterar determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToCreateOrUpdateClass(Class Class)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null && user.Owner.IsActive)
+                {
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == Class.CourseID).Any())
+                        {
+                            return true; 
+                        }
+                    }
+                }
+
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para deletar determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToDeleteClass(int id)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null && user.Owner.IsActive)
+                {
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == id).Any())
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão adicionar um Student em determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToAddStudent(StudentClass item)
+        {
+            try
+            {
+                bool isPermited = false;
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner != null && user.Owner.IsActive)
+                {
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == item.ClassID).Any())
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+                if (!isPermited)
+                {
+                    if (user.Instructor != null && user.Instructor.IsActive)
+                    {
+                        Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                        if (instructor.Classes.Where(ic => ic.ClassID == item.ClassID).Any())
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+                if (!isPermited)
+                {
+                    if (user.Coordinator != null && user.Coordinator.IsActive)
+                    {
+                        Coordinator coordinator = (await this._coordinatorService.GetByID(user.Instructor.ID)).Data[0];
+                        if (coordinator.Classes.Where(cc => cc.ClassID == item.ClassID).Any())
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+
+                return isPermited;
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
+        }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão adicionar um Instructor em determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToAddInstructor(InstructorClass item)
+        {
+            try
+            {
+                bool isPermited = false;
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Owner == null && user.Coordinator == null)
+                {
+                    return false; 
+                }
+
+                Coordinator coordinator = (await _coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
+                if (coordinator.Classes.Where(c => c.ClassID == item.ClassID).Any())
+                {
+                    isPermited = true;
+                }
+
+                if (!isPermited)
+                {
+                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
+                    foreach (OwnerCourse oc in owner.Courses)
+                    {
+                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
+                        if (course.Classes.Where(c => c.ID == item.ClassID).Any())
+                        {
+                            isPermited = true;
+                        }
+                    }
+                }
+
+                return isPermited;
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
+        }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão adicionar um Coordinator em determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToAddCoordinator(CoordinatorClass item)
         {
             try
             {
@@ -263,27 +413,24 @@ namespace AcademicSystemApi.Controllers
                         Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
                         if (course.Classes.Where(c => c.ID == item.ClassID).Any())
                         {
-                            Response response = await _classService.AddCoordinator(new Class() { ID = item.ClassID }, new Coordinator() { ID = item.CoordinatorID });
-                            return new
-                            {
-                                success = response.Success
-                            };
+                            return true; 
                         }
                     }
                 }
 
-                return Forbid();
+                return false; 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
+                return false;
             }
         }
-
-        
-
-        private async Task<bool> PermissionCheckToReadClass(Class Class)
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para ler determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToReadClass(Class Class)
         {
             bool hasPermissionToRead = false;
             int userID = this.GetUserID();
@@ -330,42 +477,6 @@ namespace AcademicSystemApi.Controllers
                 }
             }
             return hasPermissionToRead;
-        }
-
-        [Authorize]
-        [HttpPut]
-        [Route("")]
-        public async Task<object> Update(Class Class)
-        {
-            try
-            {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Owner != null && user.Owner.IsActive) 
-                {
-                    Owner owner = (await _ownerService.GetByID(user.Owner.ID)).Data[0];
-
-                    foreach (OwnerCourse oc in owner.Courses)
-                    {
-                        Course course = (await _courseService.GetByID(oc.CourseID)).Data[0];
-                        if (course.Classes.Where(c => c.ID == Class.CourseID).Any())
-                        {
-                            Response response = await _classService.Update(Class);
-                            return new
-                            {
-                                success = response.Success
-                            };
-                        }
-                    }
-                }
-
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
-            }
         }
     }
 }

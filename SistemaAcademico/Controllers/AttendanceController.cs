@@ -34,7 +34,161 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
-        private async Task<bool> PermissionCheckToReadAttendance(Attendance attendance)
+        /// <summary>
+        ///     Pega uma Attendance pelo seu ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}")]
+        [Authorize]
+        public async Task<object> GetAttendance(int id)
+        {
+            try
+            {
+                DataResponse<Attendance> response = await _service.GetByID(id);
+
+                if (response.HasError())
+                {
+                    return response; 
+                }
+
+                if (await this.CheckPermissionToReadAttendance(response.Data[0]))
+                {
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///     Cria uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public async Task<object> CreateAttendance(Attendance attendance)
+        {
+            try
+            {
+                if (await this.CheckPermissionToCreateOrUpdateAttendance(attendance))
+                {
+                    Response response = await _service.Create(attendance);
+
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///     Altera uma Attendance pelo corpo da requisição através de seu ID 
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Authorize]
+        [Route("{id}")]
+        public async Task<object> UpdateAttendance(Attendance attendance, int id)
+        {
+            attendance.ID = id;
+            try
+            {
+                if (await this.CheckPermissionToCreateOrUpdateAttendance(attendance))
+                {
+                    Response response = await _service.Update(attendance);
+
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///     Deleta uma attendance pelo seu ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        [Authorize]       
+        public async Task<object> DeleteAttendance(int id)
+        {
+            try
+            {
+                if (await this.CheckPermissionToDeleteAttendance(id))
+                {
+                    Response response = await _service.Delete(id);  
+
+                    return this.SendResponse(response);
+                }
+
+                return Forbid();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCode(500).StatusCode;
+                return null;
+            }
+        }
+        
+        
+        
+        /// <summary>
+        ///     Verifica se o usuário tem permissão para criar ou alterar uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToCreateOrUpdateAttendance(Attendance attendance)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Instructor != null)
+                {
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+
+                    if (instructor.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
+                    {
+                        return true; 
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        
+        /// <summary>
+        ///     Verifica se o usuário tem permissão para ler uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToReadAttendance(Attendance attendance)
         {
             bool hasPermissionToRead = false;
 
@@ -69,119 +223,26 @@ namespace AcademicSystemApi.Controllers
             return hasPermissionToRead;
         }
 
-        [HttpGet]
-        [Route("{id}")]
-        [Authorize]
-        public async Task<object> GetAttendance(int id)
+        /// <summary>
+        ///     Verifica se o usuário tem permissão para deletar uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
+        private async Task<bool> CheckPermissionToDeleteAttendance(int id)
         {
-            try
-            {
-                DataResponse<Attendance> response = await _service.GetByID(id);
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (response.HasError())
+            if (user.Instructor != null)
+            {
+                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                Attendance Attendance = (await this._service.GetByID(id)).Data[0];
+                if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
                 {
-                    return response; 
+                    return true; 
                 }
-
-                if (await this.PermissionCheckToReadAttendance(response.Data[0]))
-                {
-                    return this.SendResponse(response);
-                }
-
-                return Forbid();
             }
-            catch (Exception e)
-            {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
-            }
-        }
 
-        [HttpPost]
-        [Authorize]
-        public async Task<object> CreateAttendance(Attendance Attendance)
-        {
-            try
-            {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null)
-                {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-
-                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
-                    {
-                        Response response = await _service.Create(Attendance);
-                        return this.SendResponse(response);
-                    }
-                }
-
-                return Forbid();
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
-            }
-        }
-
-
-        [HttpPut]
-        [Authorize]
-        [Route("{id}")]
-        public async Task<object> UpdateAttendance(Attendance Attendance, int id)
-        {
-            Attendance.ID = id;
-            try
-            {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null)
-                {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-
-                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
-                    {
-                        Response response = await _service.Update(Attendance);
-                        return this.SendResponse(response);
-                    }
-                }
-
-                return Forbid();
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
-
-        [HttpDelete]
-        [Route("{id}")]
-        [Authorize]
-        public async Task<object> DeleteAttendance(int id)
-        {
-            try
-            {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null)
-                {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                    Attendance Attendance = (await this._service.GetByID(id)).Data[0];
-                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
-                    {
-                        Response response = await _service.Delete(id);
-                        return this.SendResponse(response);
-                    }
-                }
-
-                return Forbid();
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = StatusCode(500).StatusCode;
-                return null;
-            }
+            return false;
         }
     }
 }
