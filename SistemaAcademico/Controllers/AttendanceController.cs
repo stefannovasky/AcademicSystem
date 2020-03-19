@@ -34,7 +34,7 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
-        private async Task<bool> PermissionCheckToReadAttendance(Attendance attendance)
+        private async Task<bool> CheckPermissionToReadAttendance(Attendance attendance)
         {
             bool hasPermissionToRead = false;
 
@@ -69,6 +69,30 @@ namespace AcademicSystemApi.Controllers
             return hasPermissionToRead;
         }
 
+        private async Task<bool> CheckPermissionToCreateOrUpdateAttendance(Attendance attendance)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Instructor != null)
+                {
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+
+                    if (instructor.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
+                    {
+                        return true; 
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -83,7 +107,7 @@ namespace AcademicSystemApi.Controllers
                     return response; 
                 }
 
-                if (await this.PermissionCheckToReadAttendance(response.Data[0]))
+                if (await this.CheckPermissionToReadAttendance(response.Data[0]))
                 {
                     return this.SendResponse(response);
                 }
@@ -99,21 +123,15 @@ namespace AcademicSystemApi.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateAttendance(Attendance Attendance)
+        public async Task<object> CreateAttendance(Attendance attendance)
         {
             try
             {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null)
+                if (await this.CheckPermissionToCreateOrUpdateAttendance(attendance))
                 {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                    Response response = await _service.Create(attendance);
 
-                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
-                    {
-                        Response response = await _service.Create(Attendance);
-                        return this.SendResponse(response);
-                    }
+                    return this.SendResponse(response);
                 }
 
                 return Forbid();
@@ -129,30 +147,42 @@ namespace AcademicSystemApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id}")]
-        public async Task<object> UpdateAttendance(Attendance Attendance, int id)
+        public async Task<object> UpdateAttendance(Attendance attendance, int id)
         {
-            Attendance.ID = id;
+            attendance.ID = id;
             try
             {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null)
+                if (await this.CheckPermissionToCreateOrUpdateAttendance(attendance))
                 {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                    Response response = await _service.Update(attendance);
 
-                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
-                    {
-                        Response response = await _service.Update(Attendance);
-                        return this.SendResponse(response);
-                    }
+                    return this.SendResponse(response);
                 }
 
                 return Forbid();
             }
             catch (Exception e)
             {
+                Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
+        }
+
+        private async Task<bool> CheckPermissionToDeleteAttendance(int id)
+        {
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+            if (user.Instructor != null)
+            {
+                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                Attendance Attendance = (await this._service.GetByID(id)).Data[0];
+                if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
+                {
+                    return true; 
+                }
+            }
+
+            return false;
         }
 
         [HttpDelete]
@@ -162,17 +192,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null)
+                if (await this.CheckPermissionToDeleteAttendance(id))
                 {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                    Attendance Attendance = (await this._service.GetByID(id)).Data[0];
-                    if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
-                    {
-                        Response response = await _service.Delete(id);
-                        return this.SendResponse(response);
-                    }
+                    Response response = await _service.Delete(id);  
+
+                    return this.SendResponse(response);
                 }
 
                 return Forbid();
