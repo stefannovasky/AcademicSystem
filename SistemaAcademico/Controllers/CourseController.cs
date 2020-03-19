@@ -37,7 +37,11 @@ namespace AcademicSystemApi.Controllers
             this._subjectService = subjectService;
         }
 
-
+        /// <summary>
+        ///     Pega um Course através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -58,7 +62,11 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Cria um Course 
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateCourse(Course course)
@@ -82,7 +90,12 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Altera um Course pelo corpo da requisição através de seu ID
+        /// </summary>
+        /// <param name="course"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -104,7 +117,11 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Deleta um Course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -127,7 +144,12 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Adiciona um Subject em determinado Course
+        /// </summary>
+        /// <param name="courseID"></param>
+        /// <param name="subjectID"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("subject")]
         [Authorize]
@@ -149,7 +171,11 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Adicionar um Owner em determinado Course 
+        /// </summary>
+        /// <param name="ownerCourse"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("owner")]
         [Authorize]
@@ -170,7 +196,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Verifica se o usuario logado tem permissão para criar um Course 
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToCreateCourse(Course course)
         {
             try
@@ -188,6 +218,11 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+        /// <summary>
+        ///     Verifica se o usuario logado tem permissao para deletar determinado Course 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToDeleteCourse(int id)
         {
             try
@@ -210,6 +245,12 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+
+        /// <summary>
+        ///     Verifica se o usuario logado tem permissao para alterar determinado Course
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToUpdateCourse(Course course)
         {
             try
@@ -233,6 +274,11 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+        /// <summary>
+        ///     Verifica se o usuario logado tem permissao para adicionar Subject em um determinado Course 
+        /// </summary>
+        /// <param name="courseID"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToAddSubject(int courseID)
         {
             try
@@ -251,6 +297,11 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+        /// <summary>
+        ///     Verifica se o usuario logado tem permissao para adicionar um Owner em um determinado Course 
+        /// </summary>
+        /// <param name="ownerCourse"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToAddOwner(OwnerCourse ownerCourse)
         {
             try
@@ -269,6 +320,11 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
+        /// <summary>
+        ///     Verifica se o usuario logado tem permissao para ler determinado Course 
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToReadCourse(Course c)
         {
             User u = (await _userService.GetByID(this.GetUserID())).Data[0];

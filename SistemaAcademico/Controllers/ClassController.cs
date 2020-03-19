@@ -34,6 +34,11 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
+        /// <summary>
+        ///     Cria uma Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<object> Create(Class Class)
@@ -55,6 +60,12 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+
+        /// <summary>
+        ///     Pega um Class através de seu ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -80,6 +91,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Deleta uma Class através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
@@ -102,7 +118,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Adiciona um Student em uma Class
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [Route("student")]
@@ -128,6 +148,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Adiciona um Instrucor em uma Class
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [Route("instructor")]
@@ -153,7 +178,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Adiciona um Coordinator em uma Class
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [Route("coordinator")]
@@ -176,7 +205,12 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Altera uma Class pelo corpo da requisição através de seu ID
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPut]
         [Route("{id}")]
@@ -200,7 +234,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
         
-
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para criar ou alterar determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToCreateOrUpdateClass(Class Class)
         {
             try
@@ -228,6 +266,11 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para deletar determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToDeleteClass(int id)
         {
             try
@@ -254,6 +297,11 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão adicionar um Student em determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToAddStudent(StudentClass item)
         {
             try
@@ -303,6 +351,11 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão adicionar um Instructor em determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToAddInstructor(InstructorClass item)
         {
             try
@@ -341,6 +394,11 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão adicionar um Coordinator em determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToAddCoordinator(CoordinatorClass item)
         {
             try
@@ -367,6 +425,11 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para ler determinada Class
+        /// </summary>
+        /// <param name="Class"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToReadClass(Class Class)
         {
             bool hasPermissionToRead = false;

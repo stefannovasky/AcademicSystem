@@ -32,7 +32,11 @@ namespace AcademicSystemApi.Controllers
             this._studentService = studentService;
             this._instructorService = instructorService;
         }
-
+        /// <summary>
+        ///     Pega uma Evaluation através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -61,6 +65,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Cria uma Evaluation 
+        /// </summary>
+        /// <param name="evaluation"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateEvaluation(Evaluation evaluation)
@@ -82,6 +91,12 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Altera uma Evaluation pelo corpo da requisição através de seu ID 
+        /// </summary>
+        /// <param name="Evaluation"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -107,6 +122,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Deleta uma Evaluation 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -130,7 +150,11 @@ namespace AcademicSystemApi.Controllers
         }
 
 
-
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para criar uma Evaluation
+        /// </summary>
+        /// <param name="evaluation"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToCreateEvaluation(Evaluation evaluation)
         {
             try
@@ -154,6 +178,11 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para alterar determinada Evaluation
+        /// </summary>
+        /// <param name="evaluation"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToUpdateEvaluation(Evaluation evaluation)
         {
             try
@@ -177,6 +206,11 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
+        /// <summary>
+        ///     Verifica se o usuario logado tem permissão para deletar determinada Evaluation 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToDeleteEvaluation(int id)
         {
             try
@@ -199,6 +233,11 @@ namespace AcademicSystemApi.Controllers
                 return false; 
             }
         }
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissao para deletar determinada Evaluation
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         private async Task<bool> PermissionCheckToReadEvaluation(Evaluation e)
         {
             bool hasPermissionToRead = false;

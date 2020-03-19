@@ -34,7 +34,11 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
-
+        /// <summary>
+        ///     Pega uma Attendance pelo seu ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -63,7 +67,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Cria uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateAttendance(Attendance attendance)
@@ -86,7 +94,12 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Altera uma Attendance pelo corpo da requisição através de seu ID 
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -111,7 +124,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Deleta uma attendance pelo seu ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]       
@@ -137,7 +154,11 @@ namespace AcademicSystemApi.Controllers
         
         
         
-        
+        /// <summary>
+        ///     Verifica se o usuário tem permissão para criar ou alterar uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToCreateOrUpdateAttendance(Attendance attendance)
         {
             try
@@ -161,6 +182,12 @@ namespace AcademicSystemApi.Controllers
                 return false;
             }
         }
+        
+        /// <summary>
+        ///     Verifica se o usuário tem permissão para ler uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToReadAttendance(Attendance attendance)
         {
             bool hasPermissionToRead = false;
@@ -196,6 +223,11 @@ namespace AcademicSystemApi.Controllers
             return hasPermissionToRead;
         }
 
+        /// <summary>
+        ///     Verifica se o usuário tem permissão para deletar uma Attendance
+        /// </summary>
+        /// <param name="attendance"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToDeleteAttendance(int id)
         {
             User user = (await this._userService.GetByID(this.GetUserID())).Data[0];

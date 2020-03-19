@@ -26,7 +26,11 @@ namespace AcademicSystemApi.Controllers
             this.userService = userService;
         }
 
-
+        /// <summary>
+        ///     Pega um Coordinator através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -49,6 +53,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Cria um Coordinator 
+        /// </summary>
+        /// <param name="Coordinator"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateCoordinator(Coordinator Coordinator)
@@ -69,6 +78,12 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Altera um Coordinator pelo corpo da requisição através de seu ID 
+        /// </summary>
+        /// <param name="Coordinator"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -91,6 +106,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+        /// <summary>
+        ///     Deleta um Coordinator através de seu ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -111,7 +131,11 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para alterar ou deletar determinado Coordinator 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToUpdateOrDeleteCoordinator(int id) 
         {
             try
@@ -129,6 +153,12 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
+
+        /// <summary>
+        ///     Verifica se o usuário logado tem permissão para ler determinado Coordinator
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToReadCoordinator(int id)
         {
             try
