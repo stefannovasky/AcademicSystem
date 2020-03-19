@@ -34,64 +34,6 @@ namespace AcademicSystemApi.Controllers
             this._instructorService = instructorService;
         }
 
-        private async Task<bool> CheckPermissionToReadAttendance(Attendance attendance)
-        {
-            bool hasPermissionToRead = false;
-
-            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-            //Ser Coordinator/ Instructor da classe que a attendance foi registrada
-            //Ser o aluno registrado pelo atendance
-
-            if (user.Coordinator != null)
-            {
-                Coordinator coordinator = (await this._coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
-                if (coordinator.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
-                {
-                    hasPermissionToRead = true;
-                }
-            }
-            if (user.Instructor != null)
-            {
-                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                if (instructor.Classes.Where(i => i.ClassID == attendance.ClassID).Any()) 
-                {
-                    hasPermissionToRead = true;
-                }
-            }
-            if (user.Student != null)
-            {
-                if (user.Student.ID == attendance.StudentID)
-                {
-                    hasPermissionToRead = true; 
-                }
-            }
-
-            return hasPermissionToRead;
-        }
-
-        private async Task<bool> CheckPermissionToCreateOrUpdateAttendance(Attendance attendance)
-        {
-            try
-            {
-                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-                if (user.Instructor != null)
-                {
-                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-
-                    if (instructor.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
-                    {
-                        return true; 
-                    }
-                }
-
-                return false;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-        }
 
         [HttpGet]
         [Route("{id}")]
@@ -120,6 +62,7 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
+
 
         [HttpPost]
         [Authorize]
@@ -168,26 +111,10 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-        private async Task<bool> CheckPermissionToDeleteAttendance(int id)
-        {
-            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
-
-            if (user.Instructor != null)
-            {
-                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
-                Attendance Attendance = (await this._service.GetByID(id)).Data[0];
-                if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
-                {
-                    return true; 
-                }
-            }
-
-            return false;
-        }
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize]
+        [Authorize]       
         public async Task<object> DeleteAttendance(int id)
         {
             try
@@ -206,6 +133,84 @@ namespace AcademicSystemApi.Controllers
                 Response.StatusCode = StatusCode(500).StatusCode;
                 return null;
             }
+        }
+        
+        
+        
+        
+        private async Task<bool> CheckPermissionToCreateOrUpdateAttendance(Attendance attendance)
+        {
+            try
+            {
+                User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+                if (user.Instructor != null)
+                {
+                    Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+
+                    if (instructor.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
+                    {
+                        return true; 
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        private async Task<bool> CheckPermissionToReadAttendance(Attendance attendance)
+        {
+            bool hasPermissionToRead = false;
+
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+            //Ser Coordinator/ Instructor da classe que a attendance foi registrada
+            //Ser o aluno registrado pelo atendance
+
+            if (user.Coordinator != null)
+            {
+                Coordinator coordinator = (await this._coordinatorService.GetByID(user.Coordinator.ID)).Data[0];
+                if (coordinator.Classes.Where(c => c.ClassID == attendance.ClassID).Any())
+                {
+                    hasPermissionToRead = true;
+                }
+            }
+            if (user.Instructor != null)
+            {
+                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                if (instructor.Classes.Where(i => i.ClassID == attendance.ClassID).Any()) 
+                {
+                    hasPermissionToRead = true;
+                }
+            }
+            if (user.Student != null)
+            {
+                if (user.Student.ID == attendance.StudentID)
+                {
+                    hasPermissionToRead = true; 
+                }
+            }
+
+            return hasPermissionToRead;
+        }
+
+        private async Task<bool> CheckPermissionToDeleteAttendance(int id)
+        {
+            User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
+
+            if (user.Instructor != null)
+            {
+                Instructor instructor = (await this._instructorService.GetByID(user.Instructor.ID)).Data[0];
+                Attendance Attendance = (await this._service.GetByID(id)).Data[0];
+                if (instructor.Classes.Where(c => c.ClassID == Attendance.ClassID).Any())
+                {
+                    return true; 
+                }
+            }
+
+            return false;
         }
     }
 }
