@@ -26,6 +26,7 @@ namespace AcademicSystemApi.Controllers
             this.userService = userService;
         }
 
+
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -33,15 +34,11 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                DataResponse<Coordinator> response = await _service.GetByID(id);
-                User user = (await userService.GetByID(this.GetUserID())).Data[0];
-                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
-                foreach (CoordinatorClass coordinatorClass in response.Data[0].Classes)
+                if (await CheckPermissionToReadCoordinator(id))
                 {
-                    if (coordinator.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Any())
-                    {
-                        return this.SendResponse(response);
-                    }
+                    DataResponse<Coordinator> response = await _service.GetByID(id);
+
+                    return this.SendResponse(response);
                 }
                 return Forbid();
             }
@@ -80,7 +77,7 @@ namespace AcademicSystemApi.Controllers
             Coordinator.ID = id;
             try
             {
-                if (Coordinator.UserID == this.GetUserID())
+                if (await this.CheckPermissionToUpdateOrDeleteCoordinator(id))
                 {
                     Response response = await _service.Update(Coordinator);
                     return this.SendResponse(response);
@@ -101,8 +98,8 @@ namespace AcademicSystemApi.Controllers
         {
             try
             {
-                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
-                if (this.GetUserID() == coordinator.UserID) {
+                if (await CheckPermissionToUpdateOrDeleteCoordinator(id))
+                {
                     Response response = await _service.Delete(id);
                     return this.SendResponse(response);
                 }
@@ -111,6 +108,47 @@ namespace AcademicSystemApi.Controllers
             catch (Exception e)
             {
                 return null;
+            }
+        }
+
+
+        private async Task<bool> CheckPermissionToUpdateOrDeleteCoordinator(int id) 
+        {
+            try
+            {
+                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
+                if (this.GetUserID() == coordinator.UserID)
+                {
+                    return true; 
+                }
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false; 
+            }
+        }
+
+        private async Task<bool> CheckPermissionToReadCoordinator(int id)
+        {
+            try
+            {
+                DataResponse<Coordinator> response = await _service.GetByID(id);
+                User user = (await userService.GetByID(this.GetUserID())).Data[0];
+                Coordinator coordinator = (await _service.GetByID(id)).Data[0];
+                foreach (CoordinatorClass coordinatorClass in response.Data[0].Classes)
+                {
+                    if (coordinator.Classes.Where(c => c.ClassID == coordinatorClass.ClassID).Any())
+                    {
+                        return true;
+                    }
+                }
+
+                return false; 
+            }
+            catch (Exception)
+            {
+                return false; 
             }
         }
     }
