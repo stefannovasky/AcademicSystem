@@ -26,7 +26,9 @@ namespace AcademicSystemApi.Controllers
             this._userService = userService;
             this._ownerService = ownerService;
         }
-
+        /// <summary>
+        /// Metodo pega um owner.
+        /// </summary>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -53,7 +55,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo cria um owner.
+        /// </summary>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateOwner(Owner Owner)
@@ -73,7 +77,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo Atualiza um owner.
+        /// </summary>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -95,7 +101,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo deleta um owner.
+        /// </summary>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -117,7 +125,9 @@ namespace AcademicSystemApi.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Metodo checa permiçoes de criação e atualização de um owner.
+        /// </summary>
         private async Task<bool> CheckPermissionToCreateUpdateOwner(Owner owner)
         {
             if (this.GetUserID() == (await _service.GetByID(owner.ID)).Data[0].UserID)
@@ -126,7 +136,11 @@ namespace AcademicSystemApi.Controllers
             }
             return false; ;
         }
-
+        /// <summary>
+        /// Checa as permissoes de Delete de um owner.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private async Task<bool> CheckPermissionToDeleteOwner(int id)
         {
             if (this.GetUserID() == (await _service.GetByID(id)).Data[0].UserID)
@@ -135,7 +149,9 @@ namespace AcademicSystemApi.Controllers
             }
             return false; ;
         }
-
+        /// <summary>
+        /// Checa permissoes de pegar um owner.
+        /// </summary>
         private async Task<bool> CheckPermissionToGetOwner(Owner owner)
         {
             User user = (await _userService.GetByID(this.GetUserID())).Data[0];

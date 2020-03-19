@@ -33,7 +33,9 @@ namespace AcademicSystemApi.Controllers
             this.CourseService = courseService;
         }
 
-
+        /// <summary>
+        /// Metodo Pega um Student.
+        /// </summary>
         [Authorize]
         [HttpGet]
         [Route("{id}")]
@@ -61,7 +63,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo cria um Student.
+        /// </summary>
         [Authorize]
         [HttpPost]
         public async Task<object> CreateStudent(Student student)
@@ -81,7 +85,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo Atualiza um Student.
+        /// </summary>
         [Authorize]
         [HttpPut]
         [Route("{id}")]
@@ -103,7 +109,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo Deleta um Student.
+        /// </summary>
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
@@ -124,8 +132,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
-
+        /// <summary>
+        /// Metodo checa as permisoes de criação e atualização de um Student.
+        /// </summary>>
         private async Task<bool> CheckPermissionToCreateUpdateStudent(Student student)
         {
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
@@ -135,7 +144,9 @@ namespace AcademicSystemApi.Controllers
             }
             return false;
         }
-
+        /// <summary>
+        /// Metodo checa as permissoes de delete de um student.
+        /// </summary>
         private async Task<bool> CheckPermissionToDeleteStudent(int id)
         {
             User user = (await userService.GetByID(this.GetUserID())).Data[0];
@@ -146,7 +157,9 @@ namespace AcademicSystemApi.Controllers
             }
             return false;
         }
-
+        /// <summary>
+        ///     Metodo checa as permissoes de pegar um student.
+        /// </summary>
         private async Task<bool> CheckPermisionToGetStudent(Student student)
         {
             User user = (await userService.GetByID(this.GetUserID())).Data[0];

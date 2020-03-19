@@ -37,7 +37,9 @@ namespace AcademicSystemApi.Controllers
             this._courseService = courseService;
             this._ownerService = ownerService;
         }
-       
+       /// <summary>
+       ///  Metodo pega um Subject.
+       /// </summary>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -65,7 +67,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Metodo cria um Subject.
+        /// </summary>
         [HttpPost]
         [Authorize]
         public async Task<object> CreateSubject(Subject Subject)
@@ -85,7 +89,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Metodo Atualiza um Subject.
+        /// </summary>
         [HttpPut]
         [Authorize]
         [Route("{id}")]
@@ -107,7 +113,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        ///     Metodo Deleta um Subject.
+        /// </summary>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -128,7 +136,9 @@ namespace AcademicSystemApi.Controllers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Metodo checa as permiçoes de criação e atualização de Subject.
+        /// </summary>
         private async Task<bool> CheckPermissionToCreateUpdateSubject(Subject subject)
         {
             User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
@@ -147,7 +157,9 @@ namespace AcademicSystemApi.Controllers
             }
             return false;
         }
-
+        /// <summary>
+        /// Metodo checa as permissoes de Delete de um Subject.
+        /// </summary>
         private async Task<bool> CheckPermissionToDeleteSubject(int id)
         {
             User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
@@ -166,7 +178,9 @@ namespace AcademicSystemApi.Controllers
             }
             return false;
         }
-
+        /// <summary>
+        ///     Metodo checa as permiçoes de Leitura de um Subject.
+        /// </summary>
         private async Task<bool> CheckPermissionToReadSubject(Subject subject)
         {
 

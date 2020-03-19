@@ -28,7 +28,11 @@ namespace AcademicSystemApi.Controllers
             this._service = service;
 
         }
-
+        /// <summary>
+        ///     Pega um user.
+        /// </summary>
+        /// <param name="id">Id do User a ser pego.</param>
+        /// <returns>Retorna um User</returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -52,7 +56,10 @@ namespace AcademicSystemApi.Controllers
                 message = response.GetErrorMessage()
             };
         }
-
+        /// <summary>
+        ///     Método retorna o usuario atual logado.
+        /// </summary>
+        /// <returns>Retona um User.</returns>
         [HttpGet]
         [Route("profile")]
         [Authorize]
@@ -73,7 +80,11 @@ namespace AcademicSystemApi.Controllers
                 message = response.GetErrorMessage()
             };
         }
-
+        /// <summary>
+        ///     Realiza a authenticação do usuario.
+        /// </summary>
+        /// <param name="model">Recebe o model a partir do corpo da requisisão</param>
+        /// <returns>Retorna o usuario logado e o token de sessão</returns>
         [HttpPost]
         [Route("auth")]
         [AllowAnonymous]
@@ -95,7 +106,11 @@ namespace AcademicSystemApi.Controllers
                 message = response.GetErrorMessage()
             };
         }
-
+        /// <summary>
+        ///     Metodo cria um novo usuario.
+        /// </summary>
+        /// <param name="model">Dados para a criação de User passados pelo corpo da requisição</param>
+        /// <returns>Retorna um "Ok" caso ocora tudo certo.</returns>
         [HttpPost]
         [Route("register")]
         [AllowAnonymous]
@@ -120,7 +135,11 @@ namespace AcademicSystemApi.Controllers
                 message = response.GetErrorMessage()
             };
         }
-
+        /// <summary>
+        ///  Metodo deleta um usuario.
+        /// </summary>
+        /// <param name="id">Id do usuario a ser deletado.</param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -148,7 +167,9 @@ namespace AcademicSystemApi.Controllers
                 message = response.GetErrorMessage()
             };
         }
-
+        /// <summary>
+        ///     Metodo atualiza dados de um usuario.
+        /// </summary>
         [HttpPut]
         [Route("{id}")]
         [Authorize]
