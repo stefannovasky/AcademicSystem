@@ -104,7 +104,7 @@ namespace DAL.Impl
                 if (owner == null)
                 {
                     DataResponse<Owner> response = new DataResponse<Owner>() { Success = false };
-                    response.ErrorList.Add("User not found");
+                    response.ErrorList.Add("Owner not found");
                     return response;
                 }
 
