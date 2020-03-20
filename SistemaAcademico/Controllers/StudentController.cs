@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AcademicSystemApi.Extensions;
+using AcademicSystemApi.Models;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -68,8 +69,10 @@ namespace AcademicSystemApi.Controllers
         /// </summary>
         [Authorize]
         [HttpPost]
-        public async Task<object> CreateStudent(Student student)
+        public async Task<object> CreateStudent(StudentViewModel model)
         {
+            Student student = new SimpleAutoMapper<Student>().Map(model);
+
             try
             {
                 if (await CheckPermissionToCreateUpdateStudent(student))
@@ -91,8 +94,10 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpPut]
         [Route("{id}")]
-        public async Task<object> UpdateStudent(Student student, int id)
+        public async Task<object> UpdateStudent(StudentViewModel model, int id)
         {
+            Student student = new SimpleAutoMapper<Student>().Map(model);
+
             student.ID = id;
             try
             {

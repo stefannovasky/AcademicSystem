@@ -4,17 +4,21 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AcademicSystemApi.Extensions;
+using AcademicSystemApi.Models;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
+using Swashbuckle.Swagger.Annotations;
 
 namespace AcademicSystemApi.Controllers
 {
     [Route("attendances")]
     [ApiController]
+    [SwaggerSchemaFilter(typeof(Attendance))]
+
     public class AttendanceController : ControllerBase
     {
         IAttendanceService _service;
@@ -23,7 +27,6 @@ namespace AcademicSystemApi.Controllers
         IClassService _classService;
         IStudentService _studentService;
         IInstructorService _instructorService; 
-
         public AttendanceController(IAttendanceService service, IUserService userService, ICoordinatorService coordinatorService, IClassService classService, IStudentService studentService, IInstructorService instructorService)
         {
             this._service = service;
@@ -36,6 +39,8 @@ namespace AcademicSystemApi.Controllers
 
         /// <summary>
         ///     Pega uma Attendance pelo seu ID
+        ///     
+        ///     
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -70,14 +75,14 @@ namespace AcademicSystemApi.Controllers
         /// <summary>
         ///     Cria uma Attendance
         /// </summary>
-        /// <param name="attendance"></param>
-        /// <returns></returns>
+        [ProducesResponseType(typeof(Response), 200)]
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateAttendance(Attendance attendance)
+        public async Task<object> CreateAttendance(AttendanceViewModel model)
         {
             try
             {
+                Attendance attendance = new SimpleAutoMapper<Attendance>().Map(model);
                 if (await this.CheckPermissionToCreateOrUpdateAttendance(attendance))
                 {
                     Response response = await _service.Create(attendance);
@@ -103,8 +108,10 @@ namespace AcademicSystemApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id}")]
-        public async Task<object> UpdateAttendance(Attendance attendance, int id)
+        public async Task<object> UpdateAttendance(AttendanceViewModel model, int id)
         {
+            Attendance attendance = new SimpleAutoMapper<Attendance>().Map(model);
+
             attendance.ID = id;
             try
             {

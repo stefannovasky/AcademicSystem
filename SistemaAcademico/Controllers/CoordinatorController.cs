@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AcademicSystemApi.Extensions;
+using AcademicSystemApi.Models;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -60,13 +61,15 @@ namespace AcademicSystemApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateCoordinator(Coordinator Coordinator)
+        public async Task<object> CreateCoordinator(CoordinatorViewModel model)
         {
+            Coordinator coordinator = new SimpleAutoMapper<Coordinator>().Map(model);
+
             try
             {
-                if (Coordinator.UserID == this.GetUserID())
+                if (coordinator.UserID == this.GetUserID())
                 {
-                    Response response = await _service.Create(Coordinator);
+                    Response response = await _service.Create(coordinator);
                     return this.SendResponse(response);
                 }
                 return Forbid();
@@ -87,14 +90,16 @@ namespace AcademicSystemApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id}")]
-        public async Task<object> UpdateCoordinator(Coordinator Coordinator, int id)
+        public async Task<object> UpdateCoordinator(CoordinatorViewModel model, int id)
         {
-            Coordinator.ID = id;
+            Coordinator coordinator = new SimpleAutoMapper<Coordinator>().Map(model);
+
+            coordinator.ID = id;
             try
             {
                 if (await this.CheckPermissionToUpdateOrDeleteCoordinator(id))
                 {
-                    Response response = await _service.Update(Coordinator);
+                    Response response = await _service.Update(coordinator);
                     return this.SendResponse(response);
                 }
                 return Forbid();

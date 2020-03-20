@@ -1,0 +1,535 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AcademicSystemApi</name>
+    </assembly>
+    <members>
+        <member name="M:AcademicSystemApi.Controllers.AttendanceController.GetAttendance(System.Int32)">
+            <summary>
+                Pega uma Attendance pelo seu ID
+                
+                
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.AttendanceController.CreateAttendance(AcademicSystemApi.Models.AttendanceViewModel)">
+            <summary>
+                Cria uma Attendance
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.AttendanceController.UpdateAttendance(AcademicSystemApi.Models.AttendanceViewModel,System.Int32)">
+            <summary>
+                Altera uma Attendance pelo corpo da requisição através de seu ID 
+            </summary>
+            <param name="attendance"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.AttendanceController.DeleteAttendance(System.Int32)">
+            <summary>
+                Deleta uma attendance pelo seu ID
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.AttendanceController.CheckPermissionToCreateOrUpdateAttendance(Entities.Attendance)">
+            <summary>
+                Verifica se o usuário tem permissão para criar ou alterar uma Attendance
+            </summary>
+            <param name="attendance"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.AttendanceController.CheckPermissionToReadAttendance(Entities.Attendance)">
+            <summary>
+                Verifica se o usuário tem permissão para ler uma Attendance
+            </summary>
+            <param name="attendance"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.AttendanceController.CheckPermissionToDeleteAttendance(System.Int32)">
+            <summary>
+                Verifica se o usuário tem permissão para deletar uma Attendance
+            </summary>
+            <param name="attendance"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.Create(AcademicSystemApi.Models.ClassViewModel)">
+            <summary>
+                Cria uma Class
+            </summary>
+            <param name="Class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.GetClass(System.Int32)">
+            <summary>
+                Pega um Class através de seu ID
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.DeleteClass(System.Int32)">
+            <summary>
+                Deleta uma Class através de seu ID 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.AddStudent(AcademicSystemApi.Models.StudentClassViewModel)">
+            <summary>
+                Adiciona um Student em uma Class
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.AddInstructor(AcademicSystemApi.Models.InstructorClassViewModel)">
+            <summary>
+                Adiciona um Instrucor em uma Class
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.AddCoordinator(AcademicSystemApi.Models.CoordinatorClassViewModel)">
+            <summary>
+                Adiciona um Coordinator em uma Class
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.Update(AcademicSystemApi.Models.ClassViewModel,System.Int32)">
+            <summary>
+                Altera uma Class pelo corpo da requisição através de seu ID
+            </summary>
+            <param name="Class"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.CheckPermissionToCreateOrUpdateClass(Entities.Class)">
+            <summary>
+                Verifica se o usuário logado tem permissão para criar ou alterar determinada Class
+            </summary>
+            <param name="Class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.CheckPermissionToDeleteClass(System.Int32)">
+            <summary>
+                Verifica se o usuário logado tem permissão para deletar determinada Class
+            </summary>
+            <param name="Class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.CheckPermissionToAddStudent(Entities.StudentClass)">
+            <summary>
+                Verifica se o usuário logado tem permissão adicionar um Student em determinada Class
+            </summary>
+            <param name="Class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.CheckPermissionToAddInstructor(Entities.InstructorClass)">
+            <summary>
+                Verifica se o usuário logado tem permissão adicionar um Instructor em determinada Class
+            </summary>
+            <param name="Class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.CheckPermissionToAddCoordinator(Entities.CoordinatorClass)">
+            <summary>
+                Verifica se o usuário logado tem permissão adicionar um Coordinator em determinada Class
+            </summary>
+            <param name="Class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.ClassController.CheckPermissionToReadClass(Entities.Class)">
+            <summary>
+                Verifica se o usuário logado tem permissão para ler determinada Class
+            </summary>
+            <param name="Class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CoordinatorController.GetCoordinator(System.Int32)">
+            <summary>
+                Pega um Coordinator através de seu ID 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CoordinatorController.CreateCoordinator(AcademicSystemApi.Models.CoordinatorViewModel)">
+            <summary>
+                Cria um Coordinator 
+            </summary>
+            <param name="Coordinator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CoordinatorController.UpdateCoordinator(AcademicSystemApi.Models.CoordinatorViewModel,System.Int32)">
+            <summary>
+                Altera um Coordinator pelo corpo da requisição através de seu ID 
+            </summary>
+            <param name="Coordinator"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CoordinatorController.DeleteCoordinator(System.Int32)">
+            <summary>
+                Deleta um Coordinator através de seu ID 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CoordinatorController.CheckPermissionToUpdateOrDeleteCoordinator(System.Int32)">
+            <summary>
+                Verifica se o usuário logado tem permissão para alterar ou deletar determinado Coordinator 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CoordinatorController.CheckPermissionToReadCoordinator(System.Int32)">
+            <summary>
+                Verifica se o usuário logado tem permissão para ler determinado Coordinator
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.GetCourse(System.Int32)">
+            <summary>
+                Pega um Course através de seu ID 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.CreateCourse(AcademicSystemApi.Models.CourseViewModel)">
+            <summary>
+                Cria um Course 
+            </summary>
+            <param name="course"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.UpdateCourse(AcademicSystemApi.Models.CourseViewModel,System.Int32)">
+            <summary>
+                Altera um Course pelo corpo da requisição através de seu ID
+            </summary>
+            <param name="course"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.DeleteCourse(System.Int32)">
+            <summary>
+                Deleta um Course
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.AddSubject(AcademicSystemApi.Models.SubjectCourseViewModel)">
+            <summary>
+                Adiciona um Subject em determinado Course
+            </summary>
+            <param name="courseID"></param>
+            <param name="subjectID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.AddOwner(AcademicSystemApi.Models.OwnerCourseViewModel)">
+            <summary>
+                Adicionar um Owner em determinado Course 
+            </summary>
+            <param name="ownerCourse"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.CheckPermissionToCreateCourse(Entities.Course)">
+            <summary>
+                Verifica se o usuario logado tem permissão para criar um Course 
+            </summary>
+            <param name="course"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.CheckPermissionToDeleteCourse(System.Int32)">
+            <summary>
+                Verifica se o usuario logado tem permissao para deletar determinado Course 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.CheckPermissionToUpdateCourse(Entities.Course)">
+            <summary>
+                Verifica se o usuario logado tem permissao para alterar determinado Course
+            </summary>
+            <param name="course"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.CheckPermissionToAddSubject(System.Int32)">
+            <summary>
+                Verifica se o usuario logado tem permissao para adicionar Subject em um determinado Course 
+            </summary>
+            <param name="courseID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.CheckPermissionToAddOwner(Entities.OwnerCourse)">
+            <summary>
+                Verifica se o usuario logado tem permissao para adicionar um Owner em um determinado Course 
+            </summary>
+            <param name="ownerCourse"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.CourseController.CheckPermissionToReadCourse(Entities.Course)">
+            <summary>
+                Verifica se o usuario logado tem permissao para ler determinado Course 
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.GetEvaluation(System.Int32)">
+            <summary>
+                Pega uma Evaluation através de seu ID 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.CreateEvaluation(AcademicSystemApi.Models.EvaluationViewModel)">
+            <summary>
+                Cria uma Evaluation 
+            </summary>
+            <param name="evaluation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.UpdateEvaluation(AcademicSystemApi.Models.EvaluationViewModel,System.Int32)">
+            <summary>
+                Altera uma Evaluation pelo corpo da requisição através de seu ID 
+            </summary>
+            <param name="Evaluation"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.DeleteEvaluation(System.Int32)">
+            <summary>
+                Deleta uma Evaluation 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.CheckPermissionToCreateEvaluation(Entities.Evaluation)">
+            <summary>
+                Verifica se o usuário logado tem permissão para criar uma Evaluation
+            </summary>
+            <param name="evaluation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.CheckPermissionToUpdateEvaluation(Entities.Evaluation)">
+            <summary>
+                Verifica se o usuário logado tem permissão para alterar determinada Evaluation
+            </summary>
+            <param name="evaluation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.CheckPermissionToDeleteEvaluation(System.Int32)">
+            <summary>
+                Verifica se o usuario logado tem permissão para deletar determinada Evaluation 
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.EvaluationController.PermissionCheckToReadEvaluation(Entities.Evaluation)">
+            <summary>
+                Verifica se o usuário logado tem permissao para deletar determinada Evaluation
+            </summary>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.InstructorController.GetInstructor(System.Int32)">
+            <summary>
+            pegar um instructor.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.InstructorController.CreateInstructor(AcademicSystemApi.Models.InstructorViewModel)">
+            <summary>
+                Metodo cria um instrcutor.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.InstructorController.UpdateInstructor(AcademicSystemApi.Models.InstructorViewModel,System.Int32)">
+            <summary>
+            Atualiza um instructor.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.InstructorController.DeleteInstructor(System.Int32)">
+            <summary>
+            Metodo deleta um instructor.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.InstructorController.CheckPermissionToCreateUpdateInstructor(Entities.Instructor)">
+            <summary>
+            Metodo checa permissão de criação e atualização de um instrcutor.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.InstructorController.CheckPermissionToDeleteInstructor(System.Int32)">
+            <summary>
+                Verifica se o usuario autenticado tem autorização para deletar um instructor.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.InstructorController.CheckPermissionToGetInstructor(Entities.Instructor)">
+            <summary>
+            Verifica se o usuario autenticado tem autorização para
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.OwnerController.GetOwner(System.Int32)">
+            <summary>
+            Metodo pega um owner.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.OwnerController.CreateOwner(AcademicSystemApi.Models.OwnerViewModel)">
+            <summary>
+            Metodo cria um owner.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.OwnerController.UpdateOwner(AcademicSystemApi.Models.OwnerViewModel,System.Int32)">
+            <summary>
+            Metodo Atualiza um owner.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.OwnerController.DeleteOwner(System.Int32)">
+            <summary>
+            Metodo deleta um owner.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.OwnerController.CheckPermissionToCreateUpdateOwner(Entities.Owner)">
+            <summary>
+            Metodo checa permiçoes de criação e atualização de um owner.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.OwnerController.CheckPermissionToDeleteOwner(System.Int32)">
+            <summary>
+            Checa as permissoes de Delete de um owner.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.OwnerController.CheckPermissionToGetOwner(Entities.Owner)">
+            <summary>
+            Checa permissoes de pegar um owner.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.StudentController.GetStudent(System.Int32)">
+            <summary>
+            Metodo Pega um Student.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.StudentController.CreateStudent(AcademicSystemApi.Models.StudentViewModel)">
+            <summary>
+            Metodo cria um Student.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.StudentController.UpdateStudent(AcademicSystemApi.Models.StudentViewModel,System.Int32)">
+            <summary>
+            Metodo Atualiza um Student.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.StudentController.DeleteStudent(System.Int32)">
+            <summary>
+            Metodo Deleta um Student.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.StudentController.CheckPermissionToCreateUpdateStudent(Entities.Student)">
+            <summary>
+            Metodo checa as permisoes de criação e atualização de um Student.
+            </summary>>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.StudentController.CheckPermissionToDeleteStudent(System.Int32)">
+            <summary>
+            Metodo checa as permissoes de delete de um student.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.StudentController.CheckPermisionToGetStudent(Entities.Student)">
+            <summary>
+                Metodo checa as permissoes de pegar um student.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.SubjectController.GetSubject(System.Int32)">
+            <summary>
+             Metodo pega um Subject.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.SubjectController.CreateSubject(AcademicSystemApi.Models.SubjectViewModel)">
+            <summary>
+                Metodo cria um Subject.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.SubjectController.UpdateSubject(AcademicSystemApi.Models.SubjectViewModel,System.Int32)">
+            <summary>
+                Metodo Atualiza um Subject.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.SubjectController.DeleteSubject(System.Int32)">
+            <summary>
+                Metodo Deleta um Subject.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.SubjectController.CheckPermissionToCreateUpdateSubject(Entities.Subject)">
+            <summary>
+            Metodo checa as permiçoes de criação e atualização de Subject.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.SubjectController.CheckPermissionToDeleteSubject(System.Int32)">
+            <summary>
+            Metodo checa as permissoes de Delete de um Subject.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.SubjectController.CheckPermissionToReadSubject(Entities.Subject)">
+            <summary>
+                Metodo checa as permiçoes de Leitura de um Subject.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.UserController.GetByID(System.Int32)">
+            <summary>
+                Pega um user.
+            </summary>
+            <param name="id">Id do User a ser pego.</param>
+            <returns>Retorna um User</returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.UserController.Profile">
+            <summary>
+                Método retorna o usuario atual logado.
+            </summary>
+            <returns>Retona um User.</returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.UserController.Authenticate(AcademicSystemApi.Models.AuthenticateModel)">
+            <summary>
+                Realiza a authenticação do usuario.
+            </summary>
+            <param name="model">Recebe o model a partir do corpo da requisisão</param>
+            <returns>Retorna o usuario logado e o token de sessão</returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.UserController.Register(AcademicSystemApi.Models.RegisterModel)">
+            <summary>
+                Metodo cria um novo usuario.
+            </summary>
+            <param name="model">Dados para a criação de User passados pelo corpo da requisição</param>
+            <returns>Retorna um "Ok" caso ocora tudo certo.</returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.UserController.Delete(System.Int32)">
+            <summary>
+             Metodo deleta um usuario.
+            </summary>
+            <param name="id">Id do usuario a ser deletado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Controllers.UserController.Update(AcademicSystemApi.Models.UpdateUserModel,System.Int32)">
+            <summary>
+                Metodo atualiza dados de um usuario.
+            </summary>
+        </member>
+        <member name="M:AcademicSystemApi.Extensions.ControllerBaseExtensions.VerifyIfUserIsOwnerAndReturnOwnerId(Microsoft.AspNetCore.Mvc.ControllerBase,BLL.Interfaces.IUserService)">
+            <summary>
+            If user isn't a owner return 0
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Extensions.ControllerBaseExtensions.VerifyIfUserIsInstructorAndReturnInstructorId(Microsoft.AspNetCore.Mvc.ControllerBase,BLL.Interfaces.IUserService)">
+            <summary>
+            If user isn't a coordinator return 0
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AcademicSystemApi.Extensions.ControllerBaseExtensions.VerifyIfUserIsCoordinatorAndReturnCoordinatorId(Microsoft.AspNetCore.Mvc.ControllerBase,BLL.Interfaces.IUserService)">
+            <summary>
+            If user isn't a coordinator return 0
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
