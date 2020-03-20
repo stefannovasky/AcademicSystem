@@ -130,7 +130,7 @@ namespace AcademicSystemApi.Controllers
         /// </summary>
         private async Task<bool> CheckPermissionToCreateUpdateOwner(Owner owner)
         {
-            if (this.GetUserID() == (await _service.GetByID(owner.ID)).Data[0].UserID)
+            if (this.GetUserID() == owner.UserID)
             {
                 return true;
             }
