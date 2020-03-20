@@ -88,7 +88,7 @@ namespace AcademicSystemApi.Controllers
             Owner.ID = id;
             try
             {
-                if (await CheckPermissionToCreateUpdateOwner(Owner);
+                if (await CheckPermissionToCreateUpdateOwner(Owner))
                 {
                     Response response = await _service.Update(Owner);
                     return this.SendResponse(response);
