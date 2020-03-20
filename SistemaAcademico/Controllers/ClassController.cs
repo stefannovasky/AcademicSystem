@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AcademicSystemApi.Extensions;
+using AcademicSystemApi.Models;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -41,8 +42,10 @@ namespace AcademicSystemApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<object> Create(Class Class)
+        public async Task<object> Create(ClassViewModel model)
         {
+            Class Class = new SimpleAutoMapper<Class>().Map(model);
+
             try
             {
                 if (await this.CheckPermissionToCreateOrUpdateClass(Class))
@@ -126,8 +129,10 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpPost]
         [Route("student")]
-        public async Task<object> AddStudent([FromBody] StudentClass item)
+        public async Task<object> AddStudent([FromBody] StudentClassViewModel model)
         {
+            StudentClass item = new SimpleAutoMapper<StudentClass>().Map(model);
+
             try
             {
                 if (await this.CheckPermissionToAddStudent(item))
@@ -156,8 +161,10 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpPost]
         [Route("instructor")]
-        public async Task<object> AddInstructor([FromBody] InstructorClass item)
+        public async Task<object> AddInstructor([FromBody] InstructorClassViewModel model)
         {
+            InstructorClass item = new SimpleAutoMapper<InstructorClass>().Map(model);
+
             try
             {
                 if (await this.CheckPermissionToAddInstructor(item))
@@ -186,8 +193,10 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpPost]
         [Route("coordinator")]
-        public async Task<object> AddCoordinator([FromBody] CoordinatorClass item)
+        public async Task<object> AddCoordinator([FromBody] CoordinatorClassViewModel model)
         {
+            CoordinatorClass item = new SimpleAutoMapper<CoordinatorClass>().Map(model);
+
             try
             {
                 if (await CheckPermissionToAddCoordinator(item))
@@ -214,8 +223,10 @@ namespace AcademicSystemApi.Controllers
         [Authorize]
         [HttpPut]
         [Route("{id}")]
-        public async Task<object> Update(Class Class, int id)
+        public async Task<object> Update(ClassViewModel model, int id)
         {
+            Class Class = new SimpleAutoMapper<Class>().Map(model);
+
             Class.ID = id; 
             try
             {

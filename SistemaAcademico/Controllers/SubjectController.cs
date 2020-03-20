@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AcademicSystemApi.Extensions;
+using AcademicSystemApi.Models;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -72,13 +73,15 @@ namespace AcademicSystemApi.Controllers
         /// </summary>
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateSubject(Subject Subject)
+        public async Task<object> CreateSubject(SubjectViewModel model)
         {
+            Subject subject = new SimpleAutoMapper<Subject>().Map(model);
+
             try
             {
-                if (await CheckPermissionToCreateUpdateSubject(Subject))
+                if (await CheckPermissionToCreateUpdateSubject(subject))
                 {
-                    Response response = await _service.Create(Subject);
+                    Response response = await _service.Create(subject);
                     return this.SendResponse(response);
                 }
                 return Forbid();
@@ -95,14 +98,16 @@ namespace AcademicSystemApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id}")]
-        public async Task<object> UpdateSubject(Subject Subject, int id)
+        public async Task<object> UpdateSubject(SubjectViewModel model, int id)
         {
-            Subject.ID = id;
+            Subject subject = new SimpleAutoMapper<Subject>().Map(model);
+
+            subject.ID = id;
             try
             {
-                if (await CheckPermissionToCreateUpdateSubject(Subject))
+                if (await CheckPermissionToCreateUpdateSubject(subject))
                 {
-                    Response response = await _service.Update(Subject);
+                    Response response = await _service.Update(subject);
                     return this.SendResponse(response);
                 }
                 return Forbid();

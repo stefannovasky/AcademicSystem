@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AcademicSystemApi.Extensions;
+using AcademicSystemApi.Models;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -60,13 +61,15 @@ namespace AcademicSystemApi.Controllers
         /// </summary>
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateOwner(Owner Owner)
+        public async Task<object> CreateOwner(OwnerViewModel model)
         {
+            Owner owner = new SimpleAutoMapper<Owner>().Map(model);
+
             try
             {
-                if(await CheckPermissionToCreateUpdateOwner(Owner))
+                if(await CheckPermissionToCreateUpdateOwner(owner))
                 {
-                    Response response = await _service.Create(Owner);
+                    Response response = await _service.Create(owner);
                     return this.SendResponse(response);
                 }
                 return Forbid();
@@ -83,14 +86,16 @@ namespace AcademicSystemApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id}")]
-        public async Task<object> UpdateOwner(Owner Owner, int id)
+        public async Task<object> UpdateOwner(OwnerViewModel model, int id)
         {
-            Owner.ID = id;
+            Owner owner = new SimpleAutoMapper<Owner>().Map(model);
+
+            owner.ID = id;
             try
             {
-                if (await CheckPermissionToCreateUpdateOwner(Owner);
+                if (await CheckPermissionToCreateUpdateOwner(owner))
                 {
-                    Response response = await _service.Update(Owner);
+                    Response response = await _service.Update(owner);
                     return this.SendResponse(response);
                 }
                 return Forbid();
@@ -130,7 +135,7 @@ namespace AcademicSystemApi.Controllers
         /// </summary>
         private async Task<bool> CheckPermissionToCreateUpdateOwner(Owner owner)
         {
-            if (this.GetUserID() == (await _service.GetByID(owner.ID)).Data[0].UserID)
+            if (this.GetUserID() == owner.UserID)
             {
                 return true;
             }

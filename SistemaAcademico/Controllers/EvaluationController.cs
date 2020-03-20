@@ -13,6 +13,7 @@ using Shared;
 using log4net.Config;
 using log4net;
 using System.Reflection;
+using AcademicSystemApi.Models;
 
 namespace AcademicSystemApi.Controllers
 {
@@ -72,8 +73,10 @@ namespace AcademicSystemApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateEvaluation(Evaluation evaluation)
+        public async Task<object> CreateEvaluation(EvaluationViewModel model)
         {
+            Evaluation evaluation = new SimpleAutoMapper<Evaluation>().Map(model);
+
             try
             {
                 if (await this.CheckPermissionToCreateEvaluation(evaluation))
@@ -100,16 +103,18 @@ namespace AcademicSystemApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id}")]
-        public async Task<object> UpdateEvaluation(Evaluation Evaluation, int id)
+        public async Task<object> UpdateEvaluation(EvaluationViewModel model, int id)
         {
-            Evaluation.ID = id;
+            Evaluation evaluation = new SimpleAutoMapper<Evaluation>().Map(model);
+
+            evaluation.ID = id;
             try
             {
                 User user = (await this._userService.GetByID(this.GetUserID())).Data[0];
 
-                if (await this.CheckPermissionToUpdateEvaluation(Evaluation))
+                if (await this.CheckPermissionToUpdateEvaluation(evaluation))
                 {
-                    Response response = await _service.Update(Evaluation);
+                    Response response = await _service.Update(evaluation);
                     return this.SendResponse(response);
                 }
 

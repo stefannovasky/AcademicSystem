@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AcademicSystemApi.Extensions;
+using AcademicSystemApi.Models;
 using BLL.Interfaces;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -69,15 +70,21 @@ namespace AcademicSystemApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<object> CreateCourse(Course course)
+        public async Task<object> CreateCourse(CourseViewModel model)
         {
+            Course course = new SimpleAutoMapper<Course>().Map(model);
+
             try
             {
                 if (await this.CheckPermissionToCreateCourse(course))
                 {
                     User user = (await _userService.GetByID(this.GetUserID())).Data[0];
 
-                    course.Owners.Clear();
+                    if (course.Owners != null)
+                    {
+                        course.Owners.Clear();
+                    }
+                    
                     int id = (await _courseService.CreateAndReturnId(course)).Data[0];
                     course = (await _courseService.GetByID(id)).Data[0];
                     return this.SendResponse(await _courseService.AddOwner(course, user.Owner));
@@ -99,8 +106,10 @@ namespace AcademicSystemApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id}")]
-        public async Task<object> UpdateCourse(Course course, int id)
+        public async Task<object> UpdateCourse(CourseViewModel model, int id)
         {
+            Course course = new SimpleAutoMapper<Course>().Map(model);
+
             course.ID = id;
             try
             {
@@ -153,13 +162,13 @@ namespace AcademicSystemApi.Controllers
         [HttpPost]
         [Route("subject")]
         [Authorize]
-        public async Task<object> AddSubject(int courseID, int subjectID)
+        public async Task<object> AddSubject(SubjectCourseViewModel model)
         {
             try
             {
-                if (await this.CheckPermissionToAddSubject(courseID))
+                if (await this.CheckPermissionToAddSubject(model.CourseID))
                 {
-                    return await _courseService.AddSubject((await _courseService.GetByID(courseID)).Data[0], (await _subjectService.GetByID(subjectID)).Data[0]);
+                    return await _courseService.AddSubject((await _courseService.GetByID(model.CourseID)).Data[0], (await _subjectService.GetByID(model.SubjectID)).Data[0]);
                 }
 
 
@@ -179,8 +188,10 @@ namespace AcademicSystemApi.Controllers
         [HttpPost]
         [Route("owner")]
         [Authorize]
-        public async Task<object> AddOwner(OwnerCourse ownerCourse)
+        public async Task<object> AddOwner(OwnerCourseViewModel model)
         {
+            OwnerCourse ownerCourse = new SimpleAutoMapper<OwnerCourse>().Map(model);
+
             try
             {
                 if (await this.CheckPermissionToAddOwner(ownerCourse))

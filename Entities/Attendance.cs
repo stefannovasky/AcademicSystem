@@ -12,6 +12,7 @@ namespace Entities
         public DateTime UpdatedAt { get; set; }
         public DateTime DeletedAt { get; set; }
         public DateTime Date { get; set; }
+        
         public bool Value { get; set; }
 
         public int ClassID { get; set; }
