@@ -80,7 +80,10 @@ namespace AcademicSystemApi.Controllers
                 {
                     User user = (await _userService.GetByID(this.GetUserID())).Data[0];
 
-                    //course.Owners.Clear();
+                    if (course.Owners != null)
+                    {
+                        course.Owners.Clear();
+                    }
                     
                     int id = (await _courseService.CreateAndReturnId(course)).Data[0];
                     course = (await _courseService.GetByID(id)).Data[0];
